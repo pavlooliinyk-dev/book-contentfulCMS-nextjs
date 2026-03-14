@@ -44,7 +44,8 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
       body: JSON.stringify({ query }),
       next: { tags: ["posts"] },
     },
-  ).then((response) => response.json());
+  ).then((response) => response.json())
+  .then((response) => console.log(response));
 }
 
 function extractPost(fetchResponse: any): any {

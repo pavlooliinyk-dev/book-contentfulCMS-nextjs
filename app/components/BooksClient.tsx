@@ -81,7 +81,11 @@ export default function BooksClient() {
   return (
     <section className="mt-12 pb-20">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-4xl font-bold">Books</h2>
+        <h2 className="text-4xl font-bold">
+          <Link href={`/books`}>
+                  Books
+              </Link>
+        </h2>
         <button
           onClick={togglePagination}
           className="text-sm bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition"

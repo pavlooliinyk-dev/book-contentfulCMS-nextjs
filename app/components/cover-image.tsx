@@ -1,4 +1,4 @@
-import ContentfulImage from "../lib/contentful-image";
+import ContentfulImage from "../../lib/contentful-image";
 import Link from "next/link";
 
 function cn(...classes: any[]) {
@@ -20,9 +20,9 @@ export default function CoverImage({
       priority
       width={2000}
       height={1000}
-      className={cn("shadow-small", {
-        "hover:shadow-medium transition-shadow duration-200": slug,
-      })}
+      className={cn("shadow-small", 
+        slug ? "hover:shadow-medium transition-shadow duration-200 hover:opacity-75" : ""
+      )}
       src={url}
     />
   );

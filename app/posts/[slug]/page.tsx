@@ -2,9 +2,9 @@ import Link from "next/link";
 import { draftMode } from "next/headers";
 
 import MoreStories from "../../more-stories";
-import Avatar from "../../avatar";
-import Date from "../../date";
-import CoverImage from "../../cover-image";
+import Avatar from "../../components/avatar";
+import Date from "../../components/date";
+import CoverImage from "../../components/cover-image";
 
 import { Markdown } from "@/lib/markdown";
 import { getAllPosts, getPostAndMorePosts } from "@/lib/api";
@@ -12,17 +12,16 @@ import { getAllPosts, getPostAndMorePosts } from "@/lib/api";
 export async function generateStaticParams() {
   const allPosts = await getAllPosts(false);
 
-  return allPosts.map((post) => ({
+  return (allPosts || []).map((post) => ({
     slug: post.slug,
   }));
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: { slug: string };
+export default async function PostPage(props: {
+  params: Promise<{ slug: string }>;
 }) {
-  const { isEnabled } = draftMode();
+  const params = await props.params;
+  const { isEnabled } = await draftMode();
   const { post, morePosts } = await getPostAndMorePosts(params.slug, isEnabled);
 
   return (

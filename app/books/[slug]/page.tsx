@@ -2,8 +2,8 @@ import Link from "next/link";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
-import Date from "../../date";
-import CoverImage from "../../cover-image";
+import Date from "../../components/date";
+import CoverImage from "../../components/cover-image";
 import { Markdown } from "@/lib/markdown";
 import { getAllBooks, getBookBySlug } from "@/lib/api";
 
@@ -42,7 +42,7 @@ export default async function BookPage(props: {
         </h1>
         <div className="mb-8 sm:mx-0 md:mb-16">
           {book.coverImage?.url && (
-            <CoverImage title={book.title} url={book.coverImage.url} />
+            <CoverImage title={book.title} url={book.coverImage.url} slug={book.slug}/>
           )}
         </div>
         <div className="mx-auto max-w-2xl">
@@ -54,13 +54,13 @@ export default async function BookPage(props: {
             )}
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
-          {book.taxonomy && (
+          {/* {book.taxonomy && (
             <div className="flex gap-2 mb-6">
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm uppercase">
                 {typeof book.taxonomy === "string" ? book.taxonomy : JSON.stringify(book.taxonomy)}
               </span>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="mx-auto max-w-2xl">

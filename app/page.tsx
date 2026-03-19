@@ -23,6 +23,7 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto px-5">
+      <p>process.env.environment - {process.env.environment}</p>
       <Intro />
       {heroBook && (
         <HeroBook 

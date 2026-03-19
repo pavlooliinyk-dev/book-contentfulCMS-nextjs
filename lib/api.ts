@@ -173,3 +173,21 @@ export async function getAllBooks(isDraftMode: boolean): Promise<any[]> {
       : "",
   }));
 }
+
+export async function getHomePage(preview: boolean): Promise<any> {
+  const entry = await fetchGraphQL(
+    `query {
+      homePageCollection(preview: ${preview ? "true" : "false"}, limit: 1) {
+        items {
+          title
+          heroBanner {
+            url
+          }
+          imageWithTextSection
+        }
+      }
+    }`,
+    preview,
+  );
+  return entry?.data?.homePageCollection?.items?.[0];
+}

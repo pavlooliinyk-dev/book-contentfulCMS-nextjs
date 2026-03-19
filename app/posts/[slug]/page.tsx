@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { draftMode } from "next/headers";
 
-import MoreStories from "../../more-stories";
+import MoreStories from "../../components/more-stories";
 import Avatar from "../../components/avatar";
 import Date from "../../components/date";
 import CoverImage from "../../components/cover-image";

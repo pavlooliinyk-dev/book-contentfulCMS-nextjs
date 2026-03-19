@@ -23,6 +23,11 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto px-5">
+       {process.env.environment === "preview" ? 
+        <p>Preview Mode </p> : 
+        null
+      }
+      
       <Intro />
       {heroBook && (
         <HeroBook 

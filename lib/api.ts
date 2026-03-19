@@ -60,7 +60,7 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
         }`,
       },
       body: JSON.stringify({ query }),
-      next: { tags: ["posts"] },
+      next: { tags: ["books"] },
     },
   );
   return response.json();

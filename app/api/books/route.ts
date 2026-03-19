@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { draftMode } from "next/headers";
 
 const BOOK_GRAPHQL_FIELDS = `
   title
@@ -19,12 +20,15 @@ const BOOK_GRAPHQL_FIELDS = `
 `;
 
 export async function GET(request: NextRequest) {
+  const { isEnabled } = await draftMode();
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "5");
   const skip = parseInt(searchParams.get("skip") || "0");
 
   const spaceId = process.env.CONTENTFUL_SPACE_ID;
-  const token = process.env.CONTENTFUL_ACCESS_TOKEN;
+  const token = isEnabled
+    ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
+    : process.env.CONTENTFUL_ACCESS_TOKEN;
 
   if (!spaceId || !token) {
     return NextResponse.json({ error: "Missing Contentful configuration" }, { status: 500 });
@@ -32,7 +36,9 @@ export async function GET(request: NextRequest) {
 
   const query = `
     query {
-      bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC) {
+      bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC, preview: ${
+    isEnabled ? "true" : "false"
+  }) {
         total
         items {
           ${BOOK_GRAPHQL_FIELDS}

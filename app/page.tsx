@@ -23,10 +23,12 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto px-5">
-       {process.env.environment === "preview" ? 
-        <p>Preview Mode </p> : 
-        null
-      }
+      {isEnabled && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
+          <p className="font-bold">Preview Mode</p>
+          <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
+        </div>
+      )}
       
       <Intro />
       {heroBook && (

@@ -27,5 +27,15 @@
   },
   "devDependencies": {
     "dotenv": "^17.3.1"
+  },
+  "contributes": {
+    "chatSkills": [
+      {
+        "path": "./skills/FE-react-developer/SKILL.md"
+      },
+      {
+        "path": "./skills/Contentful-developer/SKILL.md"
+      }
+    ]
   }
 }

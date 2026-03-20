@@ -1,11 +1,15 @@
 import { draftMode } from "next/headers";
 import Image from "next/image";
-
-import BooksClient from "./components/BooksClient";
-import HeroBook from "./components/HeroBook";
+import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
 import { CMS_NAME, CMS_URL } from "@/lib/constants";
+
+const BooksClient = dynamic(() => import("./components/BooksClient"), {
+  loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
+});
+
+const HeroBook = dynamic(() => import("./components/HeroBook"));
 
 function Intro({ title }: { title?: string }) {
   return (
@@ -44,7 +48,6 @@ export default async function Page() {
             priority
             sizes="100vw"
             className="object-cover rounded-lg shadow-lg"
-            fetchPriority="high"
           />
         </div>
       )}

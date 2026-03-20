@@ -1,4 +1,5 @@
 import { draftMode } from "next/headers";
+import Image from "next/image";
 
 import BooksClient from "./components/BooksClient";
 import HeroBook from "./components/HeroBook";
@@ -23,9 +24,6 @@ export default async function Page() {
     getHomePage(isEnabled),
   ]);
   const heroBook = allBooks && allBooks.length > 0 ? allBooks[0] : null;
-
-  console.log('allBooks:', allBooks);
-  console.log('heroBook:', heroBook);
   
   return (
     <div className="container mx-auto px-5">
@@ -38,12 +36,14 @@ export default async function Page() {
       <Intro title={homePage?.title} />
 
       {homePage?.heroBanner && (
-        <div className="mb-8 md:mb-16">
-          <img 
+        <div className="mb-8 md:mb-16 relative w-full h-[400px] md:h-[600px]">
+          <Image 
             src={homePage.heroBanner.url} 
-            alt={homePage.title}
-            fetchPriority="high"
-            className="w-full h-auto object-cover rounded-lg shadow-lg"
+            alt={homePage.title || "Hero banner"}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover rounded-lg shadow-lg"
           />
         </div>
       )}

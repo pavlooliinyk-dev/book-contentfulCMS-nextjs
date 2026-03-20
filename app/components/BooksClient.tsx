@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type Book = {
   title?: string;
@@ -94,12 +95,14 @@ export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) 
         {books.map((b, i) => (
           <article key={i} className="flex flex-col">
             {b.coverImage?.url && (
-              <div className="mb-5">
+              <div className="mb-5 relative w-full h-[400px]">
                 <Link href={`/books/${b.slug}`}>
-                  <img
+                  <Image
                     src={b.coverImage.url}
-                    alt={b.title}
-                    className="w-full h-[400px] object-cover hover:opacity-80 transition shadow-md rounded"
+                    alt={b.title || "Book cover"}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover hover:opacity-80 transition shadow-md rounded"
                   />
                 </Link>
               </div>

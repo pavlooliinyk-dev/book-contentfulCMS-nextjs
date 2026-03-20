@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Book = {
-  initialBooks: Book[];
   title?: string;
   slug?: string;
   shortDescription?: { json?: any };
@@ -39,13 +38,6 @@ export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) 
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
   };
-
-  // Only fetch on mount if no initial books provided
-  // useEffect(() => {
-  //   if (!initialBooks || initialBooks.length === 0) {
-  //     fetchBooks(0);
-  //   }
-  // }, []);
 
   // Infinite Scroll Logic
   useEffect(() => {

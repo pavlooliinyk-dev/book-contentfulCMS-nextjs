@@ -15,6 +15,6 @@ export async function GET(request: NextRequest) {
   // Enable Draft Mode
   (await draftMode()).enable();
 
-  // Redirect to the path from the fetched post
+  // Redirect to the path from the fetched url or fallback to the root
   redirect(slug || "/");
 }

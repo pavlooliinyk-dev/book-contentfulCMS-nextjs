@@ -24,6 +24,7 @@ export default async function Page() {
   ]);
   const heroBook = allBooks && allBooks.length > 0 ? allBooks[0] : null;
 
+  console.log('allBooks:', allBooks);
   console.log('heroBook:', heroBook);
   
   return (
@@ -34,7 +35,6 @@ export default async function Page() {
           <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
         </div>
       )}
-      
       <Intro title={homePage?.title} />
 
       {homePage?.heroBanner && (
@@ -65,7 +65,7 @@ export default async function Page() {
           taxonomy={heroBook.taxonomy}
         />
       )}
-      <BooksClient />
+      <BooksClient initialBooks={allBooks} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Book = {
+  initialBooks: Book[];
   title?: string;
   slug?: string;
   shortDescription?: { json?: any };
@@ -14,9 +15,9 @@ type Book = {
   taxonomy?: any;
 };
 
-export default function BooksClient() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [total, setTotal] = useState(0);
+export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) {
+  const [books, setBooks] = useState<Book[]>(initialBooks || []);
+  const [total, setTotal] = useState(initialBooks?.length || 0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -39,9 +40,12 @@ export default function BooksClient() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
-    fetchBooks(0);
-  }, []);
+  // Only fetch on mount if no initial books provided
+  // useEffect(() => {
+  //   if (!initialBooks || initialBooks.length === 0) {
+  //     fetchBooks(0);
+  //   }
+  // }, []);
 
   // Infinite Scroll Logic
   useEffect(() => {
@@ -83,8 +87,8 @@ export default function BooksClient() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-4xl font-bold">
           <Link href={`/books`}>
-                  Books
-              </Link>
+            Books
+          </Link>
         </h2>
         <button
           onClick={togglePagination}
@@ -121,13 +125,13 @@ export default function BooksClient() {
               )}
               {b.numberOfPages && <span className="ml-4 italic text-gray-500">{b.numberOfPages} pages</span>}
             </div>
-            {b.taxonomy && (
+            {/* {b.taxonomy && (
               <div className="flex flex-wrap gap-2 mb-4">
                 <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs uppercase tracking-wider">
                   {typeof b.taxonomy === "string" ? b.taxonomy : JSON.stringify(b.taxonomy)}
                 </span>
               </div>
-            )}
+            )} */}
           </article>
         ))}
       </div>

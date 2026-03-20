@@ -1,4 +1,3 @@
-import Link from "next/link";
 import CoverImage from "./cover-image";
 import { Book } from "@/lib/hooks/useBooks";
 

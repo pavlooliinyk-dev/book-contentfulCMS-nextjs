@@ -41,7 +41,8 @@ export default async function Page() {
         <div className="mb-8 md:mb-16">
           <img 
             src={homePage.heroBanner.url} 
-            alt={homePage.title} 
+            alt={homePage.title}
+            fetchPriority="high"
             className="w-full h-auto object-cover rounded-lg shadow-lg"
           />
         </div>

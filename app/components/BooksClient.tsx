@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,13 +16,14 @@ type Book = {
 };
 
 export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) {
-  const [books, setBooks] = useState<Book[]>(initialBooks || []);
+  const LIMIT = 5;
+  const [books, setBooks] = useState<Book[]>(initialBooks.slice(0, LIMIT));
   const [total, setTotal] = useState(initialBooks?.length || 0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [isInfinite, setIsInfinite] = useState(true);
-  const LIMIT = 5;
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const fetchBooks = (skip: number, append = false) => {
     setLoading(true);
@@ -40,25 +41,25 @@ export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) 
       .finally(() => setLoading(false));
   };
 
-  // Infinite Scroll Logic
+  // Infinite Scroll Logic using IntersectionObserver (prevents forced reflows)
   useEffect(() => {
-    if (!isInfinite || loading || books.length >= total) return;
+    if (!isInfinite || !sentinelRef.current || books.length >= total) return;
 
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 50 >=
-        document.documentElement.offsetHeight
-      ) {
-        setPage((p) => {
-          const next = p + 1;
-          fetchBooks(next * LIMIT, true);
-          return next;
-        });
-      }
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setPage((p) => {
+            const next = p + 1;
+            fetchBooks(next * LIMIT, true);
+            return next;
+          });
+        }
+      },
+      { rootMargin: "100px" }
+    );
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
   }, [isInfinite, loading, books.length, total]);
 
   const togglePagination = () => {
@@ -130,6 +131,9 @@ export default function BooksClient({ initialBooks }: { initialBooks: Book[] }) 
           </article>
         ))}
       </div>
+
+      {/* Sentinel for infinite scroll */}
+      {isInfinite && books.length < total && <div ref={sentinelRef} className="h-10" />}
 
       {loading && <div className="mt-8 text-center text-xl animate-pulse">Loading...</div>}
 

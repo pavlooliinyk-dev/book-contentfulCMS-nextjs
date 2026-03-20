@@ -41,7 +41,7 @@ export default async function Page() {
             src={homePage.heroBanner.url} 
             alt={homePage.title || "Hero banner"}
             fill
-            fetchPriority="high"
+            priority
             sizes="100vw"
             className="object-cover rounded-lg shadow-lg"
           />

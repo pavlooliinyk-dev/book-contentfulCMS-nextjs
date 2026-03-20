@@ -24,6 +24,8 @@ export default async function Page() {
   ]);
   const heroBook = allBooks && allBooks.length > 0 ? allBooks[0] : null;
 
+  console.log('heroBook:', heroBook);
+  
   return (
     <div className="container mx-auto px-5">
       {isEnabled && (

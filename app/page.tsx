@@ -44,7 +44,6 @@ export default async function Page() {
             priority
             sizes="100vw"
             className="object-cover rounded-lg shadow-lg"
-            fetchPriority="high"
           />
         </div>
       )}

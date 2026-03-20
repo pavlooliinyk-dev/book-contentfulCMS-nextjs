@@ -7,10 +7,17 @@ export const metadata = {
   description: `This is a blog built with Next.js and ${CMS_NAME}.`,
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#ffffff',
+};
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
 function Footer() {
@@ -34,6 +41,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <link rel="dns-prefetch" href="https://images.ctfassets.net" />
+        <link rel="preconnect" href="https://images.ctfassets.net" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://graphql.contentful.com" crossOrigin="anonymous" />
+      </head>
       <body>
         <section className="min-h-screen">
           <main>{children}</main>

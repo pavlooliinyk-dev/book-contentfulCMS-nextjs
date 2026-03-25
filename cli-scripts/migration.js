@@ -1,3 +1,4 @@
+// This script uses the Contentful Migration API to programmatically update content model
 module.exports = function (migration) {
   // Author Content Type
   const author = migration
@@ -52,6 +53,26 @@ module.exports = function (migration) {
     });
 
   book.createField("genre").name("Genre").type("Array").items({ type: "Symbol" });
+
+  // Home Page Content Type
+  const homePage = migration
+    .createContentType("homePage")
+    .name("Home Page")
+    .displayField("title");
+
+  homePage.createField("title").name("Title").type("Symbol").required(true);
+
+  homePage
+    .createField("heroBanner")
+    .name("Hero Banner")
+    .type("Link")
+    .linkType("Asset")
+    .required(true);
+
+  homePage
+    .createField("imageWithTextSection")
+    .name("Image With Text Section")
+    .type("Object");
 
   // Book Section Content Type
   const bookSection = migration

@@ -1,5 +1,5 @@
 import { draftMode } from "next/headers";
-import BooksClient from "../components/BooksClient";
+import BooksClient from "../components/books-client";
 import { getAllBooks } from "@/lib/api";
 
 export default async function BooksPage() {

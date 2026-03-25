@@ -3,23 +3,13 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
-import { CMS_NAME, CMS_URL } from "@/lib/constants";
+import Intro from "./components/intro";
 
-const BooksClient = dynamic(() => import("./components/BooksClient"), {
+const BooksClient = dynamic(() => import("./components/books-client"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
 });
 
-const HeroBook = dynamic(() => import("./components/HeroBook"));
-
-function Intro({ title }: { title?: string }) {
-  return (
-    <section className="flex-row flex items-center md:justify-between mt-16 mb-16 md:mb-12 intro">
-      <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8">
-        {title || "Readify."}
-      </h1>
-    </section>
-  );
-}
+const HeroBook = dynamic(() => import("./components/hero-book"));
 
 export default async function Page() {
   const { isEnabled } = await draftMode();
@@ -31,12 +21,6 @@ export default async function Page() {
   
   return (
     <div className="container mx-auto px-5">
-      {isEnabled && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
-          <p className="font-bold">Preview Mode</p>
-          <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
-        </div>
-      )}
       <Intro title={homePage?.title} />
 
       {homePage?.heroBanner && (

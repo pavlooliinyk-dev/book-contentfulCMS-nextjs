@@ -1,5 +1,5 @@
 const spaceImport = require("contentful-import");
-const exportFile = require("./export.json");
+const exportFile = require("./books.json");
 // install first: npm install dotenv
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '..', '.env.local') });

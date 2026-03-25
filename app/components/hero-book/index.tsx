@@ -1,4 +1,4 @@
-import CoverImage from "./cover-image";
+import CoverImage from "../cover-image";
 import { Book } from "@/lib/hooks/useBooks";
 
 export default function HeroBook({

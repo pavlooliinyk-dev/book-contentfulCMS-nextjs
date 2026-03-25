@@ -1,4 +1,5 @@
 import "./globals.css";
+import { draftMode } from "next/headers";
 import { Inter } from "next/font/google";
 import { EXAMPLE_PATH, CMS_NAME } from "@/lib/constants";
 
@@ -34,19 +35,21 @@ function Footer() {
   );
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+   const { isEnabled } = await draftMode();
   return (
     <html lang="en" className={inter.variable}>
-      <head>
-        <link rel="dns-prefetch" href="https://images.ctfassets.net" />
-        <link rel="preconnect" href="https://images.ctfassets.net" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://graphql.contentful.com" crossOrigin="anonymous" />
-      </head>
       <body>
+        {isEnabled && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
+          <p className="font-bold">Preview Mode</p>
+          <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
+        </div>
+      )}
         <section className="min-h-screen">
           <main>{children}</main>
           <Footer />

@@ -1,0 +1,21 @@
+/* The animation code */
+@keyframes intro {
+  0%   {background-color: red;}
+  25%  {background-color: yellow;}
+  50%  {background-color: blue;}
+  90% {background-color: green;}
+  100% {background-color: red;}
+}
+
+/* The element to apply the animation to */
+.intro::before {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 100px;
+  animation: intro 5s infinite;
+  animation-duration: 4s;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+}

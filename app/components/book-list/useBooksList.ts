@@ -2,15 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export type TaxonomyTerm = {
-  sys: {
-    id: string;
-  };
-  title: string;
-  slug?: string;
-  type?: string;
-};
-
 export type Book = {
   title?: string;
   slug?: string;
@@ -20,29 +11,21 @@ export type Book = {
   authorsCollection?: { items: { name: string }[] };
   externalResourceLink?: string;
   taxonomy?: any;
-  authors?: string | Record<string, any>[];
-  taxonomies?: TaxonomyTerm[];
 };
 
-interface UseBooksProps {
-  initialBooks: Book[];
-  initialTotal: number;
-  limit: number;
-}
-
-export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
+export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number) {
   const [books, setBooks] = useState<Book[]>(initialBooks);
   const [total, setTotal] = useState(initialTotal);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [isInfinite, setIsInfinite] = useState(true);
-  const [selectedTaxTitles, setSelectedTaxTitles] = useState<string[]>([]);
+  const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>([]);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const fetchBooks = (skip: number, append = false, currentTaxTitles = selectedTaxTitles) => {
+  const fetchBooks = (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
     setLoading(true);
-    const taxParam = currentTaxTitles.length > 0 ? `&taxonomies=${currentTaxTitles.join(",")}` : "";
+    const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
     fetch(`/api/books?limit=${limit}&skip=${skip}${taxParam}`)
       .then((r) => r.json())
       .then((data) => {
@@ -52,9 +35,9 @@ export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
         }
         const newItems = data.items || [];
         setBooks((prev) => {
-          const combined = append ? [...prev, ...newItems] : newItems;
-          const unique = combined.filter((book: Book, index: number, self: Book[]) =>
-            index === self.findIndex((b) => b.title === book.title)
+          const newBooks = append ? [...prev, ...newItems] : newItems;
+          const unique = newBooks.filter((book: Book, index: number, self: Book[]) =>
+            index === self.findIndex((b: Book) => b.title === book.title)
           );
           return unique;
         });
@@ -66,17 +49,17 @@ export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
 
   const handleFilterChange = (tax: any) => {
     const taxValue = tax.title;
-    const nextTitles = selectedTaxTitles.includes(taxValue)
-      ? selectedTaxTitles.filter((title) => title !== taxValue)
-      : [...selectedTaxTitles, taxValue];
-
-    setSelectedTaxTitles(nextTitles);
+    const nextIds = selectedTaxIds.includes(taxValue)
+      ? selectedTaxIds.filter(id => id !== taxValue)
+      : [...selectedTaxIds, taxValue];
+    
+    setSelectedTaxIds(nextIds);
     setPage(0);
-    fetchBooks(0, false, nextTitles);
+    fetchBooks(0, false, nextIds);
   };
 
   const clearFilters = () => {
-    setSelectedTaxTitles([]);
+    setSelectedTaxIds([]);
     setPage(0);
     fetchBooks(0, false, []);
   };
@@ -93,7 +76,6 @@ export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
     fetchBooks(next * limit);
   };
 
-  // Infinite Scroll Logic using IntersectionObserver
   useEffect(() => {
     if (!isInfinite || !sentinelRef.current || books.length >= total) return;
 
@@ -121,7 +103,7 @@ export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
     loading,
     page,
     isInfinite,
-    selectedTaxTitles,
+    selectedTaxIds,
     sentinelRef,
     handleFilterChange,
     clearFilters,

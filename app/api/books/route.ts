@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "5");
   const skip = parseInt(searchParams.get("skip") || "0");
+  const taxonomies = searchParams.get("taxonomies")?.split(",") || [];
 
   const spaceId = process.env.CONTENTFUL_SPACE_ID;
   const token = isEnabled
@@ -34,18 +35,27 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing Contentful configuration" }, { status: 500 });
   }
 
-  const query = `
-    query {
-      bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC, preview: ${
-    isEnabled ? "true" : "false"
-  }) {
-        total
-        items {
-          ${BOOK_GRAPHQL_FIELDS}
+  const whereClause = taxonomies.length > 0 && taxonomies[0] !== ""
+    ? `, where: { genre_contains_all: ${JSON.stringify(taxonomies)} }`
+    : "";
+
+  const queryBody = {
+    query: `
+      query GetBooks($limit: Int, $skip: Int, $preview: Boolean) {
+        bookCollection(limit: $limit, skip: $skip, order: title_DESC, preview: $preview ${whereClause}) {
+          total
+          items {
+            ${BOOK_GRAPHQL_FIELDS}
+          }
         }
       }
+    `,
+    variables: {
+      limit,
+      skip,
+      preview: isEnabled
     }
-  `;
+  };
 
   try {
     const res = await fetch(`https://graphql.contentful.com/content/v1/spaces/${spaceId}`, {
@@ -54,7 +64,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify(queryBody),
     });
 
     if (!res.ok) {

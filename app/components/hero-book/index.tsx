@@ -1,5 +1,5 @@
 import CoverImage from "../cover-image";
-import { Book } from "@/lib/hooks/useBooks";
+import { Book, TaxonomyTerm } from "@/lib/hooks/useBooks";
 
 export default function HeroBook({
   title,
@@ -8,11 +8,14 @@ export default function HeroBook({
   numberOfPages,
   externalResourceLink,
   taxonomy,
+  taxonomies,
 }: Book) {
   const getTaxonomyValue = (t: any) => (typeof t === "string" ? t : t?.position);
   const taxonomyArray = (Array.isArray(taxonomy) ? taxonomy : [taxonomy]).filter(Boolean);
   const position = taxonomyArray.map(getTaxonomyValue).find(v => v === "left" || v === "right") || "left";
 
+  console.log("HeroBook taxonomies:", taxonomies);
+  
   return (
     <section className="mb-20 bg-gray-200 p-6">
         <h2 className="text-4xl font-bold pb-2">
@@ -49,6 +52,18 @@ export default function HeroBook({
                   <span key={i} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
                     {getTaxonomyValue(t)}
                   </span>
+                ))}
+              </div>
+            )}
+            {taxonomies && taxonomies.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4 text-sm">
+                {taxonomies.map((tax: TaxonomyTerm) => (
+                  <div key={tax.sys.id} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex flex-col items-center">
+                    <span className="font-bold">{tax.slug || "Unknown"}</span>
+                    <div className="flex gap-2 text-[10px] uppercase opacity-75">
+                      {tax.type && <span>type: {tax.type}</span>}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

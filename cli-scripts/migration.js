@@ -1,5 +1,19 @@
-// This script uses the Contentful Migration API to programmatically update content model
 module.exports = function (migration) {
+  // TaxonomyTerm Content Type
+  const taxonomyTerm = migration
+    .createContentType("taxonomyTerm")
+    .name("Taxonomy Term")
+    .displayField("title");
+
+  taxonomyTerm.createField("title").name("Title").type("Symbol").required(true);
+  taxonomyTerm.createField("slug").name("Slug").type("Symbol").required(true);
+  taxonomyTerm.createField("type").name("Type").type("Symbol").required(true).validations([
+    { in: ["genre", "audience", "language"] }
+  ]);
+  taxonomyTerm.createField("parent").name("Parent").type("Link").linkType("Entry").validations([
+    { linkContentType: ["taxonomyTerm"] }
+  ]);
+
   // Author Content Type
   const author = migration
     .createContentType("author")
@@ -7,13 +21,8 @@ module.exports = function (migration) {
     .displayField("name");
 
   author.createField("name").name("Name").type("Symbol").required(true);
-
-  author
-    .createField("picture")
-    .name("Picture")
-    .type("Link")
-    .linkType("Asset")
-    .required(true);
+  author.createField("bio").name("Bio").type("RichText");
+  author.createField("avatar").name("Avatar").type("Link").linkType("Asset");
 
   // Book Content Type
   const book = migration
@@ -37,14 +46,11 @@ module.exports = function (migration) {
     .required(true);
 
   book.createField("numberOfPages").name("Number of Pages").type("Integer");
-
   book.createField("externalResourceLink").name("External Resource Link").type("Symbol");
-
-  book.createField("taxonomy").name("Taxonomy").type("Object");
-
+  
   book
-    .createField("authorsCollection")
-    .name("Authors")
+    .createField("authors")
+    .name("Author(s)")
     .type("Array")
     .items({
       type: "Link",
@@ -53,6 +59,17 @@ module.exports = function (migration) {
     });
 
   book.createField("genre").name("Genre").type("Array").items({ type: "Symbol" });
+
+  book
+    .createField("taxonomies")
+    .name("Taxonomies")
+    .type("Array")
+    .items({
+      type: "Link",
+      linkType: "Entry",
+      validations: [{ linkContentType: ["taxonomyTerm"] }],
+    });
+
 
   // Home Page Content Type
   const homePage = migration

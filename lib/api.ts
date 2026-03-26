@@ -10,9 +10,31 @@ const BOOK_GRAPHQL_FIELDS = `
   numberOfPages
   externalResourceLink
   taxonomy
-  authorsCollection {
+  authorsCollection(limit: 10) {
     items {
       name
+    }
+  }
+  taxonomiesCollection(limit: 10) {
+    items {
+      ... on Entry {
+        __typename
+        sys {
+          id
+        }
+      }
+      ... on TaxonomyTerm {
+        title
+        slug
+        type
+        parent {
+          ... on Entry {
+            sys {
+              id
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -34,23 +56,42 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
       next: { tags: ["books"] },
     },
   );
-  return response.json();
+  
+  const result = await response.json();
+  if (result.errors) {
+    console.error("GraphQL Errors:", JSON.stringify(result.errors, null, 2));
+  }
+  return result;
 }
 
 export async function getBookBySlug(slug: string, preview: boolean): Promise<any> {
-  // Since you don't have a slug field in CMS, we fetch all books and filter by generated slug
-  const allBooks = await getAllBooks(preview);
-  // console.log("DEBUG: All generated slugs:", allBooks.map(b => b.slug));
-  // console.log("DEBUG: Target slug:", slug);
+  // Since you don't have a slug field in CMS, we fetch many books and filter by generated slug
+  // Limit to 20 to avoid "TOO_COMPLEX_QUERY" error while still finding the slug
+  const { items: allBooks } = await getAllBooks(preview, 20);
   const found = allBooks.find((book: any) => book.slug === slug);
-  // console.log("DEBUG: Found book:", found ? found.title : "NULL");
   return found;
 }
 
-export async function getAllBooks(isDraftMode: boolean): Promise<any[]> {
+export async function getAllBooks(
+  isDraftMode: boolean, 
+  limit = 5,
+  skip = 0,
+  taxIds: string[] = []
+): Promise<{ items: any[], total: number }> {
+  const whereClause = taxIds.length > 0 
+    ? `, where: { genre_contains_all: ${JSON.stringify(taxIds)} }`
+    : "";
+
   const entries = await fetchGraphQL(
     `query {
-      bookCollection(preview: ${isDraftMode ? "true" : "false"}) {
+      bookCollection(
+        preview: ${isDraftMode ? "true" : "false"}, 
+        limit: ${limit}, 
+        skip: ${skip},
+        order: title_DESC
+        ${whereClause}
+      ) {
+        total
         items {
           ${BOOK_GRAPHQL_FIELDS}
         }
@@ -59,10 +100,13 @@ export async function getAllBooks(isDraftMode: boolean): Promise<any[]> {
     isDraftMode,
   );
   const items = entries?.data?.bookCollection?.items || [];
+  const total = entries?.data?.bookCollection?.total || 0;
   
   // Generate virtual slugs from titles
-  return items.map((book: any) => ({
+  const formattedItems = items.map((book: any) => ({
     ...book,
+    authors: book.authorsCollection?.items?.map((item: any) => item.name) || [],
+    taxonomies: book.taxonomiesCollection?.items || [],
     slug: book.title
       ? book.title
           .toLowerCase()
@@ -71,6 +115,27 @@ export async function getAllBooks(isDraftMode: boolean): Promise<any[]> {
           .replace(/^-+|-+$/g, "")
       : "",
   }));
+
+  return { items: formattedItems, total };
+}
+
+export async function getTaxonomies(preview: boolean): Promise<any[]> {
+  const entries = await fetchGraphQL(
+    `query {
+      taxonomyTermCollection(preview: ${preview ? "true" : "false"}, limit: 50) {
+        items {
+          title
+          slug
+          type
+          sys {
+            id
+          }
+        }
+      }
+    }`,
+    preview,
+  );
+  return entries?.data?.taxonomyTermCollection?.items || [];
 }
 
 export async function getHomePage(preview: boolean): Promise<any> {

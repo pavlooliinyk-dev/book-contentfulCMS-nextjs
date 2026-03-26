@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./components/intro";
+import Link from "next/link";
 
-const BooksClient = dynamic(() => import("./components/books-client"), {
+const BooksClient = dynamic(() => import("./components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
 });
 
@@ -13,11 +14,15 @@ const HeroBook = dynamic(() => import("./components/hero-book"));
 
 export default async function Page() {
   const { isEnabled } = await draftMode();
-  const [allBooks, homePage] = await Promise.all([
-    getAllBooks(isEnabled),
+  const [{ items: initialBooks, total: initialTotal }, homePage] = await Promise.all([
+    getAllBooks(isEnabled, 5),
     getHomePage(isEnabled),
   ]);
-  const heroBook = allBooks && allBooks.length > 0 ? allBooks[0] : null;
+
+  const heroBook = initialBooks && initialBooks.length > 0 ? initialBooks[0] : null;
+
+  console.log('heroBook', heroBook);
+  
   
   return (
     <div className="container mx-auto px-5">
@@ -48,13 +53,17 @@ export default async function Page() {
         <HeroBook 
           title={heroBook.title}
           coverImage={heroBook.coverImage}
-          authors={heroBook.author}
+          authors={heroBook.authors}
           numberOfPages={heroBook.numberOfPages}
           externalResourceLink={heroBook.externalResourceLink}
           taxonomy={heroBook.taxonomy}
+          taxonomies={heroBook.taxonomies}
         />
       )}
-      <BooksClient initialBooks={allBooks} />
+      <Link href={`/books`}>
+          Go to Books Library →
+      </Link>
+      <BooksClient initialBooks={initialBooks} initialTotal={initialTotal} />
     </div>
   );
 }

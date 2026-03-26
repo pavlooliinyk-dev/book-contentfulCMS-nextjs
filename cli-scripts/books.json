@@ -4,76 +4,119 @@
     "shortDescription": "A story about the young and mysterious millionaire Jay Gatsby and his quixotic passion and obsession with the beautiful former debutante Daisy Buchanan.",
     "numberOfPages": 180,
     "externalResourceLink": "https://example.com/gatsby",
-    "genre": ["Classic", "Fiction"]
+    "authors": [
+      {
+        "name": "F. Scott Fitzgerald",
+        "bio": "Francis Scott Key Fitzgerald was an American novelist, essayist, and short story writer."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "Adult", "slug": "audience-adult", "type": "audience" },
+      { "title": "English", "slug": "lang-en", "type": "language" }
+    ]
   },
   {
     "title": "1984",
-    "shortDescription": "A dystopian social science fiction novel and cautionary tale about totalitarianism, mass surveillance, and repressive regimentation.",
+    "shortDescription": "A Fiction social science fiction novel and cautionary tale about totalitarianism, mass surveillance, and repressive regimentation.",
     "numberOfPages": 328,
     "externalResourceLink": "https://example.com/1984",
-    "genre": ["Dystopian", "Sci-Fi"]
-  },
-  {
-    "title": "To Kill a Mockingbird",
-    "shortDescription": "A novel about the roots of human behavior—to innocence and experience, kindness and cruelty, love and hatred, humor and pathos.",
-    "numberOfPages": 281,
-    "externalResourceLink": "https://example.com/mockingbird",
-    "genre": ["Classic", "Drama"]
-  },
-  {
-    "title": "The Catcher in the Rye",
-    "shortDescription": "A story of a few days in the life of a teenager Holden Caulfield in New York City.",
-    "numberOfPages": 234,
-    "externalResourceLink": "https://example.com/catcher",
-    "genre": ["Young Adult", "Fiction"]
-  },
-  {
-    "title": "Brave New World",
-    "shortDescription": "A dystopian novel exploring a futuristic society where citizens are environmentally engineered into a social hierarchy.",
-    "numberOfPages": 268,
-    "externalResourceLink": "https://example.com/brave-new-world",
-    "genre": ["Dystopian", "Philosophy"]
+    "authors": [
+      {
+        "name": "George Orwell",
+        "bio": "Eric Arthur Blair, better known by his pen name George Orwell, was an English novelist, essayist, journalist and critic."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Sci-Fi", "slug": "genre-sci-fi", "type": "genre" },
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "Adult", "slug": "audience-adult", "type": "audience" },
+      { "title": "English", "slug": "lang-en", "type": "language" }
+    ]
   },
   {
     "title": "The Hobbit",
-    "shortDescription": "The adventure of Bilbo Baggins as he sets out on a quest to reclaim a lost kingdom.",
+    "shortDescription": "Bilbo Baggins, a hobbit, is whisked away on an unexpected journey by the wizard Gandalf and a company of thirteen dwarves.",
     "numberOfPages": 310,
     "externalResourceLink": "https://example.com/hobbit",
-    "genre": ["Fantasy", "Adventure"]
+    "authors": [
+      {
+        "name": "J.R.R. Tolkien",
+        "bio": "John Ronald Reuel Tolkien was an English writer, poet, philologist, and academic."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "Kids", "slug": "audience-kids", "type": "audience" },
+      { "title": "English", "slug": "lang-en", "type": "language" }
+    ]
   },
   {
-    "title": "Fahrenheit 451",
-    "shortDescription": "A story about a future American society where books are outlawed and firemen burn any that are found.",
-    "numberOfPages": 158,
-    "externalResourceLink": "https://example.com/451",
-    "genre": ["Dystopian", "Sci-Fi"]
+    "title": "Dune",
+    "shortDescription": "Paul Atreides adventure on Arrakis in this sci-fi classic.",
+    "numberOfPages": 412,
+    "externalResourceLink": "https://example.com/dune",
+    "authors": [
+      {
+        "name": "Frank Herbert",
+        "bio": "Franklin Patrick Herbert Jr. was an American science fiction writer."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Sci-Fi", "slug": "genre-sci-fi", "type": "genre" },
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "Adult", "slug": "audience-adult", "type": "audience" }
+    ]
   },
   {
-    "title": "Pride and Prejudice",
-    "shortDescription": "A romantic novel of manners following Elizabeth Bennet as she deals with issues of manners, upbringing, morality, and education.",
-    "numberOfPages": 432,
-    "externalResourceLink": "https://example.com/pride",
-    "genre": ["Classic", "Romance"]
+    "title": "Sapiens",
+    "shortDescription": "The history of humankind.",
+    "numberOfPages": 443,
+    "externalResourceLink": "https://example.com/sapiens",
+    "authors": [
+      {
+        "name": "Yuval Noah Harari",
+        "bio": "Yuval Noah Harari is an Israeli public intellectual, historian and a professor."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Non-Fiction", "slug": "genre-non-fiction", "type": "genre" },
+      { "title": "Adult", "slug": "audience-adult", "type": "audience" },
+      { "title": "French", "slug": "lang-fr", "type": "language" }
+    ]
   },
   {
-    "title": "The Chronicles of Narnia",
-    "shortDescription": "A series of fantasy novels set in the fictional realm of Narnia.",
-    "numberOfPages": 767,
-    "externalResourceLink": "https://example.com/narnia",
-    "genre": ["Fantasy", "Children"]
+    "title": "The Cat in the Hat",
+    "shortDescription": "A mischievous cat visits two children on a rainy day.",
+    "numberOfPages": 61,
+    "externalResourceLink": "https://example.com/cat-in-the-hat",
+    "authors": [
+      {
+        "name": "Dr. Seuss",
+        "bio": "Theodor Seuss Geisel, known as Dr. Seuss, was an American children's author, political cartoonist, illustrator, poet, animator, and filmmaker."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Kids", "slug": "audience-kids", "type": "audience" },
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "English", "slug": "lang-en", "type": "language" }
+    ]
   },
   {
-    "title": "Lord of the Flies",
-    "shortDescription": "A novel about a group of British boys stranded on an uninhabited island and their disastrous attempt to govern themselves.",
-    "numberOfPages": 224,
-    "externalResourceLink": "https://example.com/flies",
-    "genre": ["Allegory", "Classic"]
-  },
-  {
-    "title": "One Hundred Years of Solitude",
-    "shortDescription": "A multi-generational story of the Buendía family, whose patriarch, José Arcadio Buendía, founded the town of Macondo.",
-    "numberOfPages": 417,
-    "externalResourceLink": "https://example.com/solitude",
-    "genre": ["Magical Realism", "Classic"]
+    "title": "The Alchemist",
+    "shortDescription": "A shepherd's journey to find treasure and discover his destiny.",
+    "numberOfPages": 208,
+    "externalResourceLink": "https://example.com/alchemist",
+    "authors": [
+      {
+        "name": "Paulo Coelho",
+        "bio": "Paulo Coelho is a Brazilian lyricist and novelist, best known for his novel The Alchemist."
+      }
+    ],
+    "taxonomies": [
+      { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
+      { "title": "Adult", "slug": "audience-adult", "type": "audience" },
+      { "title": "Portuguese", "slug": "lang-pt", "type": "language" }
+    ]
   }
 ]

@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { Book, useBooksList } from "./useBooksList";
-import Filters from "./Filters";
-import BookGrid from "./BookGrid";
+import Filters from "./filters";
+import BookGrid from "./book-grid";
 
 export default function BooksClient({ 
   initialBooks, 

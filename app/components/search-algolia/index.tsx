@@ -66,10 +66,10 @@ function Hit({ hit }: HitProps) {
   );
 }
 
-function SearchResults() {
+function SearchResults({ showWhenEmpty = false }: { showWhenEmpty?: boolean }) {
   const { query } = useSearchBox();
 
-  if (!query.trim()) {
+  if (!showWhenEmpty && !query.trim()) {
     return null;
   }
 
@@ -83,7 +83,7 @@ function SearchResults() {
   );
 }
 
-export default function SearchAlgolia() {
+export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) {
   if (!appId || !searchKey || !indexName) {
     return <div className="text-red-600">Algolia env vars are missing.</div>;
   }
@@ -91,7 +91,7 @@ export default function SearchAlgolia() {
   return (
     <div className="mb-8">
       <InstantSearch indexName={indexName} searchClient={searchClient}>
-        <Configure hitsPerPage={5} />
+        <Configure hitsPerPage={35} />
         <SearchBox
           placeholder="Search movies in algolia..."
           classNames={{
@@ -106,7 +106,7 @@ export default function SearchAlgolia() {
             loadingIcon: "h-4 w-4",
           }}
         />
-        <SearchResults />
+        <SearchResults showWhenEmpty={showHits} />
       </InstantSearch>
     </div>
   );

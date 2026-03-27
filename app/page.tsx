@@ -3,14 +3,14 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
-import Intro from "./components/intro";
+import Intro from "./_components/intro";
 import Link from "next/link";
 
-const BookList = dynamic(() => import("./components/book-list"), {
+const BookList = dynamic(() => import("./_components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
 });
 
-const HeroBook = dynamic(() => import("./components/hero-book"));
+const HeroBook = dynamic(() => import("./_components/hero-book"));
 
 export default async function Page() {
   const { isEnabled } = await draftMode();
@@ -28,8 +28,15 @@ export default async function Page() {
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
 
+      <Link href={`/books`}>
+          Go to Books Library →
+      </Link>
+      <Link href={`/movies`} className="ml-4">
+          Go to Movies Library →
+      </Link>
+      
       {homePage?.heroBanner && (
-        <div className="mb-8 md:mb-16 relative w-full h-[400px] md:h-[600px]">
+        <div className="my-8 md:mb-16 relative w-full h-[400px] md:h-[600px]">
           <Image 
             src={homePage.heroBanner.url} 
             alt={homePage.title || "Hero banner"}
@@ -60,9 +67,7 @@ export default async function Page() {
           taxonomies={heroBook.taxonomies}
         />
       )}
-      <Link href={`/books`}>
-          Go to Books Library →
-      </Link>
+      
       <BookList initialBooks={initialBooks} initialTotal={initialTotal} withFilters={false} />
     </div>
   );

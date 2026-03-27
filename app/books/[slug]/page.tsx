@@ -2,11 +2,11 @@ import Link from "next/link";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
-import Date from "../../components/date";
-import CoverImage from "../../components/cover-image";
+import Date from "../../_components/date";
+import CoverImage from "../../_components/cover-image";
 import { Markdown } from "@/lib/markdown";
 import { getAllBooks, getBookBySlug } from "@/lib/api";
-import Pricing from "../../components/pricing";
+import Pricing from "../../_components/pricing";
 
 export async function generateStaticParams() {
   // Limit to 20 to avoid complexity errors in Contentful GraphQL

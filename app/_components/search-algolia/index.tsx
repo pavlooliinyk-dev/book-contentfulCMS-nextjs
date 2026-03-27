@@ -6,6 +6,7 @@ import {
   Hits,
   Configure,
   useSearchBox,
+  Pagination,
 } from "react-instantsearch";
 import { liteClient as algoliasearch } from "algoliasearch/lite";
 
@@ -23,6 +24,7 @@ type HitProps = {
     original_language?: string;
     poster_path?: string;
     url?: string;
+    release_date?: string;
   };
 };
 
@@ -42,6 +44,11 @@ function Hit({ hit }: HitProps) {
         {hit.overview ? (
           <p className="mt-1 line-clamp-3 text-sm text-gray-600">
             {hit.overview}
+          </p>
+        ) : null}
+        {hit.release_date ? (
+          <p className="mt-2 text-xs text-gray-500">
+            {hit.release_date}
           </p>
         ) : null}
         {hit.original_language ? (
@@ -90,8 +97,16 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
 
   return (
     <div className="mb-8">
-      <InstantSearch indexName={indexName} searchClient={searchClient}>
-        <Configure hitsPerPage={35} />
+      <InstantSearch indexName={indexName} searchClient={searchClient}
+        initialUiState={{
+            [indexName]: {
+            // Sets the initial query for the SearchBox widget
+            query: "dune",
+            // Sets the initial page number for the Pagination widget
+            page: 1,
+            },
+        }}>
+        <Configure hitsPerPage={20} />
         <SearchBox
           placeholder="Search movies in algolia..."
           classNames={{
@@ -107,6 +122,20 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
           }}
         />
         <SearchResults showWhenEmpty={showHits} />
+        <Pagination
+          classNames={{
+            root: "mt-6",
+            list: "flex flex-wrap items-center gap-2",
+            item: "list-none",
+            link: "inline-flex h-9 min-w-9 items-center justify-center rounded border border-gray-300 px-3 text-sm text-gray-700 hover:bg-gray-50",
+            selectedItem: "!border-gray-200 !bg-gray-200 !text-white",
+            disabledItem: "opacity-40 pointer-events-none",
+            previousPageItem: "mr-1",
+            nextPageItem: "ml-1",
+            firstPageItem: "mr-1",
+            lastPageItem: "ml-1",
+          }}
+        />
       </InstantSearch>
     </div>
   );

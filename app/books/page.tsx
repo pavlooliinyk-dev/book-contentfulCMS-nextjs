@@ -1,8 +1,8 @@
 import { draftMode } from "next/headers";
-import BooksClient from "../components/book-list";
+import BooksClient from "../_components/book-list";
 import { getAllBooks, getTaxonomies } from "@/lib/api";
 import Link from "next/link";
-import SearchAlgolia from "../components/search-algolia";
+import SearchAlgolia from "../_components/search-algolia";
 
 export default async function BooksPage() {
   const { isEnabled } = await draftMode();

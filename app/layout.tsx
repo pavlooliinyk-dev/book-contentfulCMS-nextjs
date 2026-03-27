@@ -26,9 +26,12 @@ function Footer() {
     <footer className="bg-accent-1 border-t border-accent-2">
       <div className="container mx-auto px-5">
         <div className="py-28 flex flex-col lg:flex-row items-center">
-          <h3 className="text-4xl lg:text-5xl font-bold tracking-tighter leading-tight text-center lg:text-left mb-10 lg:mb-0 lg:pr-4 lg:w-1/2">
-            footer
-          </h3>
+          <object
+            data="/logo_animated.svg"
+            type="image/svg+xml"
+            aria-label="Animated logo"
+            className="w-[240px] h-[80px]"
+          />
         </div>
       </div>
     </footer>

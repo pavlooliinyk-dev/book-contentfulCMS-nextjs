@@ -6,7 +6,7 @@ import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./components/intro";
 import Link from "next/link";
 
-const BooksClient = dynamic(() => import("./components/book-list"), {
+const BookList = dynamic(() => import("./components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
 });
 
@@ -56,14 +56,14 @@ export default async function Page() {
           authors={heroBook.authors}
           numberOfPages={heroBook.numberOfPages}
           externalResourceLink={heroBook.externalResourceLink}
-          taxonomy={heroBook.taxonomy}
+          metaUI={heroBook.metaUi}
           taxonomies={heroBook.taxonomies}
         />
       )}
       <Link href={`/books`}>
           Go to Books Library →
       </Link>
-      <BooksClient initialBooks={initialBooks} initialTotal={initialTotal} />
+      <BookList initialBooks={initialBooks} initialTotal={initialTotal} withFilters={false} />
     </div>
   );
 }

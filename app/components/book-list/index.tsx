@@ -9,11 +9,13 @@ import BookGrid from "./book-grid";
 export default function BooksClient({ 
   initialBooks, 
   initialTotal,
-  availableTaxonomies = []
+  availableTaxonomies = [],
+  withFilters = true,
 }: { 
   initialBooks: Book[], 
   initialTotal: number,
   availableTaxonomies?: any[]
+  withFilters?: boolean
 }) {
   const LIMIT = 5;
   const {
@@ -36,12 +38,14 @@ export default function BooksClient({
   return (
     <section className="mt-12 pb-20">
       <div className="flex flex-col lg:flex-row gap-8">
-        <Filters 
-          availableTaxonomies={availableTaxonomies}
-          selectedTaxIds={selectedTaxIds}
-          handleFilterChange={handleFilterChange}
-          clearFilters={clearFilters}
-        />
+        {withFilters && availableTaxonomies.length > 0 && (
+          <Filters 
+            availableTaxonomies={availableTaxonomies}
+            selectedTaxIds={selectedTaxIds}
+            handleFilterChange={handleFilterChange}
+            clearFilters={clearFilters}
+          />
+        )}
 
         <div className="flex-1">
           <div className="flex justify-between items-center mb-6">

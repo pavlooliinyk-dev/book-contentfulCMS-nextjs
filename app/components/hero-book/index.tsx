@@ -7,14 +7,13 @@ export default function HeroBook({
   authors,
   numberOfPages,
   externalResourceLink,
-  taxonomy,
+  metaUI,
   taxonomies,
 }: Book) {
-  const getTaxonomyValue = (t: any) => (typeof t === "string" ? t : t?.position);
-  const taxonomyArray = (Array.isArray(taxonomy) ? taxonomy : [taxonomy]).filter(Boolean);
-  const position = taxonomyArray.map(getTaxonomyValue).find(v => v === "left" || v === "right") || "left";
+  const getMetaUIValue = (t: any) => (typeof t === "string" ? t : t?.position);
+  const metaUIArray = (Array.isArray(metaUI) ? metaUI : [metaUI]).filter(Boolean);
+  const position = metaUIArray.map(getMetaUIValue).find(v => v === "left" || v === "right") || "left";
 
-  console.log("HeroBook taxonomies:", taxonomies);
   
   return (
     <section className="mb-20 bg-gray-200 p-6">
@@ -46,11 +45,11 @@ export default function HeroBook({
           </div>
           <div className="text-lg leading-relaxed mt-4">
             {numberOfPages && <p className="mb-2">{numberOfPages} pages</p>}
-            {taxonomy && (
+            {metaUI && (
               <div className="flex gap-2">
-                {taxonomyArray.map((t, i) => (
+                {metaUIArray.map((t, i) => (
                   <span key={i} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                    {getTaxonomyValue(t)}
+                    metaUI image position: {getMetaUIValue(t)}
                   </span>
                 ))}
               </div>

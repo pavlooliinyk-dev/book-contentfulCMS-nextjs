@@ -237,6 +237,7 @@ async function seedBooks() {
         },
         numberOfPages: { 'en-US': book.numberOfPages },
         externalResourceLink: { 'en-US': book.externalResourceLink },
+        metaUi: { 'en-US': book.metaUI || null },
         genre: { 'en-US': book.taxonomies?.map(t => t.title) || [] },
       };
 

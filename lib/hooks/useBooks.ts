@@ -19,7 +19,7 @@ export type Book = {
   numberOfPages?: number;
   authorsCollection?: { items: { name: string }[] };
   externalResourceLink?: string;
-  taxonomy?: any;
+  metaUI?: Record<string, {position: 'right' | 'left'}> ;
   authors?: string | Record<string, any>[];
   taxonomies?: TaxonomyTerm[];
 };

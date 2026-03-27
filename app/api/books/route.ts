@@ -11,7 +11,6 @@ const BOOK_GRAPHQL_FIELDS = `
   }
   numberOfPages
   externalResourceLink
-  taxonomy
   authorsCollection {
     items {
       name

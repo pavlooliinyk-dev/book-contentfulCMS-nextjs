@@ -14,7 +14,10 @@
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "English", "slug": "lang-en", "type": "language" }
-    ]
+    ],
+    "metaUI": {
+      "position": "right"
+    }
   },
   {
     "title": "1984",
@@ -32,7 +35,10 @@
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "English", "slug": "lang-en", "type": "language" }
-    ]
+    ],
+     "metaUI": {
+      "position": "right"
+    }
   },
   {
     "title": "The Hobbit",

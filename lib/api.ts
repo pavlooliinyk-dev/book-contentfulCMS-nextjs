@@ -9,7 +9,7 @@ const BOOK_GRAPHQL_FIELDS = `
   }
   numberOfPages
   externalResourceLink
-  taxonomy
+  metaUi
   authorsCollection(limit: 10) {
     items {
       name

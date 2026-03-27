@@ -58,10 +58,10 @@ export default async function BookPage(props: {
             )}
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
-          {/* {book.taxonomy && (
+          {/* {book.metaUI && (
             <div className="flex gap-2 mb-6">
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm uppercase">
-                {typeof book.taxonomy === "string" ? book.taxonomy : JSON.stringify(book.taxonomy)}
+                {typeof book.metaUI === "string" ? book.metaUI : JSON.stringify(book.metaUI)}
               </span>
             </div>
           )} */}

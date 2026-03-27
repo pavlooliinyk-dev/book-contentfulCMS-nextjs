@@ -10,7 +10,7 @@ export type Book = {
   numberOfPages?: number;
   authorsCollection?: { items: { name: string }[] };
   externalResourceLink?: string;
-  taxonomy?: any;
+  metaUI?: object;
 };
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number) {

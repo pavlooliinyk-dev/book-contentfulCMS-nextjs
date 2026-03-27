@@ -1,0 +1,7 @@
+[
+  { "bookId": "dune", "price": 19.99, "availability": "in stock" },
+  { "bookId": "the-hobbit", "price": 24.50, "availability": "out of stock" },
+  { "bookId": "1984", "price": 12.99, "availability": "in stock" },
+  { "bookId": "sapiens", "price": 15.00, "availability": "pre-order" },
+  { "bookId": "the-cat-in-the-hat", "price": 9.99, "availability": "in stock" }
+]

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Book } from "./useBooksList";
+import Pricing from "../pricing";
 
 interface BookGridProps {
   books: Book[];
@@ -32,6 +33,8 @@ export default function BookGrid({ books }: BookGridProps) {
               {b.title}
             </Link>
           </h3>
+          {/* <p>bookId:{b.slug}</p> */}
+          {b.slug && <Pricing bookId={b.slug} />}
           <div className="text-lg mb-4 text-gray-700">
             {b.authorsCollection?.items && (
               <span className="font-semibold">

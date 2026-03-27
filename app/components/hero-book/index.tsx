@@ -1,8 +1,10 @@
 import CoverImage from "../cover-image";
 import { Book, TaxonomyTerm } from "@/lib/hooks/useBooks";
+import Pricing from "../pricing";
 
 export default function HeroBook({
   title,
+  slug,
   coverImage,
   authors,
   numberOfPages,
@@ -43,6 +45,7 @@ export default function HeroBook({
               <span>By: {Array.isArray(authors) ? authors.join(", ") : authors}</span>
             )}
           </div>
+          {slug && <Pricing bookId={slug} />}
           <div className="text-lg leading-relaxed mt-4">
             {numberOfPages && <p className="mb-2">{numberOfPages} pages</p>}
             {metaUI && (

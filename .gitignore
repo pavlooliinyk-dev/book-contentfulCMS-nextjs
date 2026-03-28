@@ -21,7 +21,6 @@
 
 # production
 /build
-/public/contentful-app
 
 # misc
 .DS_Store

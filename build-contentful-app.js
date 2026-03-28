@@ -8,14 +8,21 @@ const contentfulAppDir = path.join(__dirname, 'contentful-app');
 const buildDir = path.join(contentfulAppDir, 'build');
 const publicDir = path.join(__dirname, 'public', 'contentful-app');
 
-// Change to contentful-app directory and install dependencies
+// Ensure we're in the contentful-app directory
 process.chdir(contentfulAppDir);
-console.log('📦 Installing dependencies...');
-execSync('npm install', { stdio: 'inherit' });
 
-// Build the app
+// Install dependencies with npm ci for reproducible builds (or npm install as fallback)
+console.log('📦 Installing dependencies...');
+try {
+  execSync('npm ci', { stdio: 'inherit' });
+} catch (error) {
+  console.log('⚠️  npm ci failed, falling back to npm install...');
+  execSync('npm install', { stdio: 'inherit' });
+}
+
+// Build the app using npx to ensure vite is found
 console.log('\n🔨 Building app...');
-execSync('npm run build', { stdio: 'inherit' });
+execSync('npx vite build', { stdio: 'inherit' });
 
 // Copy build to public/contentful-app
 console.log('\n📁 Copying to public/contentful-app...');

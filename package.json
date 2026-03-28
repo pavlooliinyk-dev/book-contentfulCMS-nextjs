@@ -4,10 +4,13 @@
   "scripts": {
     "dev": "next",
     "start": "next start",
-    "build": "next build",
+    "build": "node build-contentful-app.js && next build",
+    "build:contentful-app": "node build-contentful-app.js",
     "setup": "node ./cli-scripts/setup.js",
     "migrate": "contentful space migration cli-scripts/migration.js",
-    "seed": "node ./cli-scripts/seed-books.js"
+    "seed": "node ./cli-scripts/seed-books.js",
+    "setup-app": "node setup-contentful-app.js",
+    "start-app": "cd contentful-app && npm start"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.17.1",

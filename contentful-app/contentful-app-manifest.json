@@ -1,0 +1,17 @@
+{
+  "name": "API Usage Dashboard",
+  "version": "1.0.0",
+  "appId": "api-usage-dashboard",
+  "description": "Display total API requests and quota usage for your Contentful space",
+  "locations": [
+    {
+      "location": "app-config"
+    },
+    {
+      "location": "home"
+    }
+  ],
+  "parameters": {
+    "instance": []
+  }
+}

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./_components/intro";
 import Link from "next/link";
+import ContentfulApiUsage from "./_components/contentful-api-usage";
 
 const BookList = dynamic(() => import("./_components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
@@ -27,6 +28,10 @@ export default async function Page() {
   return (
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
+
+      <div className="my-8 max-w-md">
+        <ContentfulApiUsage />
+      </div>
 
       <Link href={`/books`}>
           Go to Books Library →

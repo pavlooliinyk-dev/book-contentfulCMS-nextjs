@@ -3,6 +3,20 @@
 
 This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [Contentful](https://www.contentful.com/) as the data source.
 
+## 🆕 Contentful Custom App Included!
+
+This project now includes a **standalone Contentful API Usage Dashboard app** that you can install directly in your Contentful space to monitor API usage.
+
+**Quick Start:**
+```bash
+npm run setup-app   # Install app dependencies
+npm run start-app   # Start the app at localhost:3001
+```
+
+See [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for installation instructions.
+
+---
+
 ## Demo
 
 ### [https://app-router-contentful.vercel.app/](https://app-router-contentful.vercel.app/)
@@ -195,6 +209,7 @@ Then set each variable on `.env.local`:
 - `CONTENTFUL_SPACE_ID` should be the **Space ID** field of your API Key
 - `CONTENTFUL_ACCESS_TOKEN` should be the **[Content Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/) - access token** field of your API key
 - `CONTENTFUL_PREVIEW_ACCESS_TOKEN` should be the **[Content Preview API](https://www.contentful.com/developers/docs/references/content-preview-api/) - access token** field of your API key
+- `CONTENTFUL_MANAGEMENT_TOKEN` should be a **[Content Management API](https://www.contentful.com/developers/docs/references/content-management-api/) - access token**. Create one at **Settings > CMA tokens** to enable API usage monitoring. This is optional but required for the API usage dashboard feature.
 - `CONTENTFUL_PREVIEW_SECRET` should be any value you want. It must be URL friendly as the dashboard will send it as a query parameter to enable Next.js Draft Mode
 - - `CONTENTFUL_REVALIDATE_SECRET` should be any value you want. This will be the value you pass in as a secret header from the Contentful Webhook settings to use **[On-Demand Revalidation](https://vercel.com/docs/concepts/next.js/incremental-static-regeneration#on-demand-revalidation)**
 
@@ -204,6 +219,7 @@ Your `.env.local` file should look like this:
 CONTENTFUL_SPACE_ID=...
 CONTENTFUL_ACCESS_TOKEN=...
 CONTENTFUL_PREVIEW_ACCESS_TOKEN=...
+CONTENTFUL_MANAGEMENT_TOKEN=...
 CONTENTFUL_PREVIEW_SECRET=...
 CONTENTFUL_REVALIDATE_SECRET=...
 ```

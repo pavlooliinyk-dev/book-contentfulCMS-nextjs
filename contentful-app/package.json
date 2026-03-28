@@ -1,0 +1,26 @@
+{
+  "name": "contentful-api-usage-app",
+  "version": "1.0.0",
+  "description": "Contentful custom app to display API usage statistics",
+  "private": true,
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@contentful/app-sdk": "^4.29.1",
+    "@contentful/f36-components": "^4.68.0",
+    "@contentful/f36-tokens": "^4.0.5",
+    "contentful-management": "^11.74.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.1.6",
+    "vite": "^5.0.0"
+  }
+}

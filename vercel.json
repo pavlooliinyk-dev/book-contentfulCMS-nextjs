@@ -1,14 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "rewrites": [
-    {
-      "source": "/contentful-app/:path*",
-      "destination": "/contentful-app/:path*"
-    }
-  ],
   "headers": [
     {
       "source": "/contentful-app/(.*)",

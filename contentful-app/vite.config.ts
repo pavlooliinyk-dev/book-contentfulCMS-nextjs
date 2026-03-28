@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/contentful-app/',
+  base: 'https://book-contentful-cms-nextjs.vercel.app/contentful-app/',
   server: {
     port: 3001,
   },

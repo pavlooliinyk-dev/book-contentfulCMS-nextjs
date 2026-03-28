@@ -2,6 +2,7 @@ import "./globals.css";
 import { draftMode } from "next/headers";
 import { Inter } from "next/font/google";
 import { EXAMPLE_PATH, CMS_NAME } from "@/lib/constants";
+import { TailwindUtilities } from "./_components/tailwind-utilities";
 
 export const metadata = {
   title: `Next.js and ${CMS_NAME} Example`,
@@ -48,6 +49,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
+        <TailwindUtilities />
         {isEnabled && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
           <p className="font-bold">Preview Mode</p>

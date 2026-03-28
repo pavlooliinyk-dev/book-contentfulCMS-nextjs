@@ -1,0 +1,3 @@
+/* Non-critical Tailwind utilities - lazy loaded */
+@tailwind components;
+@tailwind utilities;

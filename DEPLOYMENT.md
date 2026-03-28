@@ -71,6 +71,16 @@ This runs:
 1. `node build-contentful-app.js` - Builds Contentful app to `public/contentful-app/`
 2. `next build` - Builds Next.js app
 
+### Skip Contentful App Build
+
+To build only the Next.js app without the Contentful app:
+
+```bash
+SKIP_CONTENTFUL_APP=true npm run build
+```
+
+Or set in Vercel environment variables if needed.
+
 ## How It Works
 
 1. **build-contentful-app.js** script:

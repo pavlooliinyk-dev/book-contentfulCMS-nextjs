@@ -1,11 +1,12 @@
-import styles from "./intro.module.css";
+"use client";
 
-export default function Intro({ title }: { title?: string }) {
-  return (
-    <section className={`flex-row flex items-center md:justify-between mt-16 mb-16 md:mb-12 relative ${styles.intro}`}>
-      <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8">
-        {title || "Readify."}
-      </h1>
-    </section>
+import Intro from "./intro";
+import { useLazyStyles } from "@/lib/hooks/useLazyStyles";
+
+export default function IntroClient({ title }: { title?: string }) {
+  const animationClassName = useLazyStyles(
+    () => import("./intro.module.css"),
+    "intro"
   );
+  return <Intro title={title} animationClassName={animationClassName} />;
 }

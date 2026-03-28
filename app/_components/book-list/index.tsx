@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+// import React from "react";
 import Link from "next/link";
 import { Book, useBooksList } from "./useBooksList";
 import Filters from "./filters";

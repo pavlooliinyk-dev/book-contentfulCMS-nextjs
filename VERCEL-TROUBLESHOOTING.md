@@ -44,6 +44,12 @@ The build script now exits with code 0 (success) even if the Contentful app buil
 
 ## Common Issues
 
+### TypeScript Type Errors for Contentful App
+
+**Error**: `Cannot find module '@contentful/app-sdk'` during Next.js build
+
+**Solution**: Already fixed! The `tsconfig.json` now excludes the `contentful-app/` directory from Next.js type checking. The contentful-app has its own separate TypeScript configuration.
+
 ### Node Version Mismatch
 Ensure Vercel uses Node 18 or higher:
 - Project Settings → Node.js Version → 18.x or 20.x

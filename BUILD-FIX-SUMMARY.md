@@ -9,7 +9,11 @@
    - Verbose logging for debugging
    - Uses `npx vite build` to ensure vite is found
 
-2. **✅ Added Documentation**:
+2. **✅ Excluded contentful-app from Next.js TypeScript compilation**:
+   - Updated `tsconfig.json` to exclude `contentful-app/` directory
+   - Prevents type errors from contentful-app dependencies during Next.js build
+
+3. **✅ Added Documentation**:
    - [VERCEL-TROUBLESHOOTING.md](VERCEL-TROUBLESHOOTING.md) - Debugging guide
    - Updated [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment instructions
 
@@ -79,6 +83,7 @@ Once both apps are deployed successfully:
 ## ✅ Files Changed
 
 - `build-contentful-app.js` - Improved build script
+- `tsconfig.json` - Exclude contentful-app from Next.js type checking
 - `vercel.json` - CORS and routing configuration
 - `DEPLOYMENT.md` - Updated deployment guide
 - `VERCEL-TROUBLESHOOTING.md` - New troubleshooting guide

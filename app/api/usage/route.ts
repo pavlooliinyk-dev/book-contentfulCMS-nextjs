@@ -84,6 +84,8 @@ export async function GET() {
     }
 
     const data = await response.json();
+    
+    console.log('Contentful API response:', JSON.stringify(data, null, 2));
 
     // Calculate total API calls from the usage data
     let totalApiCalls = 0;
@@ -97,18 +99,20 @@ export async function GET() {
     if (data.items && data.items.length > 0) {
       // Sum up all API calls from the current period
       data.items.forEach((item: any) => {
+        const value = Number(item.unitOfMeasure) || 0;
+        
         if (item.metric === "cda") {
-          breakdown.cda += item.unitOfMeasure || 0;
-          totalApiCalls += item.unitOfMeasure || 0;
+          breakdown.cda += value;
+          totalApiCalls += value;
         } else if (item.metric === "cpa") {
-          breakdown.cpa += item.unitOfMeasure || 0;
-          totalApiCalls += item.unitOfMeasure || 0;
+          breakdown.cpa += value;
+          totalApiCalls += value;
         } else if (item.metric === "cma") {
-          breakdown.cma += item.unitOfMeasure || 0;
-          totalApiCalls += item.unitOfMeasure || 0;
+          breakdown.cma += value;
+          totalApiCalls += value;
         } else if (item.metric === "gql") {
-          breakdown.graphql += item.unitOfMeasure || 0;
-          totalApiCalls += item.unitOfMeasure || 0;
+          breakdown.graphql += value;
+          totalApiCalls += value;
         }
       });
     }

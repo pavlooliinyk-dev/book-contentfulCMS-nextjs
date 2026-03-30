@@ -42,6 +42,8 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
 
         const data = await response.json();
         
+        console.log('API response data:', JSON.stringify(data, null, 2));
+        
         // The API already returns formatted data
         if (data.error) {
           throw new Error(data.error);
@@ -80,6 +82,8 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
   if (!usage) {
     return null;
   }
+
+  console.log('Rendering UsageCard with usage:', usage);
 
   const percentageUsed = ((usage.totalApiCalls / usage.quota) * 100).toFixed(1);
   const isHighUsage = parseFloat(percentageUsed) > 80;

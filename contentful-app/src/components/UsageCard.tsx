@@ -28,16 +28,8 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
   
   useEffect(() => {
     async function fetchUsage() {
-         // Get current month's date range
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        const startDate = startOfMonth.toISOString().split('T')[0];
-        const endDate = endOfMonth.toISOString().split('T')[0];
-
-        // Call backend API to fetch usage data
-        const apiUrl = `https://book-contentful-cms-nextjs.vercel.app/api/contentful-usage?spaceId=${spaceId}&startDate=${startDate}&endDate=${endDate}`;
+        // Call backend API to fetch usage data (it handles dates and spaceId internally)
+        const apiUrl = `https://book-contentful-cms-nextjs.vercel.app/api/usage`;
         
         console.log('Fetching usage data from API:', apiUrl);
       try {
@@ -49,34 +41,13 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
         }
 
         const data = await response.json();
-
-        // Calculate totals
-        let totalApiCalls = 0;
-        const breakdown = {
-          cda: 0,
-          cpa: 0,
-          cma: 0,
-          graphql: 0,
-        };
-
-        if (data.items) {
-          data.items.forEach((item: any) => {
-            const value = item.unitOfMeasure || 0;
-            totalApiCalls += value;
-
-            if (item.metric === 'cda') breakdown.cda += value;
-            else if (item.metric === 'cpa') breakdown.cpa += value;
-            else if (item.metric === 'cma') breakdown.cma += value;
-            else if (item.metric === 'gql') breakdown.graphql += value;
-          });
+        
+        // The API already returns formatted data
+        if (data.error) {
+          throw new Error(data.error);
         }
 
-        setUsage({
-          totalApiCalls,
-          quota: 100000,
-          period: startOfMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-          breakdown,
-        });
+        setUsage(data);
       } catch (err) {
         console.error('Error fetching usage:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch usage data');

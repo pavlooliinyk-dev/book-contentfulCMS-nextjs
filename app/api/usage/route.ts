@@ -64,7 +64,7 @@ export async function GET() {
 
     // Fetch usage data from Contentful Management API at organization level
     const response = await fetch(
-      `https://api.contentful.com/organizations/${organizationId}/space_periodic_usages?startDate=${startDate}&endDate=${endDate}&spaceId=${spaceId}`,
+      `https://api.contentful.com/organizations/${organizationId}/organization_periodic_usages?dateRange.endAt=${endDate}T23:59:59.999Z&dateRange.startAt=${startDate}T00:00:00.000Z&metric[in]=cpa,cda,cma,gql`,
       {
         headers: {
           Authorization: `Bearer ${managementToken}`,
@@ -84,8 +84,6 @@ export async function GET() {
     }
 
     const data = await response.json();
-    
-    console.log('Contentful API response:', JSON.stringify(data, null, 2));
 
     // Calculate total API calls from the usage data
     let totalApiCalls = 0;
@@ -99,7 +97,7 @@ export async function GET() {
     if (data.items && data.items.length > 0) {
       // Sum up all API calls from the current period
       data.items.forEach((item: any) => {
-        const value = Number(item.unitOfMeasure) || 0;
+        const value = Number(item.usage) || 0;
         
         if (item.metric === "cda") {
           breakdown.cda += value;

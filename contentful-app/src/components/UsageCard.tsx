@@ -1,7 +1,6 @@
 import { HomeAppSDK } from '@contentful/app-sdk';
 import { Card, Heading, Paragraph, SkeletonContainer, SkeletonBodyText, Note } from '@contentful/f36-components';
 import { useEffect, useState } from 'react';
-import { createClient } from 'contentful-management';
 
 interface UsageData {
   totalApiCalls: number;
@@ -28,12 +27,6 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
   useEffect(() => {
     async function fetchUsage() {
       try {
-        // Get CMA client from SDK
-        const cmaClient = createClient(
-          { apiAdapter: sdk.cmaAdapter },
-          { type: 'plain' }
-        );
-
         // Get current month's date range
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -42,10 +35,16 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
         const startDate = startOfMonth.toISOString().split('T')[0];
         const endDate = endOfMonth.toISOString().split('T')[0];
 
-        // Fetch usage data using the organization-level API
-        const response: any = await cmaClient.raw.get(
-          `/spaces/${spaceId}/space_periodic_usages?startDate=${startDate}&endDate=${endDate}&metric[in]=cda,cpa,cma,gql`
-        );
+        // Call backend API to fetch usage data
+        const apiUrl = `https://book-contentful-cms-nextjs.vercel.app/api/contentful-usage?spaceId=${spaceId}&startDate=${startDate}&endDate=${endDate}`;
+        
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
 
         // Calculate totals
         let totalApiCalls = 0;
@@ -56,7 +55,6 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
           graphql: 0,
         };
 
-        const data = await response.json();
         if (data.items) {
           data.items.forEach((item: any) => {
             const value = item.unitOfMeasure || 0;

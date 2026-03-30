@@ -28,28 +28,51 @@ try {
   process.chdir(contentfulAppDir);
   console.log(`📂 Working in: ${process.cwd()}\n`);
 
-  // Install dependencies with npm ci for reproducible builds (or npm install as fallback)
+  // Install dependencies - use npm install for better compatibility
   console.log('📦 Installing dependencies...');
   try {
-    execSync('npm ci --loglevel=error', { stdio: 'inherit' });
+    // Use npm install instead of npm ci for better Vercel compatibility
+    execSync('npm install --prefer-offline --no-audit --loglevel=error', { 
+      stdio: 'inherit',
+      cwd: contentfulAppDir 
+    });
+    console.log('✅ Dependencies installed successfully\n');
   } catch (error) {
-    console.log('⚠️  npm ci failed, falling back to npm install...');
-    execSync('npm install --loglevel=error', { stdio: 'inherit' });
+    console.error('❌ Failed to install dependencies');
+    throw error;
   }
 
   // Verify vite is installed
   const vitePath = path.join(contentfulAppDir, 'node_modules', '.bin', 'vite');
   const vitePathCmd = path.join(contentfulAppDir, 'node_modules', '.bin', 'vite.cmd');
-  console.log(`\n🔍 Checking for vite at: ${vitePath}`);
+  const vitePathUnix = path.join(contentfulAppDir, 'node_modules', '.bin', 'vite');
+  console.log(`🔍 Checking for vite...`);
+  console.log(`   Windows: ${vitePathCmd}`);
+  console.log(`   Unix: ${vitePathUnix}`);
   
-  if (!fs.existsSync(vitePath) && !fs.existsSync(vitePathCmd)) {
+  const viteExists = fs.existsSync(vitePath) || fs.existsSync(vitePathCmd) || fs.existsSync(vitePathUnix);
+  if (!viteExists) {
+    console.error('❌ Vite not found after npm install');
+    console.error('📋 Listing node_modules/.bin:');
+    try {
+      const binDir = path.join(contentfulAppDir, 'node_modules', '.bin');
+      if (fs.existsSync(binDir)) {
+        const files = fs.readdirSync(binDir);
+        console.error(files.join(', '));
+      } else {
+        console.error('node_modules/.bin directory does not exist');
+      }
+    } catch (e) {
+      console.error('Could not list directory:', e.message);
+    }
     throw new Error('Vite not found after npm install. Check package.json dependencies.');
   }
+  console.log('✅ Vite found\n');
 
   // Build the app
-  console.log('\n🔨 Building app...');
+  console.log('🔨 Building app...');
   try {
-    execSync('npx vite build', { stdio: 'inherit', env: { ...process.env, NODE_ENV: 'production' } });
+    execSync('npx vite build', { stdio: 'inherit', cwd: contentfulAppDir, env: { ...process.env, NODE_ENV: 'production' } });
   } catch (buildError) {
     console.error('\n❌ Vite build failed!');
     throw buildError;

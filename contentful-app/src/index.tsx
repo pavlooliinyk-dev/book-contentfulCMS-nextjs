@@ -53,7 +53,7 @@ init((sdk: any) => {
   root.render(
     <div style={{ padding: '20px', color: 'red' }}>
       <h2>SDK Initialization Failed</h2>
-      <p>{error.message}</p>
+      <p>{error?.message}</p>
       <p>Make sure this app is opened from within Contentful.</p>
     </div>
   );

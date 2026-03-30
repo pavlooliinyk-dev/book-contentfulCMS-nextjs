@@ -5,17 +5,53 @@ import './index.css';
 import { HomePage } from './locations/HomePage';
 import { ConfigScreen } from './locations/ConfigScreen';
 
+// Add error boundary for initialization
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Root element not found');
+}
+
+const root = createRoot(rootElement);
+
+// Show loading state immediately
+root.render(<div style={{ padding: '20px', textAlign: 'center' }}>Loading Contentful App...</div>);
+
 init((sdk: any) => {
-  const root = createRoot(document.getElementById('root')!);
+  console.log('SDK initialized', { location: sdk.location, ids: sdk.ids });
 
-  if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {
-      console.log('locations.LOCATION_APP_CONFIG', locations.LOCATION_APP_CONFIG);
-    root.render(<ConfigScreen sdk={sdk as any} />);
-    
-  } else if (sdk.location.is(locations.LOCATION_HOME)) {
-
-    root.render(<HomePage sdk={sdk as any} />);
+  try {
+    if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {
+      console.log('Rendering ConfigScreen');
+      root.render(<ConfigScreen sdk={sdk as any} />);
+    } else if (sdk.location.is(locations.LOCATION_PAGE) || sdk.location.is(locations.LOCATION_HOME)) {
+      console.log('Rendering HomePage');
+      root.render(<HomePage sdk={sdk as any} />);
+    } else {
+      console.warn('Unknown location:', sdk.location);
+      root.render(
+        <div style={{ padding: '20px' }}>
+          <h2>API Usage Dashboard</h2>
+          <p>This app should be installed in a Page or Home location.</p>
+          <p>Current location: {JSON.stringify(sdk.location)}</p>
+        </div>
+      );
+    }
+  } catch (error) {
+    console.error('Render error:', error);
+    root.render(
+      <div style={{ padding: '20px', color: 'red' }}>
+        <h2>Error</h2>
+        <p>{String(error)}</p>
+      </div>
+    );
   }
-console.log('End render', sdk.location, locations, root);
-
+}, (error: Error) => {
+  console.error('SDK initialization failed:', error);
+  root.render(
+    <div style={{ padding: '20px', color: 'red' }}>
+      <h2>SDK Initialization Failed</h2>
+      <p>{error.message}</p>
+      <p>Make sure this app is opened from within Contentful.</p>
+    </div>
+  );
 });

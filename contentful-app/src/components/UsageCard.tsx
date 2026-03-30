@@ -24,10 +24,11 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  console.log('UsageCard inited with spaceId:', spaceId);
+  
   useEffect(() => {
     async function fetchUsage() {
-      try {
-        // Get current month's date range
+         // Get current month's date range
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -38,6 +39,9 @@ export const UsageCard = ({ sdk, spaceId }: UsageCardProps) => {
         // Call backend API to fetch usage data
         const apiUrl = `https://book-contentful-cms-nextjs.vercel.app/api/contentful-usage?spaceId=${spaceId}&startDate=${startDate}&endDate=${endDate}`;
         
+        console.log('Fetching usage data from API:', apiUrl);
+      try {
+       
         const response = await fetch(apiUrl);
 
         if (!response.ok) {

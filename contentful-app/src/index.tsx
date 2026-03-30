@@ -17,7 +17,10 @@ const root = createRoot(rootElement);
 root.render(<div style={{ padding: '20px', textAlign: 'center' }}>Loading Contentful App...</div>);
 
 init((sdk: any) => {
-  console.log('SDK initialized', { location: sdk.location, ids: sdk.ids });
+  console.log('SDK initialized :: ', { location: sdk.location, ids: sdk.ids });
+  console.log('LOCATION_APP_CONFIG :: ', locations.LOCATION_APP_CONFIG);
+  console.log('sdk.location :: ', sdk.location);
+  console.log('locations :: ', locations);
 
   try {
     if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {

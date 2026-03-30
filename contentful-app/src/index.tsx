@@ -9,8 +9,13 @@ init((sdk: any) => {
   const root = createRoot(document.getElementById('root')!);
 
   if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {
+      console.log('locations.LOCATION_APP_CONFIG', locations.LOCATION_APP_CONFIG);
     root.render(<ConfigScreen sdk={sdk as any} />);
+    
   } else if (sdk.location.is(locations.LOCATION_HOME)) {
+
     root.render(<HomePage sdk={sdk as any} />);
   }
+console.log('End render', sdk.location, locations, root);
+
 });

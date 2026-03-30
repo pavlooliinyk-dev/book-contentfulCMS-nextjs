@@ -27,7 +27,7 @@ init((sdk: any) => {
       console.log('Rendering ConfigScreen');
       root.render(<ConfigScreen sdk={sdk as any} />);
     } else if (sdk.location.is(locations.LOCATION_PAGE) || sdk.location.is(locations.LOCATION_HOME)) {
-      console.log('Rendering HomePage');
+      console.log('Rendering HomePage', locations);
       root.render(<HomePage sdk={sdk as any} />);
     } else {
       console.warn('Unknown location:', sdk.location);
@@ -48,7 +48,7 @@ init((sdk: any) => {
       </div>
     );
   }
-}, (error: Error) => {
+}, (error) => {
   console.error('SDK initialization failed:', error);
   root.render(
     <div style={{ padding: '20px', color: 'red' }}>

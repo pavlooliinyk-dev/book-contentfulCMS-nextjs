@@ -10,6 +10,8 @@ interface HomePageProps {
 export const HomePage = ({ sdk }: HomePageProps) => {
   const [spaceId, setSpaceId] = useState<string>('');
 
+  console.log('HomePage', spaceId);
+  
   useEffect(() => {
     const space = sdk.ids.space;
     setSpaceId(space);

@@ -34,9 +34,37 @@ export async function GET() {
     const startDate = startOfMonth.toISOString().split('T')[0];
     const endDate = endOfMonth.toISOString().split('T')[0];
 
-    // Fetch usage data from Contentful Management API
+    // First, get the organization ID from the space
+    const spaceResponse = await fetch(
+      `https://api.contentful.com/spaces/${spaceId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${managementToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!spaceResponse.ok) {
+      return NextResponse.json(
+        { error: `Failed to fetch space info: ${spaceResponse.status}` },
+        { status: spaceResponse.status }
+      );
+    }
+
+    const spaceData = await spaceResponse.json();
+    const organizationId = spaceData.sys.organization?.sys?.id;
+
+    if (!organizationId) {
+      return NextResponse.json(
+        { error: "Could not determine organization ID from space" },
+        { status: 500 }
+      );
+    }
+
+    // Fetch usage data from Contentful Management API at organization level
     const response = await fetch(
-      `https://api.contentful.com/spaces/${spaceId}/space_periodic_usages?startDate=${startDate}&endDate=${endDate}`,
+      `https://api.contentful.com/organizations/${organizationId}/space_periodic_usages?startDate=${startDate}&endDate=${endDate}&spaceId=${spaceId}`,
       {
         headers: {
           Authorization: `Bearer ${managementToken}`,

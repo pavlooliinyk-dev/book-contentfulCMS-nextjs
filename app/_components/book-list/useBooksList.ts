@@ -8,6 +8,7 @@ export type Book = {
   shortDescription?: { json?: any };
   coverImage?: { url?: string };
   numberOfPages?: number;
+  rating?: number | null;
   authorsCollection?: { items: { name: string }[] };
   externalResourceLink?: string;
   metaUI?: object;

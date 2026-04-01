@@ -1,3 +1,7 @@
+---
+name: Contentful Developer
+description: Expert in integrating Contentful CMS with Next.js applications, focusing on content modeling, data fetching, and CMS best practices.
+---
 # Contentful Integration Skill
 
 This skill provides guidance and best practices for integrating Contentful CMS with Next.js applications, specifically handling common pitfalls like Rich Text rendering, TypeScript typing for CMS objects, and Next.js 15 Draft Mode / Async Params.

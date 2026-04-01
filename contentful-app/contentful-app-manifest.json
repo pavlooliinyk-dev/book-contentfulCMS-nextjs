@@ -1,17 +1,35 @@
 {
-  "name": "API Usage Dashboard",
+  "name": "Star Rating Field Extension",
   "version": "1.0.0",
-  "appId": "api-usage-dashboard",
-  "description": "Display total API requests and quota usage for your Contentful space",
+  "appId": "star-rating-field-extension",
+  "description": "Custom star rating field extension with configurable stars and colors",
   "locations": [
     {
       "location": "app-config"
     },
     {
-      "location": "home"
+      "location": "entry-field",
+      "fieldTypes": ["Integer"]
     }
   ],
   "parameters": {
-    "instance": []
+    "installation": [
+      {
+        "id": "maxStars",
+        "name": "Maximum Stars",
+        "description": "Maximum number of stars (1-10)",
+        "type": "Number",
+        "required": false,
+        "default": 5
+      },
+      {
+        "id": "starColor",
+        "name": "Star Color",
+        "description": "Hex color code for stars",
+        "type": "Symbol",
+        "required": false,
+        "default": "#FFD700"
+      }
+    ]
   }
 }

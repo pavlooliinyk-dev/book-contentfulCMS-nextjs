@@ -8,6 +8,7 @@ const BOOK_GRAPHQL_FIELDS = `
     url
   }
   numberOfPages
+  rating
   externalResourceLink
   metaUi
   authorsCollection(limit: 10) {

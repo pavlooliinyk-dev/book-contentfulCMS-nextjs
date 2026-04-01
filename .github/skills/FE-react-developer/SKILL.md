@@ -1,4 +1,3 @@
-```skill
 ---
 name: FE React Developer
 description: Expert in React frontend development, focusing on component architecture, state management, and performance optimization.

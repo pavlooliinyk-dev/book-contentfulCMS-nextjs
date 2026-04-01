@@ -1,12 +1,20 @@
-import { Heading, Form, Paragraph } from '@contentful/f36-components';
+import { Heading, Form, Paragraph, FormControl, TextInput } from '@contentful/f36-components';
 import { useEffect, useState } from 'react';
 
 interface ConfigScreenProps {
   sdk: any;
 }
 
+interface AppParameters {
+  maxStars?: number;
+  starColor?: string;
+}
+
 export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
-  const [parameters, setParameters] = useState({});
+  const [parameters, setParameters] = useState<AppParameters>({
+    maxStars: 5,
+    starColor: '#FFD700',
+  });
 
   useEffect(() => {
     sdk.app.onConfigure(() => {
@@ -18,33 +26,76 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
       };
     });
 
-    sdk.app.getParameters().then((params: any) => {
-      setParameters(params || {});
+    sdk.app.getParameters().then((params: AppParameters) => {
+      setParameters({
+        maxStars: params?.maxStars || 5,
+        starColor: params?.starColor || '#FFD700',
+      });
     });
 
     sdk.app.setReady();
   }, [sdk, parameters]);
 
+  const handleMaxStarsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0 && value <= 10) {
+      setParameters({ ...parameters, maxStars: value });
+    }
+  };
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setParameters({ ...parameters, starColor: e.target.value });
+  };
+
   return (
     <div style={{ margin: '80px', maxWidth: '800px' }}>
       <Form>
-        <Heading>API Usage Dashboard Configuration</Heading>
+        <Heading>Star Rating Field Configuration</Heading>
         <Paragraph>
-          This app displays your Contentful API usage statistics directly in your space.
+          Configure the star rating field extension for your content types.
         </Paragraph>
-        <Paragraph>
+
+        <FormControl style={{ marginTop: '24px' }}>
+          <FormControl.Label>Maximum Stars</FormControl.Label>
+          <TextInput
+            type="number"
+            value={String(parameters.maxStars || 5)}
+            onChange={handleMaxStarsChange}
+            min={1}
+            max={10}
+          />
+          <FormControl.HelpText>
+            Maximum number of stars to display (1-10, default: 5)
+          </FormControl.HelpText>
+        </FormControl>
+
+        <FormControl style={{ marginTop: '24px' }}>
+          <FormControl.Label>Star Color</FormControl.Label>
+          <TextInput
+            type="text"
+            value={parameters.starColor}
+            onChange={handleColorChange}
+            placeholder="#FFD700"
+          />
+          <FormControl.HelpText>
+            Hex color code for the stars (default: #FFD700 - gold)
+          </FormControl.HelpText>
+        </FormControl>
+
+        <Paragraph style={{ marginTop: '32px' }}>
           <strong>Features:</strong>
         </Paragraph>
         <ul>
-          <li>View total API requests for the current month</li>
-          <li>Monitor usage against your quota (100K/month standard)</li>
-          <li>See breakdown by API type (CDA, CPA, CMA, GraphQL)</li>
-          <li>Visual progress bar with warnings at 80% usage</li>
+          <li>Interactive star selection (hover and click)</li>
+          <li>Stores rating as integer (1-{parameters.maxStars || 5})</li>
+          <li>Supports read-only mode for published entries</li>
+          <li>Auto-resizes to content height</li>
+          <li>Validation included</li>
         </ul>
-        <Paragraph>
-          <strong>Note:</strong> This app uses the Contentful Management API to fetch usage data.
-          No additional configuration is needed - the app will automatically use your current
-          space credentials.
+
+        <Paragraph style={{ marginTop: '24px' }}>
+          <strong>Usage:</strong> Add this field extension to your content types using the
+          "Rating" field type.
         </Paragraph>
       </Form>
     </div>

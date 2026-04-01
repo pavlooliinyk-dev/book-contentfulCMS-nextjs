@@ -12,6 +12,7 @@ if (!rootElement) {
 }
 
 const root = createRoot(rootElement);
+console.log('init StarRatingField', locations);
 
 // Show loading state immediately
 root.render(<div style={{ padding: '20px', textAlign: 'center' }}>Loading Contentful App...</div>);

@@ -41,6 +41,8 @@ export function useBooks({ initialBooks, initialTotal, limit }: UseBooksProps) {
   const [selectedTaxTitles, setSelectedTaxTitles] = useState<string[]>([]);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  console.log('[DEBUG]: useBooks init');
+  
   const fetchBooks = (skip: number, append = false, currentTaxTitles = selectedTaxTitles) => {
     setLoading(true);
     const taxParam = currentTaxTitles.length > 0 ? `&taxonomies=${currentTaxTitles.join(",")}` : "";

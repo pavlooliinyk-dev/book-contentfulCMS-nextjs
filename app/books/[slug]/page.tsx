@@ -2,10 +2,10 @@ import Link from "next/link";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
-import Date from "../../_components/date";
-import CoverImage from "../../_components/cover-image";
 import { Markdown } from "@/lib/markdown";
 import { getAllBooks, getBookBySlug } from "@/lib/api";
+import CoverImage from "../../_components/cover-image";
+import { StarRatingDisplay } from "../../_components/star-rating-display";
 import Pricing from "../../_components/pricing";
 
 export async function generateStaticParams() {
@@ -24,12 +24,12 @@ export default async function BookPage(props: {
   const { isEnabled } = await draftMode();
   
 //   console.log("DEBUG: Looking for slug:", slug);
-//   console.log("DEBUG: Found book:", book ? book.title : "NOT FOUND");
-  const book = await getBookBySlug(slug, isEnabled);
+const book = await getBookBySlug(slug, isEnabled);
 
-  if (!book) {
-    notFound();
-  }
+if (!book) {
+  notFound();
+}
+console.log("DEBUG: Found book:", book);
 
   return (
     <div className="container mx-auto px-5">
@@ -61,6 +61,7 @@ export default async function BookPage(props: {
           </div>
           {/* <p>bookId:{book.slug}</p> */}
           <Pricing bookId={book.slug} />
+          <StarRatingDisplay rating={book?.rating} size="sm" />
         </div>
 
         <div className="mx-auto max-w-2xl">

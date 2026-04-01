@@ -16,6 +16,8 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   const maxStars = appParams.maxStars || 5;
   const color = appParams.starColor || '#FFD700'; // Default gold color
 
+  console.log('[DEBUG]: StarRatingField init', { value, maxStars, color });
+  
   useEffect(() => {
     // Auto-resize to content height
     sdk.window.startAutoResizer();

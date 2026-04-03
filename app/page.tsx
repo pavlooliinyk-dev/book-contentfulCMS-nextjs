@@ -22,7 +22,7 @@ export default async function Page() {
 
   const heroBook = initialBooks && initialBooks.length > 0 ? initialBooks[0] : null;
 
-  // console.log('heroBook', heroBook);
+  console.log('homePage', homePage);
   return (
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./_components/intro";
-import Link from "next/link";
+import MainNavigation from "./_components/main-navigation";
 import ContentfulApiUsage from "./_components/contentful-api-usage";
 import HeroBanner from "./_components/hero-banner";
 
@@ -22,20 +22,15 @@ export default async function Page() {
 
   const heroBook = initialBooks && initialBooks.length > 0 ? initialBooks[0] : null;
 
-  console.log('homePage', homePage);
+  // console.log('homePage', homePage);
   return (
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
 
-      <p className="d-none">{JSON.stringify(homePage, null, 2)}</p>
+      <p className="hidden">{JSON.stringify(homePage, null, 2)}</p>
 
-      <Link href={`/books`}>
-          Go to Books Library →
-      </Link>
-      <Link href={`/movies`} className="ml-4">
-          Go to Movies Library →
-      </Link>
-      
+      <MainNavigation />
+
       {homePage?.heroBanner && (
         <HeroBanner 
           heroBanner={homePage.heroBanner}

@@ -7,7 +7,7 @@ export default function MainNavigation() {
         <li>
           <Link 
             href="/books"
-            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="text-blue-700 hover:text-blue-900 hover:underline transition-colors font-medium"
           >
             Books
           </Link>
@@ -15,7 +15,7 @@ export default function MainNavigation() {
         <li>
           <Link 
             href="/movies"
-            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="text-blue-700 hover:text-blue-900 hover:underline transition-colors font-medium"
           >
             Movies
           </Link>

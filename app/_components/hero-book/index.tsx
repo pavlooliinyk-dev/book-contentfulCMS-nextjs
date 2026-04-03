@@ -62,7 +62,7 @@ export default function HeroBook({
                 {taxonomies.map((tax: TaxonomyTerm) => (
                   <div key={tax.sys.id} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex flex-col items-center">
                     <span className="font-bold">{tax.slug || "Unknown"}</span>
-                    <div className="flex gap-2 text-[10px] uppercase opacity-75">
+                    <div className="flex gap-2 text-[10px] uppercase opacity-95">
                       {tax.type && <span>type: {tax.type}</span>}
                     </div>
                   </div>

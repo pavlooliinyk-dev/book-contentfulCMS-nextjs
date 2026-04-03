@@ -6,12 +6,13 @@ import Link from "next/link";
 export default async function BooksPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { isEnabled } = await draftMode();
+  const params = await searchParams;
   
   // Extract taxonomies from URL query params
-  const taxonomiesParam = searchParams.taxonomies;
+  const taxonomiesParam = params.taxonomies;
   const initialFilters = taxonomiesParam 
     ? (Array.isArray(taxonomiesParam) ? taxonomiesParam : taxonomiesParam.split(','))
     : [];

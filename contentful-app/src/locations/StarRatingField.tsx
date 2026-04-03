@@ -22,6 +22,9 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     // Auto-resize to content height
     sdk.window.startAutoResizer();
 
+
+    console.log('[DEBUG]: Auto-resize to content height done');
+
     // Check if field is disabled (read-only mode for published entries)
     const checkDisabled = () => {
       const isReadOnly = sdk.field.locale && sdk.entry.getSys().publishedVersion;

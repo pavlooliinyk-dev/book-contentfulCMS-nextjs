@@ -22,10 +22,10 @@ init((sdk: any) => {
 
   try {
     if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {
-      console.log('Rendering ConfigScreen');
+      console.log('Rendering ConfigScreen', locations.LOCATION_APP_CONFIG);
       root.render(<ConfigScreen sdk={sdk as any} />);
     } else if (sdk.location.is(locations.LOCATION_ENTRY_FIELD)) {
-      console.log('Rendering StarRatingField');
+      console.log('Rendering StarRatingField', locations.LOCATION_ENTRY_FIELD);
       root.render(<StarRatingField sdk={sdk as any} />);
     } else {
       console.warn('Unknown location:', sdk.location);

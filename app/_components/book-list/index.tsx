@@ -11,11 +11,13 @@ export default function BooksClient({
   initialTotal,
   availableTaxonomies = [],
   withFilters = true,
+  initialFilters = [],
 }: { 
   initialBooks: Book[], 
   initialTotal: number,
   availableTaxonomies?: any[]
   withFilters?: boolean
+  initialFilters?: string[]
 }) {
   const LIMIT = 5;
   const {
@@ -31,7 +33,7 @@ export default function BooksClient({
     clearFilters,
     togglePagination,
     goToPage,
-  } = useBooksList(initialBooks, initialTotal, LIMIT);
+  } = useBooksList(initialBooks, initialTotal, LIMIT, initialFilters);
 
   if (error) return <div className="mt-8 text-red-600">{error}</div>;
 

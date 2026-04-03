@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export type Book = {
   title?: string;
@@ -14,15 +15,29 @@ export type Book = {
   metaUI?: object;
 };
 
-export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number) {
+export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [books, setBooks] = useState<Book[]>(initialBooks);
   const [total, setTotal] = useState(initialTotal);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [isInfinite, setIsInfinite] = useState(true);
-  const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>([]);
+  const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>(initialFilters);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  
+  // Update URL when filters change
+  const updateURL = (filters: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (filters.length > 0) {
+      params.set('taxonomies', filters.join(','));
+    } else {
+      params.delete('taxonomies');
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   const fetchBooks = (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
     setLoading(true);
@@ -56,12 +71,14 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     
     setSelectedTaxIds(nextIds);
     setPage(0);
+    updateURL(nextIds);
     fetchBooks(0, false, nextIds);
   };
 
   const clearFilters = () => {
     setSelectedTaxIds([]);
     setPage(0);
+    updateURL([]);
     fetchBooks(0, false, []);
   };
 
@@ -76,6 +93,13 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     setPage(next);
     fetchBooks(next * limit);
   };
+
+  // Fetch filtered books when initialFilters are present on mount
+  useEffect(() => {
+    if (initialFilters.length > 0) {
+      fetchBooks(0, false, initialFilters);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isInfinite || !sentinelRef.current || books.length >= total) return;

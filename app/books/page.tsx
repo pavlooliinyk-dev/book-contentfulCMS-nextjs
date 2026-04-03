@@ -3,8 +3,19 @@ import BooksClient from "../_components/book-list";
 import { getAllBooks, getTaxonomies } from "@/lib/api";
 import Link from "next/link";
 
-export default async function BooksPage() {
+export default async function BooksPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const { isEnabled } = await draftMode();
+  
+  // Extract taxonomies from URL query params
+  const taxonomiesParam = searchParams.taxonomies;
+  const initialFilters = taxonomiesParam 
+    ? (Array.isArray(taxonomiesParam) ? taxonomiesParam : taxonomiesParam.split(','))
+    : [];
+  
   const [{ items, total }, taxonomies] = await Promise.all([
     getAllBooks(isEnabled, 10),
     getTaxonomies(isEnabled),
@@ -21,6 +32,7 @@ export default async function BooksPage() {
         initialBooks={items} 
         initialTotal={total} 
         availableTaxonomies={taxonomies}
+        initialFilters={initialFilters}
       />
     </div>
   );

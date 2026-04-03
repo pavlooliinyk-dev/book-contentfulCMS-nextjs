@@ -14,7 +14,7 @@ export default async function BooksPage() {
   return (
     <div className="container mx-auto px-5 pt-10">
       <Link href="/" className="hover:underline">
-          {'go Home'}
+          go Home
         </Link>
       <h1 className="text-6xl font-bold mb-10">Movies (PLP)</h1>
       <SearchAlgolia showHits={true}/>

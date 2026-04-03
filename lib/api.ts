@@ -154,5 +154,19 @@ export async function getHomePage(preview: boolean): Promise<any> {
     }`,
     preview,
   );
-  return entry?.data?.homePageCollection?.items?.[0];
+  const homePage = entry?.data?.homePageCollection?.items?.[0];
+  
+  // Parse imageWithTextSection if it exists
+  if (homePage?.imageWithTextSection) {
+    try {
+      homePage.imageWithTextSection = typeof homePage.imageWithTextSection === 'string' 
+        ? JSON.parse(homePage.imageWithTextSection) 
+        : homePage.imageWithTextSection;
+    } catch (e) {
+      console.error('Error parsing imageWithTextSection:', e);
+      homePage.imageWithTextSection = null;
+    }
+  }
+  
+  return homePage;
 }

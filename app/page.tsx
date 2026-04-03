@@ -1,11 +1,11 @@
 import { draftMode } from "next/headers";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./_components/intro";
 import Link from "next/link";
 import ContentfulApiUsage from "./_components/contentful-api-usage";
+import HeroBanner from "./_components/hero-banner";
 
 const BookList = dynamic(() => import("./_components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
@@ -40,24 +40,11 @@ export default async function Page() {
       </Link>
       
       {homePage?.heroBanner && (
-        <div className="my-8 md:mb-16 relative w-full h-[400px] md:h-[600px]">
-          <Image 
-            src={homePage.heroBanner.url} 
-            alt={homePage.title || "Hero banner"}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover rounded-lg shadow-lg"
-          />
-        </div>
-      )}
-
-      {homePage?.imageWithTextSection?.text && (
-        <div className="mb-12 p-8 bg-gray-50 rounded-lg text-center">
-          <p className="text-xl italic text-gray-700">
-            {homePage.imageWithTextSection.text}
-          </p>
-        </div>
+        <HeroBanner 
+          heroBanner={homePage.heroBanner}
+          title={homePage.title}
+          imageWithTextSection={homePage.imageWithTextSection}
+        />
       )}
       
       {heroBook && (

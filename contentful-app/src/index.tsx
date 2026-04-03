@@ -31,7 +31,7 @@ init((sdk: any) => {
       console.warn('Unknown location:', sdk.location);
       root.render(
         <div style={{ padding: '20px' }}>
-          <h2>Star Rating Field Extension</h2>
+          <h2>Goodreads Rating Field</h2>
           <p>This app should be configured as a field extension.</p>
           <p>Current location: {JSON.stringify(sdk.location)}</p>
         </div>

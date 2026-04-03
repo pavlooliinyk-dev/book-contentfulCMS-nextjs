@@ -34,8 +34,11 @@ module.exports = function (migration) {
       },
     ]);
 
-  // Optional: Move rating field to appear after numberOfPages
+  // Move rating field to appear after numberOfPages
   book.moveField("rating").afterField("numberOfPages");
+
+  // Set the field control to use the "star rating field extension"
+  book.changeFieldControl('rating', 'app', 'star-rating-field-extension');
 
   console.log("✅ Rating field added to book content type");
 };

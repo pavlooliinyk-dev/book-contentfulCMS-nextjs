@@ -1,7 +1,7 @@
 {
-  "name": "Star Rating Field Extension",
+  "name": "Goodreads rating app",
   "version": "1.0.0",
-  "appId": "star-rating-field-extension",
+  "appId": "7IGWVp20K1P19yYo57HPiY",
   "description": "Custom star rating field extension with configurable stars and colors",
   "locations": [
     {

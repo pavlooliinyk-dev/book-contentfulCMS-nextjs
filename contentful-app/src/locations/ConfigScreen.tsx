@@ -50,7 +50,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
   return (
     <div style={{ margin: '80px', maxWidth: '800px' }}>
       <Form>
-        <Heading>Star Rating Field Configuration</Heading>
+        <Heading>Goodreads Rating Field Configuration</Heading>
         <Paragraph>
           Configure the star rating field extension for your content types.
         </Paragraph>

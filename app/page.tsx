@@ -27,6 +27,7 @@ export default async function Page() {
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
 
+<p>{JSON.stringify(homePage, null, 2)}</p>
       {/* <div className="my-8 max-w-md">
         <ContentfulApiUsage />
       </div> */}

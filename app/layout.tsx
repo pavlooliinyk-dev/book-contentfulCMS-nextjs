@@ -49,7 +49,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        {/* <TailwindUtilities /> */}
+        <TailwindUtilities />
         {isEnabled && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
           <p className="font-bold">Preview Mode</p>

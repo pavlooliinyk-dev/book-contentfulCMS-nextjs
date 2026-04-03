@@ -1,4 +1,4 @@
 /* Only critical base resets - minimal size */
 @tailwind base;
-@tailwind components;
+/* @tailwind components; */
 @tailwind utilities;

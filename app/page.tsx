@@ -27,9 +27,9 @@ export default async function Page() {
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
 
-      <div className="my-8 max-w-md">
+      {/* <div className="my-8 max-w-md">
         <ContentfulApiUsage />
-      </div>
+      </div> */}
 
       <Link href={`/books`}>
           Go to Books Library →

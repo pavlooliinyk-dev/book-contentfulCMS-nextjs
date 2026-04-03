@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useFetch } from '@/lib/hooks/useFetch';
 
 interface PricingData {
   bookId: string;
@@ -9,24 +9,30 @@ interface PricingData {
 }
 
 export default function Pricing({ bookId }: { bookId: string }) {
-  const [pricing, setPricing] = useState<PricingData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/pricing?bookId=${bookId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPricing(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching pricing:', err);
-        setLoading(false);
-      });
-  }, [bookId]);
+  const { data: pricing, loading, error } = useFetch<PricingData>(
+    `/api/pricing?bookId=${bookId}`
+  );
 
   if (loading) {
     return <div className="animate-pulse h-6 w-24 bg-gray-200 rounded"></div>;
+  }
+
+  if (error) {
+    // Log detailed error info in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Pricing fetch error:', {
+        message: error.message,
+        name: error.name,
+        status: 'status' in error ? error.status : undefined,
+        bookId,
+      });
+    }
+    
+    return (
+      <div className="text-sm text-red-600">
+        Error: {error.message || 'Failed to load pricing'}
+      </div>
+    );
   }
 
   if (!pricing) return null;

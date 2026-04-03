@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useFetch } from "@/lib/hooks/useFetch";
 
 interface UsageData {
   totalApiCalls: number;
@@ -15,29 +15,7 @@ interface UsageData {
 }
 
 export default function ContentfulApiUsage() {
-  const [usage, setUsage] = useState<UsageData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchUsage() {
-      try {
-        const response = await fetch("/api/usage");
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch usage data");
-        }
-        const data = await response.json();
-        setUsage(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchUsage();
-  }, []);
+  const { data: usage, loading, error } = useFetch<UsageData>("/api/usage");
 
   if (loading) {
     return (
@@ -55,7 +33,7 @@ export default function ContentfulApiUsage() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
         <h3 className="text-red-800 font-semibold mb-2">Error Loading Usage Data</h3>
-        <p className="text-red-600 text-sm">{error}</p>
+        <p className="text-red-600 text-sm">{error.message}</p>
         <p className="text-red-500 text-xs mt-2">
           Make sure CONTENTFUL_MANAGEMENT_TOKEN is set in your environment variables.
         </p>

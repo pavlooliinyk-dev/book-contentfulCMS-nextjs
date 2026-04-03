@@ -39,28 +39,46 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  const fetchBooks = (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
+  const fetchBooks = async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
     setLoading(true);
+    setError(null);
     const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
-    fetch(`/api/books?limit=${limit}&skip=${skip}${taxParam}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.errors || data.error) {
-          setError(data.error || "Error fetching books");
-          return;
-        }
-        const newItems = data.items || [];
-        setBooks((prev) => {
-          const newBooks = append ? [...prev, ...newItems] : newItems;
-          const unique = newBooks.filter((book: Book, index: number, self: Book[]) =>
-            index === self.findIndex((b: Book) => b.title === book.title)
-          );
-          return unique;
-        });
-        setTotal(data.total);
-      })
-      .catch((e) => setError(String(e)))
-      .finally(() => setLoading(false));
+    
+    const controller = new AbortController();
+    
+    try {
+      const response = await fetch(`/api/books?limit=${limit}&skip=${skip}${taxParam}`, {
+        signal: controller.signal,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.errors || data.error) {
+        setError(data.error || "Error fetching books");
+        return;
+      }
+      
+      const newItems = data.items || [];
+      setBooks((prev) => {
+        const newBooks = append ? [...prev, ...newItems] : newItems;
+        const unique = newBooks.filter((book: Book, index: number, self: Book[]) =>
+          index === self.findIndex((b: Book) => b.title === book.title)
+        );
+        return unique;
+      });
+      setTotal(data.total);
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        return; // Silently ignore abort errors
+      }
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFilterChange = (tax: any) => {

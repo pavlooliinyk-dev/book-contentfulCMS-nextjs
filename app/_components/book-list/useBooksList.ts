@@ -13,6 +13,7 @@ export type Book = {
   authorsCollection?: { items: { name: string }[] };
   externalResourceLink?: string;
   metaUI?: object;
+  taxonomiesCollection?: { items: { title: string }[] };
 };
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {

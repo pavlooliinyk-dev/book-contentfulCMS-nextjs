@@ -29,7 +29,6 @@ const book = await getBookBySlug(slug, isEnabled);
 if (!book) {
   notFound();
 }
-console.log("DEBUG: Found book:", book);
 
   return (
     <div className="container mx-auto px-5">
@@ -81,6 +80,13 @@ console.log("DEBUG: Found book:", book);
             </div>
           )}
         </div>
+        {book.taxonomiesCollection?.items && (
+          <div className="mt-8">
+            <span className="font-bold">Taxonomies: </span>
+            {book.taxonomiesCollection.items.map((t: any) => t.title).join(", ")}
+          </div>
+        )}
+
       </article>
       <hr className="border-accent-2 mt-28 mb-24" />
     </div>

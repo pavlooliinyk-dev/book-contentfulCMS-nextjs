@@ -50,6 +50,13 @@ export default function BookGrid({ books }: BookGridProps) {
               </span>
             </div>
           )}
+
+         {b?.taxonomiesCollection?.items && (
+          <div className="mt-8">
+            <span className="font-bold">Taxonomies: </span>
+            {b?.taxonomiesCollection?.items.map((t: any) => t.title).join(", ")}
+          </div>
+        )}
         </article>
       ))}
     </div>

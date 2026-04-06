@@ -49,6 +49,7 @@ export default async function RootLayout({
         </div>
       )}
         <section className="min-h-screen">
+          <div className="text-red-200">TMP: dev feature under progress </div> 
           <main>{children}</main>
           <Footer />
         </section>

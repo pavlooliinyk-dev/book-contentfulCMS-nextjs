@@ -702,8 +702,12 @@ This will deploy the Next.js project as well as connect it to your Contentful sp
 You need to add these secrets in your GitHub repository (Settings → Secrets and variables → Actions):
 
 VERCEL_TOKEN - Generate from Vercel dashboard → Settings → Tokens
-VERCEL_ORG_ID - Found in .vercel/project.json after running vercel link locally (optional, as vercel pull handles this)
-VERCEL_PROJECT_ID - Same as above (optional)
+VERCEL_ORG_ID - team_kKlsiY3KUFZsQdhKo1JOfH4v Found in .vercel/project.json after running vercel link locally (optional, as vercel pull handles this)
+VERCEL_PROJECT_ID - prj_Gigxmgt1gWWEuN42jAJzA2I4lYNe Same as above (optional)
+
+how to :
+https://vercel.com/kb/guide/how-do-i-use-a-vercel-api-access-token
+https://codenote.net/en/posts/how-to-find-vercel-org-project-ids/
 
 ### Step 9. Try using On-Demand Revalidation
 

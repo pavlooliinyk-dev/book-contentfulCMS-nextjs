@@ -67,7 +67,7 @@ See [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for installation instru
 
 ## Demo
 
-### [https://app-router-contentful.vercel.app/](https://app-router-contentful.vercel.app/)
+### [https://book-contentful-cms-nextjs.vercel.app/](https://book-contentful-cms-nextjs.vercel.app/)
 
 ---
 

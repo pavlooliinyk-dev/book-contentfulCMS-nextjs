@@ -67,7 +67,7 @@ See [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for installation instru
 
 ## Demo
 
-### [https://app-router-contentful.vercel.app/](https://app-router-contentful.vercel.app/)
+### [https://book-contentful-cms-nextjs.vercel.app/](https://book-contentful-cms-nextjs.vercel.app/)
 
 ---
 
@@ -315,6 +315,23 @@ Then reseed:
 ```bash
 npm run seed
 ```
+
+## 🚀 Deployment Branches
+
+### Preview Deployment (Development)
+Push to any branch matching `dev-*` pattern to automatically:
+- ✅ Run linting checks
+- 🚀 Deploy to preview environment
+
+**Preview URL:** [https://book-contentful-cms-nextj-git-485118-pavlooliinyk-devs-projects.vercel.app/](https://book-contentful-cms-nextj-git-485118-pavlooliinyk-devs-projects.vercel.app/)
+
+### Production Deployment
+Merge to `main` branch to automatically:
+- ✅ Run linting checks
+- 🚀 Deploy to production environment
+
+**Production URL:** [https://book-contentful-cms-nextjs.vercel.app/](https://book-contentful-cms-nextjs.vercel.app/)
+
 
 ---
 

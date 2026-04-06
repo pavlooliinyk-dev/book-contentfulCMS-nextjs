@@ -2,7 +2,7 @@ import Link from "next/link";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
-import { Markdown } from "@/lib/markdown";
+import { Markdown } from "@/app/_components/markdown";
 import { getAllBooks, getBookBySlug } from "@/lib/api";
 import CoverImage from "../../_components/cover-image";
 import { StarRatingDisplay } from "../../_components/star-rating-display";
@@ -58,7 +58,6 @@ if (!book) {
             )}
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
-          {/* <p>bookId:{book.slug}</p> */}
           <Pricing bookId={book.slug} />
           <StarRatingDisplay rating={book?.rating} size="sm" />
         </div>

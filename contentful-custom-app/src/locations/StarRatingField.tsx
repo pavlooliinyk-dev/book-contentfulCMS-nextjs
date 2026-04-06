@@ -22,7 +22,6 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     // Auto-resize to content height
     sdk.window.startAutoResizer();
 
-
     console.log('[DEBUG]: Auto-resize to content height done');
 
     // Check if field is disabled (read-only mode for published entries)
@@ -52,8 +51,6 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
 
   const handleStarClick = useCallback(
     (starValue: number) => {
-        console.log('handleStarClick', starValue);
-        
       if (isDisabled) return;
 
       const newValue = value === starValue ? null : starValue;
@@ -65,7 +62,6 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
 
   const handleStarHover = useCallback(
     (starValue: number | null) => {
-        console.log('handleStarHover', starValue);
       if (!isDisabled) {
         setHoveredStar(starValue);
       }
@@ -74,7 +70,6 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   );
 
   const getStarFill = (starIndex: number): string => {
-    console.log('getStarFill', { starIndex, hoveredStar, value });
     const displayValue = hoveredStar !== null ? hoveredStar : value;
     if (displayValue && starIndex <= displayValue) {
       return color;

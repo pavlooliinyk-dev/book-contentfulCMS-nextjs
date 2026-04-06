@@ -9,6 +9,7 @@ import {
   Pagination,
 } from "react-instantsearch";
 import { liteClient as algoliasearch } from "algoliasearch/lite";
+import Image from "next/image";
 
 const appId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
 const searchKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!;
@@ -32,10 +33,12 @@ function Hit({ hit }: HitProps) {
   const content = (
     <article className="flex gap-4 rounded border p-3">
       {hit.poster_path ? (
-        <img
+        <Image
           src={hit.poster_path}
           alt={hit.title ?? "Untitled"}
           className="h-24 w-16 rounded object-cover"
+          width={64}
+          height={96}
         />
       ) : null}
 
@@ -140,50 +143,3 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
     </div>
   );
 }
-
-/*
-
-applicationId="6NHK71ROMP"
-  apiKey="4fd4226dcfb0044e816cd99661284bf8"
-  indexName="algolia_movie_sample_dataset"
-  attributes={{
-    primaryText: "title", // the attribute to display in the hits list
-    secondaryText: "overview", // the secondary attribute to display in the hits list
-    tertiaryText: "original_language", // the tertiary attribute to display in the hits list
-    url: "", // the URL of the hit
-    image: "poster_path" // the image URL of the hit
-  }}
-  darkMode={false}
-
-<InstantSearch
-indexName={string}
-        searchClient={object}
-        // Optional props
-        initialUiState={object}
-        onStateChange={function}
-        stalledSearchDelay={number}
-        routing={boolean | object}
-        insights={boolean | object}
-        future={{
-          preserveSharedStateOnUnmount: boolean,
-          persistHierarchicalRootCount: boolean,
-        }}
-
-        npx shadcn@latest add @algolia/search
-        import Search from "@/components/search";
-
-<Search
-  applicationId="6NHK71ROMP"
-  apiKey="4fd4226dcfb0044e816cd99661284bf8"
-  indexName="algolia_movie_sample_dataset"
-  attributes={{
-    primaryText: "title", // the attribute to display in the hits list
-    secondaryText: "overview", // the secondary attribute to display in the hits list
-    tertiaryText: "original_language", // the tertiary attribute to display in the hits list
-    url: "", // the URL of the hit
-    image: "poster_path" // the image URL of the hit
-  }}
-  darkMode={false}
-/>
-      
-*/

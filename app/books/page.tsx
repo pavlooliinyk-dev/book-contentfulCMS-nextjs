@@ -18,7 +18,7 @@ export default async function BooksPage({
     : [];
   
   const [{ items, total }, taxonomies] = await Promise.all([
-    getAllBooks(isEnabled, 10),
+    getAllBooks(isEnabled, 10, 0, initialFilters), // Fetch first page of books with filters
     getTaxonomies(isEnabled),
   ]);
   

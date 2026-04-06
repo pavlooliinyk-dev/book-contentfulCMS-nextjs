@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { log } from "console";
 
 export type Book = {
   title?: string;
@@ -40,7 +41,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  const fetchBooks = async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
+  const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
     setLoading(true);
     setError(null);
     const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
@@ -80,7 +81,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, selectedTaxIds]);
 
   const handleFilterChange = (tax: any) => {
     const taxValue = tax.title;
@@ -113,13 +114,6 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     fetchBooks(next * limit);
   };
 
-  // Fetch filtered books when initialFilters are present on mount
-  useEffect(() => {
-    if (initialFilters.length > 0) {
-      fetchBooks(0, false, initialFilters);
-    }
-  }, []);
-
   useEffect(() => {
     if (!isInfinite || !sentinelRef.current || books.length >= total) return;
 
@@ -128,6 +122,8 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
         if (entries[0].isIntersecting && !loading) {
           setPage((p) => {
             const next = p + 1;
+            console.log('useBooksList IntersectionObserver -> fetchBooks', next * limit);
+
             fetchBooks(next * limit, true);
             return next;
           });
@@ -138,7 +134,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
 
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [isInfinite, loading, books.length, total]);
+  }, [isInfinite, loading, books.length, total, fetchBooks, limit]);
 
   return {
     books,

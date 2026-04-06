@@ -95,7 +95,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
 
         <Paragraph style={{ marginTop: '24px' }}>
           <strong>Usage:</strong> Add this field extension to your content types using the
-          "Rating" field type.
+          &quot;Rating&quot; field type.
         </Paragraph>
       </Form>
     </div>

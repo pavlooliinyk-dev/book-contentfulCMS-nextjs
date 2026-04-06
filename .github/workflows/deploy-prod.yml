@@ -36,6 +36,7 @@ jobs:
     name: Deploy to Vercel Production
     runs-on: ubuntu-latest
     needs: lint
+    environment: Production
     steps:
       - uses: actions/checkout@v4
       
@@ -48,20 +49,20 @@ jobs:
         run: npm install --global vercel@latest
       
       - name: Pull Vercel Environment
-        run: vercel pull --yes --environment=production --token=vcp_2le7mcg0jYBuZE3zUhiTjcnMgnhNceUskAGc1oXGqvnzgmLFWj2oSM1u
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: team_kKlsiY3KUFZsQdhKo1JOfH4v
-          VERCEL_PROJECT_ID: prj_Gigxmgt1gWWEuN42jAJzA2I4lYNe
+          VERCEL_ORG_ID: ${{ env.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID }}
       
       - name: Build Project
-        run: vercel build --prod --token=vcp_2le7mcg0jYBuZE3zUhiTjcnMgnhNceUskAGc1oXGqvnzgmLFWj2oSM1u
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: team_kKlsiY3KUFZsQdhKo1JOfH4v
-          VERCEL_PROJECT_ID: prj_Gigxmgt1gWWEuN42jAJzA2I4lYNe
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           SKIP_CONTENTFUL_APP: 'true'
       
       - name: Deploy to Production
-        run: vercel deploy --prebuilt --prod --token=vcp_2le7mcg0jYBuZE3zUhiTjcnMgnhNceUskAGc1oXGqvnzgmLFWj2oSM1u
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: team_kKlsiY3KUFZsQdhKo1JOfH4v
-          VERCEL_PROJECT_ID: prj_Gigxmgt1gWWEuN42jAJzA2I4lYNe
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

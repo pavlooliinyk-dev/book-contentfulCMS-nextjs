@@ -29,7 +29,7 @@ The improved build script now provides better error messages. Check your Vercel 
 
 ## Graceful Degradation
 
-The build script now exits with code 0 (success) even if the Contentful app build fails. This means:
+The build script exits with code 0 (success) even if the Contentful app build fails. This means:
 - ✅ Your Next.js site will still deploy
 - ⚠️ The Contentful app won't be available at /contentful-app
 - 📝 Error details will be in the build logs

@@ -6,7 +6,7 @@ import { TailwindUtilities } from "./_components/tailwind-utilities";
 
 export const metadata = {
   title: `Next.js and ${CMS_NAME} Example`,
-  description: `This is a blog built with Next.js and ${CMS_NAME}.`,
+  description: `This is built with Next.js and ${CMS_NAME}.`,
 };
 
 export const viewport = {
@@ -26,15 +26,7 @@ function Footer() {
   return (
     <footer className="bg-accent-1 border-t border-accent-2">
       <div className="container mx-auto px-5">
-        <span>Footer</span>
-        {/* <div className="py-28 flex flex-col lg:flex-row items-center">
-          <object
-            data="/logo_animated.svg"
-            type="image/svg+xml"
-            aria-label="Animated logo"
-            className="w-[240px] h-[80px]"
-          />
-        </div> */}
+        <span>Footer</span>        
       </div>
     </footer>
   );

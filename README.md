@@ -1,248 +1,667 @@
-<<<<<<< HEAD
-# A statically generated blog example using Next.js and Contentful
+# Next.js Book Library with Contentful CMS
 
-This example showcases Next.js's [Static Generation](https://nextjs.org/docs/basic-features/pages) feature using [Contentful](https://www.contentful.com/) as the data source.
+A modern, full-featured book library application built with **Next.js 15** and **Contentful CMS**, showcasing best practices for headless CMS integration, server components, and dynamic content rendering.
 
-## 🆕 Contentful Custom App Included!
+## 📚 What This Project Does
 
-This project now includes a **standalone Contentful API Usage Dashboard app** that you can install directly in your Contentful space to monitor API usage.
+This is a **book catalog application** featuring:
+- 📖 **Book Library** with filtering, pagination, and infinite scroll
+- 🔍 **Search functionality** (Algolia integration ready)
+- ⭐ **Star Ratings** with custom Contentful app
+- 🎨 **Dynamic layouts** controlled from CMS
+- 📝 **Rich text rendering** for book descriptions
+- 👤 **Author management** with bio and avatar
+- 🏷️ **Taxonomy system** (genres, audiences, languages)
+- 🚀 **Draft Mode** for content preview
+- 🔄 **On-Demand Revalidation** with webhooks
+- 📊 **API Usage Dashboard** (custom Contentful app)
 
-**Quick Start:**
+## 🎯 Quick Start (New Developers)
+
+### Prerequisites
+- Node.js 18+ and npm
+- A [Contentful account](https://www.contentful.com/sign-up/) (free tier works)
+- Git
+
+### Installation & Setup
+
+```bash
+# 1. Clone and install dependencies
+npm install
+
+# 2. Set up environment variables (see Configuration section below)
+# Copy the values from .env.local (already in this repo) or create your own
+
+# 3. Set up Contentful content model and seed data
+npm run setup    # Creates content types in Contentful
+npm run seed     # Populates with sample books
+
+# 4. Start development server
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) 🎉
+
+### 🆕 Contentful Custom App (API Usage Dashboard)
+
+Monitor your Contentful API usage directly in your space:
+
 ```bash
 npm run setup-app   # Install app dependencies
-npm run start-app   # Start the app at localhost:3001
+npm run start-app   # Start at localhost:3001
 ```
 
 See [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for installation instructions.
 
 ---
 
+## 🏗️ Tech Stack
+
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety
+- **Contentful** - Headless CMS
+- **GraphQL** - API queries
+- **Tailwind CSS** - Styling
+- **Algolia** - Search (optional)
+- **Vercel** - Deployment platform
+
 ## Demo
 
 ### [https://app-router-contentful.vercel.app/](https://app-router-contentful.vercel.app/)
 
-## Deploy your own
+---
 
-Using the Deploy Button below, you'll deploy the Next.js project as well as connect it to your Contentful space using the Vercel Contentful Integration.
+## 📂 Project Structure
+
+```
+cms-contentful-app/
+├── app/                          # Next.js App Router
+│   ├── page.tsx                  # Home page (shows hero + book list)
+│   ├── layout.tsx                # Root layout
+│   ├── books/
+│   │   ├── page.tsx              # Book listing page with filters
+│   │   └── [slug]/page.tsx       # Book detail page (PDP)
+│   ├── _components/              # Shared React components
+│   │   ├── book-list/            # Book grid with pagination/infinite scroll
+│   │   ├── hero-book/            # Featured book section
+│   │   ├── star-rating-display.tsx
+│   │   └── ...
+│   └── api/                      # API routes
+│       ├── books/route.ts        # Book data endpoint
+│       ├── draft/route.ts        # Enable draft mode
+│       └── revalidate/route.ts   # Webhook handler
+│
+├── lib/
+│   ├── api.ts                    # Contentful GraphQL queries
+│   ├── constants.ts              # App constants
+│   └── hooks/                    # Custom React hooks
+│
+├── cli-scripts/                  # Contentful automation
+│   ├── setup.js                  # Initialize content model
+│   ├── seed-books.js             # Populate sample data
+│   ├── migration.js              # Content type definitions
+│   └── books.json                # Sample book data
+│
+├── contentful-custom-app/        # Custom Contentful apps
+│   └── src/
+│       ├── locations/
+│       │   ├── ConfigScreen.tsx
+│       │   └── StarRatingField.tsx
+│       └── index.tsx
+│
+├── public/                       # Static assets
+├── .env.local                    # Environment variables (DO NOT COMMIT)
+└── package.json                  # Dependencies & scripts
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+The `.env.local` file contains all necessary API keys:
+
+```bash
+# Contentful Space Configuration
+CONTENTFUL_SPACE_ID=your_space_id
+CONTENTFUL_ACCESS_TOKEN=your_cda_token
+CONTENTFUL_PREVIEW_ACCESS_TOKEN=your_preview_token
+CONTENTFUL_MANAGEMENT_TOKEN=your_cma_token  # For API dashboard & migrations
+
+# Next.js Features
+CONTENTFUL_PREVIEW_SECRET=my_super_secret
+CONTENTFUL_REVALIDATE_SECRET=my_super_secret
+CONTENTFUL_ENVIRONMENT=master
+
+# Algolia Search (Optional)
+NEXT_PUBLIC_ALGOLIA_APP_ID=your_app_id
+NEXT_PUBLIC_ALGOLIA_SEARCH_KEY=your_search_key
+NEXT_PUBLIC_ALGOLIA_INDEX_NAME=your_index_name
+```
+
+### Getting Your Contentful Credentials
+
+1. **Create a Contentful Space**
+   - Go to [Contentful Dashboard](https://app.contentful.com/)
+   - Create a new space or use existing
+
+2. **Get API Keys**
+   - Navigate to **Settings > API keys**
+   - Copy `Space ID`, `Content Delivery API - access token`, and `Content Preview API - access token`
+
+3. **Create Management Token** (for migrations & API dashboard)
+   - Go to **Settings > CMA tokens**
+   - Click **Create personal access token**
+   - Save it to `CONTENTFUL_MANAGEMENT_TOKEN`
+
+---
+
+## 📖 Content Model
+
+The project uses these Contentful content types:
+
+### 1. **Book** (Main Content Type)
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | Text | Book title (required) |
+| `shortDescription` | Rich Text | Book description |
+| `coverImage` | Asset | Cover image (required) |
+| `numberOfPages` | Integer | Page count |
+| `rating` | Number | Star rating (1-5) |
+| `externalResourceLink` | Text | External link |
+| `authors` | References | Links to Author entries |
+| `taxonomies` | References | Genre, audience, language tags |
+| `metaUi` | JSON | UI metadata (positioning, etc.) |
+
+### 2. **Author**
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | Text | Author name |
+| `bio` | Rich Text | Biography |
+| `avatar` | Asset | Profile picture |
+
+### 3. **TaxonomyTerm**
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | Text | Display name |
+| `slug` | Text | URL-friendly identifier |
+| `type` | Text | genre \| audience \| language |
+| `parent` | Reference | Hierarchical parent |
+
+### 4. **HomePage**
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | Text | Page title |
+| `heroBanner` | Asset | Hero image |
+| `imageWithTextSection` | JSON | Dynamic section data |
+
+---
+
+## 🎨 Key Features Explained
+
+### 1. **Book Listing with Filters** ([app/books/page.tsx](app/books/page.tsx))
+- Server-side data fetching
+- Client-side filtering by taxonomies
+- Toggle between pagination and infinite scroll
+- Real-time filter updates
+
+### 2. **Book Detail Page** ([app/books/[slug]/page.tsx](app/books/[slug]/page.tsx))
+- Dynamic routing based on slugs
+- Rich text rendering
+- Star rating display
+- Related taxonomies
+
+### 3. **Draft Mode** (Content Preview)
+- Preview unpublished content
+- Enabled via `/api/draft?secret=XXX&slug=book-slug`
+- Disabled via `/api/disable-draft`
+
+### 4. **On-Demand Revalidation**
+- Webhook-triggered cache invalidation
+- Instant updates on content changes
+- See [Step 9](#step-9-try-using-on-demand-revalidation) below
+
+### 5. **Custom Star Rating Field**
+- Contentful app for rating input
+- Visual star picker in CMS
+- Display component for frontend
+
+---
+
+## ➕ How to Add a New Feature to the Books System
+
+### Example: Adding a "Publication Year" Field
+
+#### Step 1: Update Content Model (Migration)
+
+Create or edit `cli-scripts/migration.js`:
+
+```javascript
+book.createField("publicationYear")
+  .name("Publication Year")
+  .type("Integer")
+  .required(false);
+```
+
+Run migration:
+```bash
+npm run migrate
+```
+
+Or add field manually in Contentful UI:
+1. Go to **Content model > Book**
+2. Click **Add field** → **Integer**
+3. Set **Field ID**: `publicationYear`, **Name**: "Publication Year"
+4. Save
+
+#### Step 2: Update GraphQL Query ([lib/api.ts](lib/api.ts))
+
+Add the new field to `BOOK_GRAPHQL_FIELDS`:
+
+```typescript
+const BOOK_GRAPHQL_FIELDS = `
+  title
+  shortDescription { json }
+  coverImage { url }
+  numberOfPages
+  rating
+  publicationYear  # ← Add this
+  externalResourceLink
+  ...
+`;
+```
+
+#### Step 3: Update TypeScript Types (Optional but Recommended)
+
+In `lib/api.ts` or create a `types.ts` file:
+
+```typescript
+export interface Book {
+  title: string;
+  slug: string;
+  shortDescription?: any;
+  coverImage?: { url: string };
+  numberOfPages?: number;
+  rating?: number;
+  publicationYear?: number;  // ← Add this
+  // ...other fields
+}
+```
+
+#### Step 4: Display in UI
+
+Update [app/books/[slug]/page.tsx](app/books/[slug]/page.tsx):
+
+```typescript
+<div className="mb-6 text-lg">
+  {book.publicationYear && (
+    <span className="ml-4">Published: {book.publicationYear}</span>
+  )}
+</div>
+```
+
+#### Step 5: Update Seed Data (Optional)
+
+Add to `cli-scripts/books.json`:
+
+```json
+{
+  "title": "Example Book",
+  "publicationYear": 2024,
+  ...
+}
+```
+
+Then reseed:
+```bash
+npm run seed
+```
+
+---
+
+## 🚀 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (localhost:3000) |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run setup` | Initialize Contentful content model |
+| `npm run seed` | Populate Contentful with sample books |
+| `npm run migrate` | Run content type migrations |
+| `npm run setup-app` | Install custom Contentful app dependencies |
+| `npm run start-app` | Start Contentful custom app (localhost:3001) |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Fix ESLint errors |
+
+---
+
+## 🔄 Development Workflow
+
+### Making Changes to Book Features
+
+1. **Add/Modify Content in Contentful**
+   - Go to Contentful Web App
+   - Edit book entries
+   - Publish changes
+
+2. **Test with Draft Mode**
+   ```
+   http://localhost:3000/api/draft?secret=my_super_secret&slug=book-title-slug
+   ```
+
+3. **Update GraphQL Queries**
+   - Edit `lib/api.ts`
+   - Add new fields to `BOOK_GRAPHQL_FIELDS`
+
+4. **Build New Components**
+   - Create in `app/_components/`
+   - Follow existing patterns (see `star-rating-display.tsx`)
+
+5. **Test Locally**
+   ```bash
+   npm run dev
+   ```
+
+### Adding a New Book Page/Route
+
+```typescript
+// app/books/my-new-route/page.tsx
+import { getAllBooks } from "@/lib/api";
+
+export default async function MyBookPage() {
+  const { items: books } = await getAllBooks(false, 10);
+  
+  return (
+    <div className="container mx-auto px-5">
+      <h1>My Custom Book Page</h1>
+      {/* Your component logic */}
+    </div>
+  );
+}
+```
+
+### Working with Taxonomies (Filters)
+
+Taxonomies are used for categorization. To filter books:
+
+```typescript
+// In your component or API
+const { items } = await getAllBooks(
+  false,           // isDraftMode
+  10,              // limit
+  0,               // skip
+  ['tax-id-1', 'tax-id-2']  // filter by taxonomy IDs
+);
+```
+
+------
+
+## 🚢 Deployment & Production
+
+### Deploy to Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fcms-contentful&project-name=nextjs-contentful-blog&repository-name=nextjs-contentful-blog&demo-title=Next.js+Blog&demo-description=Static+blog+with+multiple+authors+using+Draft+Mode&demo-url=https%3A%2F%2Fnext-blog-contentful.vercel.app%2F&demo-image=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Fv1625705016%2Ffront%2Fexamples%2FCleanShot_2021-07-07_at_19.43.15_2x.png&integration-ids=oac_aZtAZpDfT1lX3zrnWy7KT9VA&env=CONTENTFUL_PREVIEW_SECRET&envDescription=Any%20URL%20friendly%20value%20to%20secure%20Draft%20Mode)
 
+#### Manual Deployment Steps
+
+1. **Push to Git**
+   ```bash
+   git push origin main
+   ```
+
+2. **Import to Vercel**
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import your repository
+   - **Important**: Add all environment variables from `.env.local`
+
+3. **Set Environment Variables**
+   - In Vercel dashboard → Settings → Environment Variables
+   - Add all `CONTENTFUL_*` variables
+   - Add `NEXT_PUBLIC_ALGOLIA_*` if using search
+
+4. **Deploy**
+   - Vercel will auto-deploy on push to main branch
+
+---
+
+## 🔌 Setting Up Draft Mode (Content Preview)
+
+Allows content editors to preview unpublished changes.
+
+### In Contentful:
+
+1. Go to **Settings > Content preview**
+2. Click **Add content preview**
+3. Fill in:
+   - **Name**: Development Preview
+   - **Content preview URL**:
+     ```
+     http://localhost:3000/api/draft?secret=my_super_secret&slug={entry.fields.slug}
+     ```
+     (Replace with your production URL for production)
+
+4. Check **Book** content type
+5. Save
+
+### Usage:
+
+1. Edit a book entry
+2. Make changes (don't publish)
+3. Click **Open preview** in sidebar
+4. See unpublished changes live!
+
+Exit draft mode: Navigate to `/api/disable-draft`
+
+---
+
+## 🔄 Setting Up On-Demand Revalidation (Webhooks)
+
+Enables instant cache updates when content changes.
+
+### In Contentful:
+
+1. Go to **Settings > Webhooks**
+2. Click **Add webhook**
+3. Configure:
+   - **Name**: Vercel Revalidation
+   - **URL**: `https://your-site.vercel.app/api/revalidate`
+   - **Triggers**: Select "Publish" and "Unpublish" for Entries and Assets
+   - **Secret header**: 
+     - Key: `x-vercel-reval-key`
+     - Value: `my_super_secret` (your `CONTENTFUL_REVALIDATE_SECRET`)
+   - **Content type**: `application/json`
+
+4. Save and activate
+
+### Test:
+
+1. Edit and publish a book in Contentful
+2. Visit your site - changes appear instantly!
+3. Check webhook logs in Contentful for 200 status
+
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### 1. "GraphQL Errors: TOO_COMPLEX_QUERY"
+**Problem**: Querying too many books at once
+
+**Solution**: Reduce the `limit` in `getAllBooks()` calls
+```typescript
+const { items } = await getAllBooks(false, 20); // Instead of 100
+```
+
+#### 2. Books Not Showing
+**Checklist**:
+- ✅ Content published in Contentful?
+- ✅ Environment variables correct?
+- ✅ `npm run setup` executed?
+- ✅ GraphQL query includes all fields?
+
+**Debug**:
+```typescript
+// In lib/api.ts, add logging
+const result = await fetchGraphQL(query, preview);
+console.log('GraphQL Result:', JSON.stringify(result, null, 2));
+```
+
+#### 3. Draft Mode Issues
+- Ensure `CONTENTFUL_PREVIEW_SECRET` matches in code and Contentful URL
+- Check preview token vs. delivery token
+- Verify `draftMode()` is awaited: `const { isEnabled } = await draftMode();`
+
+#### 4. Images Not Loading
+- Check asset is published in Contentful
+- Verify `coverImage` field in GraphQL query includes `url`
+- Check Next.js `next.config.js` has Contentful domain in `images.remotePatterns`
+
+#### 5. TypeScript Errors After Adding Field
+- Update TypeScript interfaces
+- Restart TS server: `Cmd/Ctrl + Shift + P` → "Restart TS Server"
+
+---
+
+## 📚 Best Practices for Book Features
+
+### 1. **Always Use Type Safety**
+```typescript
+// Good ✅
+interface Book {
+  title: string;
+  rating?: number;
+}
+
+// Avoid ❌
+const book: any = ...;
+```
+
+### 2. **Handle Missing Data Defensively**
+```typescript
+// Good ✅
+{book.authors?.map((a) => a.name).join(", ") || "Unknown Author"}
+
+// Risky ❌
+{book.authors.map((a) => a.name).join(", ")}
+```
+
+### 3. **Filter Falsy Values**
+```typescript
+const taxonomies = book.taxonomiesCollection?.items.filter(Boolean) || [];
+```
+
+### 4. **Use Contentful's Reference Pattern**
+```graphql
+authorsCollection(limit: 10) {
+  items {
+    name
+    bio { json }
+  }
+}
+```
+
+### 5. **Optimize GraphQL Queries**
+- Only request fields you need
+- Limit nested collections
+- Use fragments for reusable fields
+
+### 6. **Leverage Next.js 15 Features**
+```typescript
+// Async params/searchParams
+const { slug } = await params;
+const { isEnabled } = await draftMode();
+
+// Cache tags for revalidation
+fetch(..., { next: { tags: ['books'] } })
+```
+
+---
+
+## 🎓 Learning Resources
+
+### Next.js 15 Specifics
+- **Async Params**: `const { slug } = await params;`
+- **Async Headers**: `const { isEnabled } = await draftMode();`
+- [Next.js Docs](https://nextjs.org/docs)
+
+### Contentful
+- [GraphQL API Docs](https://www.contentful.com/developers/docs/references/graphql/)
+- [Content Management API](https://www.contentful.com/developers/docs/references/content-management-api/)
+- [Rich Text Rendering](https://www.contentful.com/developers/docs/tutorials/general/rich-text-and-react/)
+
+### This Codebase
+- Check [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for custom app development
+- Review [app/_components/book-list](app/_components/book-list) for client-side patterns
+- See [lib/api.ts](lib/api.ts) for all available API functions
+
+---
+
+## 📝 Advanced: Creating a Custom Contentful Field
+
+Example: Creating a "Series Selector" field
+
+1. **Create Component**
+   ```typescript
+   // contentful-custom-app/src/locations/SeriesField.tsx
+   import { FieldAppSDK } from '@contentful/app-sdk';
+   
+   const SeriesField = ({ sdk }: { sdk: FieldAppSDK }) => {
+     const [value, setValue] = useState(sdk.field.getValue());
+     
+     return <select onChange={(e) => setValue(e.target.value)}>
+       {/* Your options */}
+     </select>;
+   };
+   ```
+
+2. **Register in Contentful**
+   - Apps → Your App → Locations
+   - Enable "Entry field"
+   - Select field types: "Short text", "JSON", etc.
+
+3. **Assign to Content Type**
+   - Content model → Book → Your field
+   - Appearance → Select your app
+
+---
+
+## 🤝 Contributing
+
+### Adding a New Book Source
+
+1. Create seeder function in `cli-scripts/`
+2. Update `books.json` schema
+3. Modify `seed-books.js` to handle new structure
+4. Document in README
+
+### Code Style
+
+- Use TypeScript for all new files
+- Follow existing component patterns
+- Add JSDoc comments for complex functions
+- Run `npm run lint:fix` before committing
+
+---
+
+## 🔗 Related Documentation
+
+- [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) - Custom app development
+- [VERCEL-TROUBLESHOOTING.md](./VERCEL-TROUBLESHOOTING.md) - Deployment issues
+
+---
+
+## 📞 Getting Help
+
+- **Next.js Issues**: [GitHub Discussions](https://github.com/vercel/next.js/discussions)
+- **Contentful Issues**: [Community Forum](https://www.contentful.com/developers/community/)
+- **Project Issues**: Open an issue in this repository
+
+---
+
+## 📖 Setup Guide 
+
 ### Related examples
-
-- [AgilityCMS](/examples/cms-agilitycms)
-- [Builder.io](/examples/cms-builder-io)
-- [ButterCMS](/examples/cms-buttercms)
-- [Contentful](/examples/cms-contentful)
-- [Cosmic](/examples/cms-cosmic)
-- [DatoCMS](/examples/cms-datocms)
-- [DotCMS](/examples/cms-dotcms)
-- [Drupal](/examples/cms-drupal)
-- [Enterspeed](/examples/cms-enterspeed)
-- [Ghost](/examples/cms-ghost)
-- [GraphCMS](/examples/cms-graphcms)
-- [Kontent.ai](/examples/cms-kontent-ai)
-- [MakeSwift](/examples/cms-makeswift)
-- [Payload](/examples/cms-payload)
-- [Plasmic](/examples/cms-plasmic)
-- [Prepr](/examples/cms-prepr)
-- [Prismic](/examples/cms-prismic)
-- [Sanity](/examples/cms-sanity)
-- [Sitecore XM Cloud](/examples/cms-sitecore-xmcloud)
-- [Sitefinity](/examples/cms-sitefinity)
-- [Storyblok](/examples/cms-storyblok)
-- [TakeShape](/examples/cms-takeshape)
-- [Tina](/examples/cms-tina)
-- [Umbraco](/examples/cms-umbraco)
-- [Umbraco heartcore](/examples/cms-umbraco-heartcore)
-- [Webiny](/examples/cms-webiny)
-- [WordPress](/examples/cms-wordpress)
-- [Blog Starter](/examples/blog-starter)
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
-```bash
-npx create-next-app --example cms-contentful cms-contentful-app
-```
-
-```bash
-yarn create next-app --example cms-contentful cms-contentful-app
-```
-
-```bash
-pnpm create next-app --example cms-contentful cms-contentful-app
-```
-
-## Configuration
-
-### Step 1. Create an account and a space on Contentful
-
-First, [create an account on Contentful](https://www.contentful.com/sign-up/).
-
-After creating an account, create a new empty **space** from the [dashboard](https://app.contentful.com/) and assign to it any name of your liking.
-
-### Step 2. Create a content model
-
-The [content model](https://www.contentful.com/developers/docs/concepts/data-model/) defines the data structures of your application/websites. The structures are flexible and you can tailor them to your needs.
-
-For this example you need to create a content model that defines an author and a post content type. **You can create these two by running a script or by doing it manually** to familiarize yourself with the Contentful user interface.
-
-#### Run a script to create the content model
-
-This project includes a setup script which you can use to set up the content model expected by the source code.
-
-In your Contentful dashboard go to **Settings > General Settings** and copy the **Space ID**.
-
-Next, go to **Settings > CMA tokens** and create a new token by clicking **Create personal access token**. This token has the same access rights as the logged in user. **Do not share it publicly**, you will only use it to set up your space and can delete it afterwards.
-
-With the space ID and management access token at hand run the following command:
-
-```
-npx cross-env CONTENTFUL_SPACE_ID=YOUR_SPACE_ID CONTENTFUL_MANAGEMENT_TOKEN=XXX npm run setup
-```
-
-This command will create the needed content structures and set up your Contentful space ready to use. The output should look as follows:
-
-```
-> cms-contentful@1.0.0 setup /Users/stefan.judis/Projects/next.js/examples/cms-contentful
-> node ./contentful/setup.js $CONTENTFUL_SPACE_ID $CONTENTFUL_MANAGEMENT_TOKEN
-
-┌──────────────────────────────────────────────────┐
-│ The following entities are going to be imported: │
-├─────────────────────────────────┬────────────────┤
-│ Content Types                   │ 2              │
-├─────────────────────────────────┼────────────────┤
-│ Editor Interfaces               │ 2              │
-├─────────────────────────────────┼────────────────┤
-│ Locales                         │ 1              │
-├─────────────────────────────────┼────────────────┤
-│ Webhooks                        │ 0              │
-├─────────────────────────────────┼────────────────┤
-│ Entries                         │ 0              │
-├─────────────────────────────────┼────────────────┤
-│ Assets                          │ 0              │
-└─────────────────────────────────┴────────────────┘
- ✔ Validating content-file
- ✔ Initialize client (1s)
- ✔ Checking if destination space already has any content and retrieving it (2s)
- ✔ Apply transformations to source data (1s)
- ✔ Push content to destination space
-   ✔ Connecting to space (1s)
-   ...
-   ...
-   ...
-```
-
-#### Create the content model manually
-
-##### Create an `Author` content type
-
-From your contentful space, go to **Content model** and add a new content type:
-
-- Give it the **Name** `Author`, the **Api Identifier** should be `author`
-
-Once the content model is saved, add these fields (you don't have to modify the settings unless specified):
-
-- `name` - **Text** field (type **short text**). **Field ID** should be set to `name`
-- `picture` - **Media** field (type **one file**). **Field ID** should be set to `picture`
-
-Save the content type and continue.
-
-##### Create a `post` type
-
-From your contentful space, go to **Content model** and add another content type:
-
-- Give it the **Name** `Post`, the **Api Identifier** should be `post`
-
-Next, add these fields (you don't have to modify the settings unless specified):
-
-- `title` - **Text** field (type **short text**)
-- `content` - **Rich text** field
-- `excerpt` - **Text** field (type **Long text, full-text search**)
-- `coverImage` - **Media** field (type **one file**)
-- `date` - **Date and time** field
-- `slug` - **Text** field. You can optionally go to the settings of this field, and under **Appearance**, select **Slug** to display it as a slug of the `title` field.
-- `author` - **Reference** field (type **one reference**)
-
-Save the content type and continue.
-
-### Step 3. Validate your content model
-
-After setting up the content model (either manually or by running `npm run setup` or `yarn setup`), it should look as follows.
-
-**Content model overview**
-
-![Content model overview](https://github.com/vercel/next.js/assets/9113740/d3f76907-7046-4d94-b285-eb89b87aa223)
-
-### Step 4. Populate Content
-
-Go to the **Content** section in your space, then click on **Add entry** and select the **Author** content type:
-
-- You just need **1 author entry**.
-- Use dummy data for the text.
-- For the image, you can download one from [Unsplash](https://unsplash.com/).
-
-Next, create another entry with the content type **Post**:
-
-- We recommend creating at least **2 post entries**.
-- Use dummy data for the text.
-- For images, you can download them from [Unsplash](https://unsplash.com/).
-- Pick the **author** you created earlier.
-
-**Important:** For each entry and asset, you need to click on **Publish**. If not, the entry will be in draft state.
-
-![Published content entry](https://github.com/vercel/next.js/assets/9113740/e1b4a3fe-45f4-4851-91db-8908d3ca18e9)
-
-### Step 5. Set up environment variables
-
-From your contentful space, go to **Settings > API keys**. There will be an example Content delivery / preview token - you can use these API keys. (You may also create a new key.)
-
-Next, copy the `.env.local.example` file in this directory to `.env.local` (which will be ignored by Git):
-
-```bash
-cp .env.local.example .env.local
-```
-
-Then set each variable on `.env.local`:
-
-- `CONTENTFUL_SPACE_ID` should be the **Space ID** field of your API Key
-- `CONTENTFUL_ACCESS_TOKEN` should be the **[Content Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/) - access token** field of your API key
-- `CONTENTFUL_PREVIEW_ACCESS_TOKEN` should be the **[Content Preview API](https://www.contentful.com/developers/docs/references/content-preview-api/) - access token** field of your API key
-- `CONTENTFUL_MANAGEMENT_TOKEN` should be a **[Content Management API](https://www.contentful.com/developers/docs/references/content-management-api/) - access token**. Create one at **Settings > CMA tokens** to enable API usage monitoring. This is optional but required for the API usage dashboard feature.
-- `CONTENTFUL_PREVIEW_SECRET` should be any value you want. It must be URL friendly as the dashboard will send it as a query parameter to enable Next.js Draft Mode
-- - `CONTENTFUL_REVALIDATE_SECRET` should be any value you want. This will be the value you pass in as a secret header from the Contentful Webhook settings to use **[On-Demand Revalidation](https://vercel.com/docs/concepts/next.js/incremental-static-regeneration#on-demand-revalidation)**
-
-Your `.env.local` file should look like this:
-
-```bash
-CONTENTFUL_SPACE_ID=...
-CONTENTFUL_ACCESS_TOKEN=...
-CONTENTFUL_PREVIEW_ACCESS_TOKEN=...
-CONTENTFUL_MANAGEMENT_TOKEN=...
-CONTENTFUL_PREVIEW_SECRET=...
-CONTENTFUL_REVALIDATE_SECRET=...
-```
-
-### Step 6. Run Next.js in development mode
-
-```bash
-npm install
-npm run dev
-
-# or
-
-yarn install
-yarn dev
-```
-
-Your blog should be up and running on [http://localhost:3000](http://localhost:3000)! If it doesn't work, post on [GitHub discussions](https://github.com/vercel/next.js/discussions).
-
-### Step 7. Try Draft Mode
-
-In your Contentful space, go to **Settings > Content preview** and add a new content preview for development.
-
-The **Name** field may be anything, like `Development`. Then, under **Content preview URLs**, check **Post** and set its value to:
 
 ```
 http://localhost:3000/api/draft?secret=<CONTENTFUL_PREVIEW_SECRET>&slug={entry.fields.slug}
@@ -314,7 +733,6 @@ In your Contentful space, go to **Settings > Webhooks** and add a new webhook:
 - **Verify:** You can verify if your request was made successfully by checking the webhook request log on Contentful and checking for a successful 200 status code, or by having your functions tab open on Vercel when committing the change (log drains may also be used). If you are experiencing issues with the api call, ensure you have correctly entered in the value for environment variable `CONTENTFUL_REVALIDATE_SECRET` within your Vercel deployment.
 
   ![Content successful request](https://github.com/vercel/next.js/assets/9113740/ed1ffbe9-4dbf-4ec6-9c1f-39c8949c4d38)
-=======
-# book-contentfulCMS-nextjs
-book-contentfulCMS-nextjs
->>>>>>> book-contentfulCMS-nextjs/main
+
+---
+

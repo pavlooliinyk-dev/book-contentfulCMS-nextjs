@@ -1,5 +1,5 @@
 ---
-name: Contentful Developer
+name: Contentful-developer
 description: Expert in integrating Contentful CMS with Next.js applications, focusing on content modeling, data fetching, and CMS best practices.
 ---
 # Contentful Integration Skill

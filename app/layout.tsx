@@ -5,7 +5,7 @@ import { EXAMPLE_PATH, CMS_NAME } from "@/lib/constants";
 import { TailwindUtilities } from "./_components/tailwind-utilities";
 
 export const metadata = {
-  title: `Next.js and ${CMS_NAME} Example`,
+  title: `Next.js and ${CMS_NAME} Example ${EXAMPLE_PATH}`,
   description: `This is built with Next.js and ${CMS_NAME}.`,
 };
 
@@ -26,7 +26,7 @@ function Footer() {
   return (
     <footer className="bg-accent-1 border-t border-accent-2">
       <div className="container mx-auto px-5">
-        <span>Footer</span>        
+        <div>Footer</div>        
       </div>
     </footer>
   );

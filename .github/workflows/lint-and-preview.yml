@@ -26,4 +26,4 @@ on:
       - name: Run lint
         run: npm run lint
       
-      - run: echo "Deployment complete!"
+      - run: echo "Deployment to (Preview) Vercel complete!"

@@ -67,9 +67,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Contentful API Error:", errorText);
-        return NextResponse.json({ error: `Contentful API error: ${res.status}`, detail: errorText }, { status: res.status });
+      const errorText = await res.text();
+      console.error("Contentful API Error:", errorText);
+      return NextResponse.json({ error: `Contentful API error: ${res.status}`, detail: errorText }, { status: res.status });
     }
 
     const json = await res.json();
@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
       ...book,
       slug: book.title
         ? book.title
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/[\s_-]+/g, "-")
-            .replace(/^-+|-+$/g, "")
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/[\s_-]+/g, "-")
+          .replace(/^-+|-+$/g, "")
         : "",
     }));
 

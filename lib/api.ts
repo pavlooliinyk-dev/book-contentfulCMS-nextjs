@@ -110,10 +110,10 @@ export async function getAllBooks(
     taxonomies: book.taxonomiesCollection?.items || [],
     slug: book.title
       ? book.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/[\s_-]+/g, "-")
-          .replace(/^-+|-+$/g, "")
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "")
       : "",
   }));
 

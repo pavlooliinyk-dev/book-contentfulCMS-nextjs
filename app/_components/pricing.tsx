@@ -44,8 +44,8 @@ export default function Pricing({ bookId }: { bookId: string }) {
       </span>
       <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
         pricing.availability === 'in stock' ? 'bg-green-100 text-green-800' :
-        pricing.availability === 'out of stock' ? 'bg-red-100 text-red-800' :
-        'bg-yellow-100 text-yellow-800'
+          pricing.availability === 'out of stock' ? 'bg-red-100 text-red-800' :
+            'bg-yellow-100 text-yellow-800'
       }`}>
         {pricing.availability}
       </span>

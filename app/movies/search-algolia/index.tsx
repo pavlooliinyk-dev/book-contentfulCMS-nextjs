@@ -102,12 +102,12 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
     <div className="mb-8">
       <InstantSearch indexName={indexName} searchClient={searchClient}
         initialUiState={{
-            [indexName]: {
+          [indexName]: {
             // Sets the initial query for the SearchBox widget
             query: "dune",
             // Sets the initial page number for the Pagination widget
             page: 1,
-            },
+          },
         }}>
         <Configure hitsPerPage={20} />
         <SearchBox

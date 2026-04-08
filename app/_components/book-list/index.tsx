@@ -2,7 +2,8 @@
 
 // import React from "react";
 import Link from "next/link";
-import { Book, useBooksList } from "./useBooksList";
+import { Book, TaxonomyTerm } from "@/lib/types";
+import { useBooksList } from "./useBooksList";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 
@@ -15,7 +16,7 @@ export default function BooksClient({
 }: { 
   initialBooks: Book[], 
   initialTotal: number,
-  availableTaxonomies?: any[]
+  availableTaxonomies?: TaxonomyTerm[]
   withFilters?: boolean
   initialFilters?: string[]
 }) {

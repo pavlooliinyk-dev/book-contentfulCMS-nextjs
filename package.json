@@ -38,7 +38,7 @@
     "contentful-management": "^11.74.0",
     "dotenv": "^17.3.1",
     "eslint": "^8",
-    "eslint-config-next": "14.2.18"
+    "eslint-config-next": "16.2.3"
   },
   "contributes": {
     "chatSkills": [

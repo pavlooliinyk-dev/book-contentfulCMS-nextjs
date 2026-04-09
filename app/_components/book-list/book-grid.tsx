@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Book } from "@/lib/types";
@@ -20,7 +19,7 @@ export default function BookGrid({ books }: BookGridProps) {
               <Link href={`/books/${b.slug}`}>
                 <Image
                   src={b.coverImage.url}
-                  alt={b.title || "Book cover"}
+                  alt={`Image of ${b.title}` || "Book cover"}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover hover:opacity-80 transition shadow-md rounded"
@@ -33,7 +32,6 @@ export default function BookGrid({ books }: BookGridProps) {
               {b.title}
             </Link>
           </h3>
-          {/* <p>bookId:{b.slug}</p> */}
           {b.slug && <Pricing bookId={b.slug} />}
           <div className="text-lg mb-4 text-gray-700">
             {b.authors && b.authors.length > 0 && (
@@ -46,7 +44,7 @@ export default function BookGrid({ books }: BookGridProps) {
           {b.slug && (
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs uppercase tracking-wider">
-                {JSON.stringify(b.slug)}
+                {b.slug}
               </span>
             </div>
           )}

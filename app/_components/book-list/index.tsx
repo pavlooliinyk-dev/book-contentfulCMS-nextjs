@@ -1,6 +1,5 @@
 "use client";
 
-// import React from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";

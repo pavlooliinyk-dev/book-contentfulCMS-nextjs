@@ -1,6 +1,6 @@
 /**
  * Migration to add slug field to Book content type
- * Run: contentful space migration cli-scripts/add-slug-field-migration.js
+ * Run: contentful space migration cms-cli-scripts/add-slug-field-migration.js
  */
 
 module.exports = function (migration) {

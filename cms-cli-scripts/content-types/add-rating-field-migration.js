@@ -5,12 +5,12 @@
  * to support the star rating field extension.
  * 
  * To run this migration:
- * npx contentful space migration cli-scripts/add-rating-field-migration.js \
+ * npx contentful space migration cms-cli-scripts/add-rating-field-migration.js \
  *   --space-id YOUR_SPACE_ID \
  *   --access-token YOUR_CMA_TOKEN
  * 
  * Or if using environment:
- * npx contentful space migration cli-scripts/add-rating-field-migration.js \
+ * npx contentful space migration cms-cli-scripts/add-rating-field-migration.js \
  *   --space-id YOUR_SPACE_ID \
  *   --environment-id YOUR_ENV_ID \
  *   --access-token YOUR_CMA_TOKEN

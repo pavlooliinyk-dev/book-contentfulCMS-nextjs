@@ -96,7 +96,7 @@ cms-contentful-app/
 │   ├── constants.ts              # App constants
 │   └── hooks/                    # Custom React hooks
 │
-├── cli-scripts/                  # Contentful automation
+├── cms-cli-scripts/                  # Contentful automation
 │   ├── setup.js                  # Initialize content model
 │   ├── seed-books.js             # Populate sample data
 │   ├── migration.js              # Content type definitions
@@ -200,7 +200,7 @@ The project uses these Contentful content types:
 
 ## 🔧 Migration 
 
-Content model defined in `cli-scripts/content-types/` (taxonomyTerm.js, author.js, book.js, homePage.js).
+Content model defined in `cms-cms-cli-scripts/content-types/` (taxonomyTerm.js, author.js, book.js, homePage.js).
 
 **Setup:**
 ```bash
@@ -208,7 +208,7 @@ npm run migrate  # Create content types
 npm run seed     # Populate 7 sample books
 ```
 
-See [cli-scripts/content-types/README.md](cli-scripts/content-types/README.md) for details.
+See [cms-cms-cli-scripts/content-types/README.md](cms-cli-scripts/content-types/README.md) for details.
 
 ---
 
@@ -249,7 +249,7 @@ See [cli-scripts/content-types/README.md](cli-scripts/content-types/README.md) f
 
 #### Step 1: Update Content Type Definition
 
-Edit [cli-scripts/content-types/book.js](cli-scripts/content-types/book.js):
+Edit [cms-cli-scripts/content-types/book.js](cms-cli-scripts/content-types/book.js):
 
 ```javascript
 // Add the new field to the Book content type
@@ -331,7 +331,7 @@ Update [app/books/[slug]/page.tsx](app/books/[slug]/page.tsx):
 
 #### Step 5: Update Seed Data (Optional)
 
-Add to `cli-scripts/books.json`:
+Add to `cms-cli-scripts/books.json`:
 
 ```json
 {
@@ -680,7 +680,7 @@ Example: Creating a "Series Selector" field
 
 ### Adding a New Book Source
 
-1. Create seeder function in `cli-scripts/`
+1. Create seeder function in `cms-cli-scripts/`
 2. Update `books.json` schema
 3. Modify `seed-books.js` to handle new structure
 4. Document in README

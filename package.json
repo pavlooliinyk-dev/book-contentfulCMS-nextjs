@@ -6,7 +6,6 @@
     "start": "next start",
     "build": "node build-contentful-app.js && next build",
     "build:contentful-app": "node build-contentful-app.js",
-    "setup": "node ./cli-scripts/setup.js",
     "migrate": "contentful space migration cli-scripts/migration.js",
     "seed": "node ./cli-scripts/seed-books.js",
     "setup-app": "node setup-contentful-app.js",

@@ -1,20 +1,6 @@
-# Contentful API Usage Dashboard App
+# Contentful API Usage Dashboard
 
-A custom Contentful app that displays your API usage statistics directly in your Contentful space.
-
-## Features
-
-- 📊 **Real-time API usage tracking** - View total API requests for the current month
-- 📈 **Visual progress bar** - Monitor usage against your quota with color-coded warnings
-- 🔍 **Detailed breakdown** - See usage by API type (CDA, CPA, CMA, GraphQL)
-- 🎯 **Quota monitoring** - Track usage against your 100K/month quota
-- ⚠️ **Usage alerts** - Visual warning when usage exceeds 80%
-
-## What This App Shows
-
-**Total API requests**: {number}
-
-Total API calls made this month from a 100K/month quota. This number includes CMA, CDA, CPA, and GraphQL requests.
+Displays API usage statistics in your Contentful space with quota monitoring and visual alerts.
 
 ## Installation
 
@@ -33,87 +19,26 @@ npm start
 
 This will start a local development server at `http://localhost:3001`.
 
-### Step 3: Create a Custom App Definition in Contentful
+### Step 3: Create App in Contentful
 
-1. Go to your Contentful space
-2. Navigate to **Apps** → **Manage app definitions**
-3. Click **Create app**
-4. Fill in the details:
-   - **Name**: API Usage Dashboard
-   - **App URL** (for local dev): `http://localhost:3001`
-   - **App URL** (for production): Your deployed app URL (see deployment section)
-5. Under **Locations**, enable:
-   - ✅ **Home** - Display the usage dashboard on the space home page
-   - ✅ **App configuration** - Allow users to configure the app
-6. Save the app definition
+1. **Apps** → **Manage app definitions** → **Create app**
+2. Name: API Usage Dashboard, URL: `http://localhost:3001`
+3. Enable locations: **Home** + **App configuration**
+4. Save
 
-### Step 4: Install the App in Your Space
+### Step 4: Install & View
 
-1. Go to **Apps** → **Custom apps**
-2. Find your **API Usage Dashboard** app
-3. Click **Install**
-4. Navigate to **Home** to see your API usage dashboard
+**Apps** → **Custom apps** → Install → Navigate to **Home**
 
 ## Deployment
 
-### Option 1: Deploy to Vercel
-
-1. Build the app:
 ```bash
 npm run build
+npx vercel --prod  # or npx netlify deploy --prod --dir=build
 ```
 
-2. Deploy the `build` folder to Vercel:
-```bash
-npx vercel --prod
-```
+Update app URL in Contentful to production URL. Requires HTTPS.
 
-3. Update your app definition URL in Contentful to the Vercel URL
-
-### Option 2: Deploy to Netlify
-
-1. Build the app:
-```bash
-npm run build
-```
-
-2. Deploy the `build` folder:
-```bash
-npx netlify deploy --prod --dir=build
-```
-
-3. Update your app definition URL in Contentful to the Netlify URL
-
-### Option 3: Deploy to Contentful's Hosting (Recommended for Custom Apps)
-
-While Contentful doesn't provide built-in hosting for custom apps, you can use any static hosting service. The key requirements are:
-- HTTPS support
-- CORS headers configured to allow requests from `app.contentful.com`
-
-## How It Works
-
-1. **Authentication**: The app uses the Contentful App SDK which automatically handles authentication with your space
-2. **Data Fetching**: Uses the Contentful Management API (via `sdk.cmaAdapter`) to fetch usage statistics
-3. **No Backend Required**: All API calls are made directly from the browser using the authenticated SDK
-4. **Permissions**: Uses the current user's permissions - no additional tokens needed
-
-## Project Structure
-
-```
-contentful-app/
-├── src/
-│   ├── components/
-│   │   └── UsageCard.tsx       # Main usage display component
-│   ├── locations/
-│   │   ├── HomePage.tsx        # Home page location
-│   │   └── ConfigScreen.tsx    # App configuration screen
-│   ├── index.tsx               # App entry point
-│   └── index.css               # Global styles
-├── contentful-app-manifest.json # App manifest
-├── package.json
-├── vite.config.ts
-└── tsconfig.json
-```
 
 ## Development
 

@@ -1,34 +1,19 @@
 # Content Type Migrations
 
-This directory contains the Contentful migration scripts organized by content type.
-
-## Structure
-
-```
-cli-scripts/
-├── migration.js              # Main migration entry point (single source of truth)
-└── content-types/            # Individual content type definitions
-    ├── taxonomyTerm.js       # TaxonomyTerm content type
-    ├── author.js             # Author content type
-    ├── book.js               # Book content type
-    └── homePage.js           # HomePage content type
-```
+Modular migration scripts for Contentful content model.
 
 ## Usage
 
-Run the migration to create all content types from scratch:
-
 ```bash
-npm run migrate
+npm run migrate  # Create all content types
+npm run seed     # Populate sample data
 ```
 
-Or directly with Contentful CLI:
 
-```bash
-contentful space migration cli-scripts/migration.js
+## Troubleshooting
+
+- **Content type exists**: Migration uses `createContentType()`. Delete existing types first.
+- **Field not showing**: Run migration, refresh Contentful UI.
+- **Validation errors**: Check slug pattern and rating range (1-5).
 ```
-
-## What This Migration Does
-
-Creates all content types from scratch in a fresh Contentful space:
 

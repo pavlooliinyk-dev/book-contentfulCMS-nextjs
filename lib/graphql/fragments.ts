@@ -25,8 +25,20 @@ export const TAXONOMY_TERM_WITH_PARENT_FIELDS = `
 
 export const BOOK_GRAPHQL_FIELDS = `
   title
+  slug
   shortDescription {
     json
+    links {
+      assets {
+        block {
+          sys {
+            id
+          }
+          url
+          description
+        }
+      }
+    }
   }
   coverImage {
     url

@@ -1,6 +1,5 @@
 
 import { BOOK_GRAPHQL_FIELDS, TAXONOMY_TERM_GRAPHQL_FIELDS, HOME_PAGE_GRAPHQL_FIELDS } from './graphql/fragments';
-import { generateSlugFromTitle } from './utils/slug';
 import { 
   GraphQLResponse, 
   BookCollectionData, 
@@ -13,7 +12,6 @@ import {
 } from './types';
 import { 
   BOOKS_DEFAULT_LIMIT, 
-  BOOKS_SLUG_LOOKUP_LIMIT, 
   TAXONOMIES_MAX_LIMIT 
 } from './constants';
 
@@ -49,11 +47,34 @@ export async function getBookBySlug(
   slug: string, 
   preview: boolean
 ): Promise<Book | undefined> {
-  // NOTE: Slug is generated client-side from title, not stored in Contentful
-  // This is a workaround - consider adding a slug field to Contentful for better performance
-  const { items: allBooks } = await getAllBooks(preview, BOOKS_SLUG_LOOKUP_LIMIT);
-  const found = allBooks.find((book) => book.slug === slug);
-  return found;
+  const result = await fetchGraphQL<BookCollectionData>(
+    `query {
+      bookCollection(
+        where: { slug: "${slug}" },
+        limit: 1,
+        preview: ${preview ? "true" : "false"}
+      ) {
+        items {
+          ${BOOK_GRAPHQL_FIELDS}
+        }
+        total
+      }
+    }`,
+    preview,
+  );
+
+  const bookRaw = result?.data?.bookCollection?.items?.[0];
+  
+  if (!bookRaw) {
+    return undefined;
+  }
+
+  // Transform to Book type
+  return {
+    ...bookRaw,
+    authors: bookRaw.authorsCollection?.items?.map((item) => item.name) || [],
+    taxonomies: bookRaw.taxonomiesCollection?.items || [],
+  };
 }
 
 export async function getAllBooks(
@@ -86,12 +107,11 @@ export async function getAllBooks(
   const items = entries?.data?.bookCollection?.items || [];
   const total = entries?.data?.bookCollection?.total || 0;
   
-  // Generate virtual slugs from titles and transform to Book type
+  // Transform to Book type with authors and taxonomies arrays
   const formattedItems: Book[] = items.map((book: BookRaw) => ({
     ...book,
     authors: book.authorsCollection?.items?.map((item) => item.name) || [],
     taxonomies: book.taxonomiesCollection?.items || [],
-    slug: generateSlugFromTitle(book.title),
   }));
 
   return { items: formattedItems, total };

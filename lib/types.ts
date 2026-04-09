@@ -12,6 +12,23 @@ export interface Author {
   name: string;
 }
 
+export interface Asset {
+  sys: {
+    id: string;
+  };
+  url: string;
+  description: string;
+}
+
+export interface RichTextContent {
+  json: Document;
+  links?: {
+    assets: {
+      block: Asset[];
+    };
+  };
+}
+
 export interface TaxonomyTerm {
   sys: {
     id: string;
@@ -28,7 +45,8 @@ export interface TaxonomyTerm {
 
 export interface BookRaw {
   title: string;
-  shortDescription?: { json: Document };
+  slug: string;
+  shortDescription?: RichTextContent;
   coverImage?: { url: string };
   numberOfPages?: number;
   rating?: number | null;
@@ -38,9 +56,8 @@ export interface BookRaw {
   taxonomiesCollection?: { items: TaxonomyTerm[] };
 }
 
-// Transformed types (with computed fields like slug, authors array)
+// Transformed types (with computed fields like authors array)
 export interface Book extends Omit<BookRaw, 'authorsCollection' | 'taxonomiesCollection'> {
-  slug: string;
   authors: string[];
   taxonomies: TaxonomyTerm[];
 }

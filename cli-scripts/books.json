@@ -1,7 +1,63 @@
 [
   {
     "title": "The Great Gatsby",
-    "shortDescription": "A story about the young and mysterious millionaire Jay Gatsby and his quixotic passion and obsession with the beautiful former debutante Daisy Buchanan.",
+    "slug": "the-great-gatsby",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "A story about the ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "young and mysterious millionaire",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "Jay Gatsby",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " and his quixotic passion and obsession with the beautiful former debutante ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "Daisy Buchanan",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": ".",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 180,
     "externalResourceLink": "https://example.com/gatsby",
     "authors": [
@@ -15,13 +71,58 @@
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "English", "slug": "lang-en", "type": "language" }
     ],
-    "metaUI": {
+    "metaUi": {
       "position": "right"
-    }
+    },
+    "rating": 4
   },
   {
     "title": "1984",
-    "shortDescription": "A Fiction social science fiction novel and cautionary tale about totalitarianism, mass surveillance, and repressive regimentation.",
+    "slug": "1984",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "A ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "dystopian",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " social science fiction novel and ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "cautionary tale",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " about totalitarianism, mass surveillance, and repressive regimentation.",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 328,
     "externalResourceLink": "https://example.com/1984",
     "authors": [
@@ -36,13 +137,64 @@
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "English", "slug": "lang-en", "type": "language" }
     ],
-     "metaUI": {
+    "metaUi": {
       "position": "right"
-    }
+    },
+    "rating": 4
   },
   {
     "title": "The Hobbit",
-    "shortDescription": "Bilbo Baggins, a hobbit, is whisked away on an unexpected journey by the wizard Gandalf and a company of thirteen dwarves.",
+    "slug": "the-hobbit",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "Bilbo Baggins",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": ", a hobbit, is whisked away on an ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "unexpected journey",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " by the wizard ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "Gandalf",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " and a company of thirteen dwarves.",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 310,
     "externalResourceLink": "https://example.com/hobbit",
     "authors": [
@@ -55,11 +207,62 @@
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "Kids", "slug": "audience-kids", "type": "audience" },
       { "title": "English", "slug": "lang-en", "type": "language" }
-    ]
+    ],
+    "rating": 3
   },
   {
     "title": "Dune",
-    "shortDescription": "Paul Atreides adventure on Arrakis in this sci-fi classic.",
+    "slug": "dune",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "Paul Atreides",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " adventure on ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "Arrakis",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " in this ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "sci-fi classic",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": ".",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 412,
     "externalResourceLink": "https://example.com/dune",
     "authors": [
@@ -72,11 +275,45 @@
       { "title": "Sci-Fi", "slug": "genre-sci-fi", "type": "genre" },
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "Adult", "slug": "audience-adult", "type": "audience" }
-    ]
+    ],
+    "rating": 2
+
   },
   {
     "title": "Sapiens",
-    "shortDescription": "The history of humankind.",
+    "slug": "sapiens",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "The ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "history of humankind",
+                "marks": [{ "type": "bold" }, { "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": ".",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 443,
     "externalResourceLink": "https://example.com/sapiens",
     "authors": [
@@ -89,11 +326,56 @@
       { "title": "Non-Fiction", "slug": "genre-non-fiction", "type": "genre" },
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "French", "slug": "lang-fr", "type": "language" }
-    ]
+    ],
+    "rating": 1
   },
   {
     "title": "The Cat in the Hat",
-    "shortDescription": "A mischievous cat visits two children on a rainy day.",
+    "slug": "the-cat-in-the-hat",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "A ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "mischievous cat",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " visits ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "two children",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " on a rainy day.",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 61,
     "externalResourceLink": "https://example.com/cat-in-the-hat",
     "authors": [
@@ -106,11 +388,56 @@
       { "title": "Kids", "slug": "audience-kids", "type": "audience" },
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "English", "slug": "lang-en", "type": "language" }
-    ]
+    ],
+    "rating": 4
   },
   {
     "title": "The Alchemist",
-    "shortDescription": "A shepherd's journey to find treasure and discover his destiny.",
+    "slug": "the-alchemist",
+    "shortDescription": {
+      "json": {
+        "nodeType": "document",
+        "data": {},
+        "content": [
+          {
+            "nodeType": "paragraph",
+            "data": {},
+            "content": [
+              {
+                "nodeType": "text",
+                "value": "A ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "shepherd's journey",
+                "marks": [{ "type": "italic" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": " to find treasure and discover his ",
+                "marks": [],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": "destiny",
+                "marks": [{ "type": "bold" }],
+                "data": {}
+              },
+              {
+                "nodeType": "text",
+                "value": ".",
+                "marks": [],
+                "data": {}
+              }
+            ]
+          }
+        ]
+      }
+    },
     "numberOfPages": 208,
     "externalResourceLink": "https://example.com/alchemist",
     "authors": [
@@ -123,6 +450,7 @@
       { "title": "Fiction", "slug": "genre-fiction", "type": "genre" },
       { "title": "Adult", "slug": "audience-adult", "type": "audience" },
       { "title": "Portuguese", "slug": "lang-pt", "type": "language" }
-    ]
+    ],
+    "rating": 2
   }
 ]

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { draftMode } from "next/headers";
 import { fetchGraphQL } from "@/lib/api";
 import { BOOK_GRAPHQL_FIELDS } from "@/lib/graphql/fragments";
-import { generateSlugFromTitle } from "@/lib/utils/slug";
 import { BookCollectionData, BookRaw, Book } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -36,12 +35,11 @@ export async function GET(request: NextRequest) {
     const items = result?.data?.bookCollection?.items || [];
     const total = result?.data?.bookCollection?.total || 0;
     
-    // Generate virtual slugs from titles and transform to Book type
+    // Transform to Book type with authors and taxonomies arrays
     const formattedItems: Book[] = items.map((book: BookRaw) => ({
       ...book,
       authors: book.authorsCollection?.items?.map((item) => item.name) || [],
       taxonomies: book.taxonomiesCollection?.items || [],
-      slug: generateSlugFromTitle(book.title),
     }));
 
     return NextResponse.json({ items: formattedItems, total });

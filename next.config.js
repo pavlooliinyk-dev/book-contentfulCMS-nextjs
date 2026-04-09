@@ -7,6 +7,7 @@ module.exports = {
         hostname: 'images.ctfassets.net',
         pathname: '/**',
       },
+      new URL('https://image.tmdb.org/**')
     ],
   },
 };

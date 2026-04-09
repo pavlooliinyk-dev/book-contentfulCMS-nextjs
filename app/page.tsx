@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./_components/intro";
 import MainNavigation from "./_components/main-navigation";
-import ContentfulApiUsage from "./_components/contentful-api-usage";
 import HeroBanner from "./_components/hero-banner";
 
 const BookList = dynamic(() => import("./_components/book-list"), {
@@ -19,16 +18,11 @@ export default async function Page() {
     getAllBooks(isEnabled, 5),
     getHomePage(isEnabled),
   ]);
-
   const heroBook = initialBooks && initialBooks.length > 0 ? initialBooks[0] : null;
 
-  // console.log('homePage', homePage);
   return (
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
-
-      <p className="hidden">{JSON.stringify(homePage, null, 2)}</p>
-
       <MainNavigation />
 
       {homePage?.heroBanner && (

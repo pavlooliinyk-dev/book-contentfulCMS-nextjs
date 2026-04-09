@@ -1,5 +1,5 @@
 import { draftMode } from "next/headers";
-import BooksClient from "../_components/book-list";
+import BooksClient from "@/app/_components/book-list";
 import { getAllBooks, getTaxonomies } from "@/lib/api";
 import Link from "next/link";
 
@@ -25,8 +25,8 @@ export default async function BooksPage({
   return (
     <div className="container mx-auto px-5 pt-10">
       <Link href="/" className="hover:underline">
-          {'go Home'}
-        </Link>
+        {'go Home'}
+      </Link>
       <h1 className="text-6xl font-bold mb-10">Library (PLP)</h1>
       
       <BooksClient 

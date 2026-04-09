@@ -2,20 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { log } from "console";
-
-export type Book = {
-  title?: string;
-  slug?: string;
-  shortDescription?: { json?: any };
-  coverImage?: { url?: string };
-  numberOfPages?: number;
-  rating?: number | null;
-  authorsCollection?: { items: { name: string }[] };
-  externalResourceLink?: string;
-  metaUI?: object;
-  taxonomiesCollection?: { items: { title: string }[] };
-};
+import { Book, TaxonomyTerm } from "@/lib/types";
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {
   const router = useRouter();
@@ -83,7 +70,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     }
   }, [limit, selectedTaxIds]);
 
-  const handleFilterChange = (tax: any) => {
+  const handleFilterChange = (tax: TaxonomyTerm) => {
     const taxValue = tax.title;
     const nextIds = selectedTaxIds.includes(taxValue)
       ? selectedTaxIds.filter(id => id !== taxValue)
@@ -122,7 +109,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
         if (entries[0].isIntersecting && !loading) {
           setPage((p) => {
             const next = p + 1;
-            console.log('useBooksList IntersectionObserver -> fetchBooks', next * limit);
+            // console.log('useBooksList IntersectionObserver -> fetchBooks', next * limit);
 
             fetchBooks(next * limit, true);
             return next;

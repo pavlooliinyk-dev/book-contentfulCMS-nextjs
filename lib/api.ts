@@ -40,7 +40,7 @@ const BOOK_GRAPHQL_FIELDS = `
   }
 `;
 
-async function fetchGraphQL(query: string, preview = false): Promise<any> {
+export async function fetchGraphQL(query: string, preview = false): Promise<any> {
   const response = await fetch(
     `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
     {
@@ -110,10 +110,10 @@ export async function getAllBooks(
     taxonomies: book.taxonomiesCollection?.items || [],
     slug: book.title
       ? book.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/[\s_-]+/g, "-")
-          .replace(/^-+|-+$/g, "")
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "")
       : "",
   }));
 

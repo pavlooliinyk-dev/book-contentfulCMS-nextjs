@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Book } from "./useBooksList";
+import { Book } from "@/lib/types";
 import Pricing from "../pricing";
 
 interface BookGridProps {
@@ -51,12 +51,12 @@ export default function BookGrid({ books }: BookGridProps) {
             </div>
           )}
 
-         {b?.taxonomiesCollection?.items && (
-          <div className="mt-8">
-            <span className="font-bold">Taxonomies: </span>
-            {b?.taxonomiesCollection?.items.map((t: any) => t.title).join(", ")}
-          </div>
-        )}
+          {b?.taxonomiesCollection?.items && (
+            <div className="mt-8">
+              <span className="font-bold">Taxonomies: </span>
+              {b?.taxonomiesCollection?.items.map((t: { title: string }) => t.title).join(", ")}
+            </div>
+          )}
         </article>
       ))}
     </div>

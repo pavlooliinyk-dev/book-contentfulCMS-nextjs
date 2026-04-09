@@ -3,6 +3,7 @@ import { draftMode } from "next/headers";
 import { Inter } from "next/font/google";
 import { EXAMPLE_PATH, CMS_NAME } from "@/lib/constants";
 import { TailwindUtilities } from "./_components/tailwind-utilities";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: `Next.js and ${CMS_NAME} Example ${EXAMPLE_PATH}`,
@@ -37,22 +38,23 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-   const { isEnabled } = await draftMode();
+  const { isEnabled } = await draftMode();
   return (
     <html lang="en" className={inter.variable}>
       <body>
         <TailwindUtilities />
         {isEnabled && (
-        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
-          <p className="font-bold">Preview Mode</p>
-          <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
-        </div>
-      )}
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-4" role="alert">
+            <p className="font-bold">Preview Mode</p>
+            <p>You are viewing draft content. <a href="/api/disable-draft" className="underline">Disable Preview</a></p>
+          </div>
+        )}
         <section className="min-h-screen">
           {/* <div className="text-red-200">TMP: dev feature under progress </div>  */}
           <main>{children}</main>
           <Footer />
         </section>
+        <SpeedInsights />
       </body>
     </html>
   );

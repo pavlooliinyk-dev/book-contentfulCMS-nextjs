@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
+import { TaxonomyTerm } from "@/lib/types";
 
 interface FiltersProps {
-  availableTaxonomies: any[];
+  availableTaxonomies: TaxonomyTerm[];
   selectedTaxIds: string[];
-  handleFilterChange: (tax: any) => void;
+  handleFilterChange: (tax: TaxonomyTerm) => void;
   clearFilters: () => void;
 }
 
@@ -15,11 +16,12 @@ export default function Filters({
   handleFilterChange,
   clearFilters,
 }: FiltersProps) {
-  const groupedTax = availableTaxonomies.reduce((acc: any, tax: any) => {
-    if (!acc[tax.type]) acc[tax.type] = [];
-    acc[tax.type].push(tax);
+  const groupedTax = availableTaxonomies.reduce((acc: Record<string, TaxonomyTerm[]>, tax: TaxonomyTerm) => {
+    const type = tax.type || 'other';
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(tax);
     return acc;
-  }, {});
+  }, {} as Record<string, TaxonomyTerm[]>);
 
   return (
     <aside className="w-full lg:w-64 shrink-0">
@@ -31,7 +33,7 @@ export default function Filters({
               {type}
             </h4>
             <div className="flex flex-col gap-2">
-              {groupedTax[type].map((tax: any) => (
+              {groupedTax[type].map((tax: TaxonomyTerm) => (
                 <label key={tax.sys.id} className="flex items-center gap-3 cursor-pointer group">
                   <input
                     type="checkbox"

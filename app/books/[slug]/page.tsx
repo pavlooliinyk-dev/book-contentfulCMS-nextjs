@@ -4,13 +4,14 @@ import { notFound } from "next/navigation";
 
 import { Markdown } from "@/app/_components/markdown";
 import { getAllBooks, getBookBySlug } from "@/lib/api";
-import CoverImage from "../../_components/cover-image";
-import { StarRatingDisplay } from "../../_components/star-rating-display";
-import Pricing from "../../_components/pricing";
+import { BOOKS_MAX_LIMIT } from "@/lib/constants";
+import CoverImage from "@/app/_components/cover-image";
+import { StarRatingDisplay } from "@/app/_components/star-rating-display";
+import Pricing from "@/app/_components/pricing";
 
 export async function generateStaticParams() {
-  // Limit to 20 to avoid complexity errors in Contentful GraphQL
-  const { items: allBooks } = await getAllBooks(false, 20);
+  // Limit to {BOOKS_MAX_LIMIT} to avoid complexity errors in Contentful GraphQL
+  const { items: allBooks } = await getAllBooks(false, BOOKS_MAX_LIMIT);
 
   return allBooks.map((book) => ({
     slug: book.slug,
@@ -23,12 +24,11 @@ export default async function BookPage(props: {
   const { slug } = await props.params;
   const { isEnabled } = await draftMode();
   
-//   console.log("DEBUG: Looking for slug:", slug);
-const book = await getBookBySlug(slug, isEnabled);
+  const book = await getBookBySlug(slug, isEnabled);
 
-if (!book) {
-  notFound();
-}
+  if (!book) {
+    notFound();
+  }
 
   return (
     <div className="container mx-auto px-5">

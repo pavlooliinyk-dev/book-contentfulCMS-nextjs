@@ -14,8 +14,8 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
-    "@contentful/rich-text-react-renderer": "^15.17.1",
-    "@contentful/rich-text-types": "^16.2.1",
+    "@contentful/rich-text-react-renderer": "^16.2.1",
+    "@contentful/rich-text-types": "^17.2.7",
     "@contentful/vercel-nextjs-toolkit": "latest",
     "@tailwindcss/typography": "0.5.9",
     "@types/node": "^20.5.0",

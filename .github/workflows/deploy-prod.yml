@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-      - run: echo "Deploying to Vercel..."
+      - run: echo "start to Lint..."
       
       - name: Install dependencies
         run: npm ci
@@ -30,7 +30,7 @@ jobs:
       #- name: Runnig build
       #  run: npm run build
       
-      - run: echo "Deployment complete!"
+      - run: echo "Lint complete!"
 
   deploy:
     name: Deploy to Vercel Production

@@ -219,23 +219,23 @@ async function seedBooks() {
         shortDescription: {
           'en-US': typeof book.shortDescription === 'string' 
             ? {
-                nodeType: 'document',
-                data: {},
-                content: [
-                  {
-                    nodeType: 'paragraph',
-                    data: {},
-                    content: [
-                      {
-                        nodeType: 'text',
-                        value: book.shortDescription,
-                        marks: [],
-                        data: {},
-                      },
-                    ],
-                  },
-                ],
-              }
+              nodeType: 'document',
+              data: {},
+              content: [
+                {
+                  nodeType: 'paragraph',
+                  data: {},
+                  content: [
+                    {
+                      nodeType: 'text',
+                      value: book.shortDescription,
+                      marks: [],
+                      data: {},
+                    },
+                  ],
+                },
+              ],
+            }
             : book.shortDescription.json // Use the rich text json directly
         },
         numberOfPages: { 'en-US': book.numberOfPages },

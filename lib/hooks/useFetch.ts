@@ -26,8 +26,8 @@ export function useFetch<T = any>(
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
-  const fetcherRef = useRef<ReturnType<typeof createAbortableFetch>>();
-  const abortControllerRef = useRef<AbortController>();
+  const fetcherRef = useRef<ReturnType<typeof createAbortableFetch> | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | undefined>(undefined);
   const isMountedRef = useRef(true);
 
   useEffect(() => {

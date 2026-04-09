@@ -1,23 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { draftMode } from "next/headers";
 import { fetchGraphQL } from "@/lib/api";
-
-const BOOK_GRAPHQL_FIELDS = `
-  title
-  shortDescription {
-    json
-  }
-  coverImage {
-    url
-  }
-  numberOfPages
-  externalResourceLink
-  authorsCollection {
-    items {
-      name
-    }
-  }
-`;
+import { BOOK_GRAPHQL_FIELDS } from "@/lib/graphql/fragments";
+import { generateSlugFromTitle } from "@/lib/utils/slug";
+import { BookCollectionData, BookRaw, Book } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const { isEnabled } = await draftMode();
@@ -31,7 +17,7 @@ export async function GET(request: NextRequest) {
     : "";
 
   try {
-    const result = await fetchGraphQL(
+    const result = await fetchGraphQL<BookCollectionData>(
       `query {
         bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC, preview: ${isEnabled ? "true" : "false"}${whereClause}) {
           total
@@ -47,21 +33,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ errors: result.errors }, { status: 500 });
     }
 
-    const bookCollection = result?.data?.bookCollection || { items: [], total: 0 };
+    const items = result?.data?.bookCollection?.items || [];
+    const total = result?.data?.bookCollection?.total || 0;
     
-    // Generate virtual slugs from titles
-    bookCollection.items = bookCollection.items.map((book: any) => ({
+    // Generate virtual slugs from titles and transform to Book type
+    const formattedItems: Book[] = items.map((book: BookRaw) => ({
       ...book,
-      slug: book.title
-        ? book.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/[\s_-]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-        : "",
+      authors: book.authorsCollection?.items?.map((item) => item.name) || [],
+      taxonomies: book.taxonomiesCollection?.items || [],
+      slug: generateSlugFromTitle(book.title),
     }));
 
-    return NextResponse.json(bookCollection);
+    return NextResponse.json({ items: formattedItems, total });
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }

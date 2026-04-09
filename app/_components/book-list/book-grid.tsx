@@ -36,9 +36,9 @@ export default function BookGrid({ books }: BookGridProps) {
           {/* <p>bookId:{b.slug}</p> */}
           {b.slug && <Pricing bookId={b.slug} />}
           <div className="text-lg mb-4 text-gray-700">
-            {b.authorsCollection?.items && (
+            {b.authors && b.authors.length > 0 && (
               <span className="font-semibold">
-                {b.authorsCollection.items.map((author) => author.name).join(", ")}
+                {b.authors.join(", ")}
               </span>
             )}
             {b.numberOfPages && <span className="ml-4 italic text-gray-500">{b.numberOfPages} pages</span>}
@@ -51,10 +51,10 @@ export default function BookGrid({ books }: BookGridProps) {
             </div>
           )}
 
-          {b?.taxonomiesCollection?.items && (
+          {b.taxonomies && b.taxonomies.length > 0 && (
             <div className="mt-8">
               <span className="font-bold">Taxonomies: </span>
-              {b?.taxonomiesCollection?.items.map((t: { title: string }) => t.title).join(", ")}
+              {b.taxonomies.map((t) => t.title).join(", ")}
             </div>
           )}
         </article>

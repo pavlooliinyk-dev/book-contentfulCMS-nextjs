@@ -1,46 +1,26 @@
 
-const BOOK_GRAPHQL_FIELDS = `
-  title
-  shortDescription {
-    json
-  }
-  coverImage {
-    url
-  }
-  numberOfPages
-  rating
-  externalResourceLink
-  metaUi
-  authorsCollection(limit: 10) {
-    items {
-      name
-    }
-  }
-  taxonomiesCollection(limit: 10) {
-    items {
-      ... on Entry {
-        __typename
-        sys {
-          id
-        }
-      }
-      ... on TaxonomyTerm {
-        title
-        slug
-        type
-        parent {
-          ... on Entry {
-            sys {
-              id
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import { BOOK_GRAPHQL_FIELDS, TAXONOMY_TERM_GRAPHQL_FIELDS, HOME_PAGE_GRAPHQL_FIELDS } from './graphql/fragments';
+import { generateSlugFromTitle } from './utils/slug';
+import { 
+  GraphQLResponse, 
+  BookCollectionData, 
+  TaxonomyCollectionData, 
+  HomePageCollectionData,
+  Book,
+  BookRaw,
+  TaxonomyTerm,
+  HomePage
+} from './types';
+import { 
+  BOOKS_DEFAULT_LIMIT, 
+  BOOKS_SLUG_LOOKUP_LIMIT, 
+  TAXONOMIES_MAX_LIMIT 
+} from './constants';
 
-export async function fetchGraphQL(query: string, preview = false): Promise<any> {
+export async function fetchGraphQL<T = unknown>(
+  query: string, 
+  preview = false
+): Promise<GraphQLResponse<T>> {
   const response = await fetch(
     `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
     {
@@ -62,28 +42,31 @@ export async function fetchGraphQL(query: string, preview = false): Promise<any>
   if (result.errors) {
     console.error("GraphQL Errors:", JSON.stringify(result.errors, null, 2));
   }
-  return result;
+  return result as GraphQLResponse<T>;
 }
 
-export async function getBookBySlug(slug: string, preview: boolean): Promise<any> {
-  // Since you don't have a slug field in CMS, we fetch many books and filter by generated slug
-  // Limit to 20 to avoid "TOO_COMPLEX_QUERY" error while still finding the slug
-  const { items: allBooks } = await getAllBooks(preview, 20);
-  const found = allBooks.find((book: any) => book.slug === slug);
+export async function getBookBySlug(
+  slug: string, 
+  preview: boolean
+): Promise<Book | undefined> {
+  // NOTE: Slug is generated client-side from title, not stored in Contentful
+  // This is a workaround - consider adding a slug field to Contentful for better performance
+  const { items: allBooks } = await getAllBooks(preview, BOOKS_SLUG_LOOKUP_LIMIT);
+  const found = allBooks.find((book) => book.slug === slug);
   return found;
 }
 
 export async function getAllBooks(
   isDraftMode: boolean, 
-  limit = 5,
+  limit = BOOKS_DEFAULT_LIMIT,
   skip = 0,
   taxIds: string[] = []
-): Promise<{ items: any[], total: number }> {
+): Promise<{ items: Book[], total: number }> {
   const whereClause = taxIds.length > 0 
     ? `, where: { genre_contains_all: ${JSON.stringify(taxIds)} }`
     : "";
 
-  const entries = await fetchGraphQL(
+  const entries = await fetchGraphQL<BookCollectionData>(
     `query {
       bookCollection(
         preview: ${isDraftMode ? "true" : "false"}, 
@@ -103,34 +86,23 @@ export async function getAllBooks(
   const items = entries?.data?.bookCollection?.items || [];
   const total = entries?.data?.bookCollection?.total || 0;
   
-  // Generate virtual slugs from titles
-  const formattedItems = items.map((book: any) => ({
+  // Generate virtual slugs from titles and transform to Book type
+  const formattedItems: Book[] = items.map((book: BookRaw) => ({
     ...book,
-    authors: book.authorsCollection?.items?.map((item: any) => item.name) || [],
+    authors: book.authorsCollection?.items?.map((item) => item.name) || [],
     taxonomies: book.taxonomiesCollection?.items || [],
-    slug: book.title
-      ? book.title
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/[\s_-]+/g, "-")
-        .replace(/^-+|-+$/g, "")
-      : "",
+    slug: generateSlugFromTitle(book.title),
   }));
 
   return { items: formattedItems, total };
 }
 
-export async function getTaxonomies(preview: boolean): Promise<any[]> {
-  const entries = await fetchGraphQL(
+export async function getTaxonomies(preview: boolean): Promise<TaxonomyTerm[]> {
+  const entries = await fetchGraphQL<TaxonomyCollectionData>(
     `query {
-      taxonomyTermCollection(preview: ${preview ? "true" : "false"}, limit: 50) {
+      taxonomyTermCollection(preview: ${preview ? "true" : "false"}, limit: ${TAXONOMIES_MAX_LIMIT}) {
         items {
-          title
-          slug
-          type
-          sys {
-            id
-          }
+          ${TAXONOMY_TERM_GRAPHQL_FIELDS}
         }
       }
     }`,
@@ -139,34 +111,39 @@ export async function getTaxonomies(preview: boolean): Promise<any[]> {
   return entries?.data?.taxonomyTermCollection?.items || [];
 }
 
-export async function getHomePage(preview: boolean): Promise<any> {
-  const entry = await fetchGraphQL(
+export async function getHomePage(preview: boolean): Promise<HomePage | null> {
+  const entry = await fetchGraphQL<HomePageCollectionData>(
     `query {
       homePageCollection(preview: ${preview ? "true" : "false"}, limit: 1) {
         items {
-          title
-          heroBanner {
-            url
-          }
-          imageWithTextSection
+          ${HOME_PAGE_GRAPHQL_FIELDS}
         }
       }
     }`,
     preview,
   );
-  const homePage = entry?.data?.homePageCollection?.items?.[0];
+  const homePageRaw = entry?.data?.homePageCollection?.items?.[0];
+  
+  if (!homePageRaw) {
+    return null;
+  }
   
   // Parse imageWithTextSection if it exists
-  if (homePage?.imageWithTextSection) {
+  let imageWithTextSection: any = null;
+  if (homePageRaw.imageWithTextSection) {
     try {
-      homePage.imageWithTextSection = typeof homePage.imageWithTextSection === 'string' 
-        ? JSON.parse(homePage.imageWithTextSection) 
-        : homePage.imageWithTextSection;
+      imageWithTextSection = typeof homePageRaw.imageWithTextSection === 'string' 
+        ? JSON.parse(homePageRaw.imageWithTextSection) 
+        : homePageRaw.imageWithTextSection;
     } catch (e) {
       console.error('Error parsing imageWithTextSection:', e);
-      homePage.imageWithTextSection = null;
+      imageWithTextSection = null;
     }
   }
   
-  return homePage;
+  return {
+    title: homePageRaw.title,
+    heroBanner: homePageRaw.heroBanner,
+    imageWithTextSection,
+  };
 }

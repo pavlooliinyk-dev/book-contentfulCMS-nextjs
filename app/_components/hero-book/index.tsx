@@ -9,11 +9,11 @@ export default function HeroBook({
   authors,
   numberOfPages,
   externalResourceLink,
-  metaUI,
+  metaUi,
   taxonomies,
 }: Book) {
-  const metaUIValue = Array.isArray(metaUI) ? metaUI.find(Boolean) : metaUI;
-  const position: Position = (typeof metaUIValue === "string" ? metaUIValue : metaUIValue?.position) === Position.RIGHT ? Position.RIGHT : Position.LEFT;
+  const metaUiValue = Array.isArray(metaUi) ? metaUi.find(Boolean) : metaUi;
+  const position: Position = (typeof metaUiValue === "string" ? metaUiValue : metaUiValue?.position) === Position.RIGHT ? Position.RIGHT : Position.LEFT;
   
   return (
     <section className="mb-20 bg-gray-200 p-6">
@@ -46,7 +46,7 @@ export default function HeroBook({
           {slug && <Pricing bookId={slug} />}
           <div className="text-lg leading-relaxed mt-4">
             {numberOfPages && <p className="mb-2">{numberOfPages} pages</p>}
-            {metaUIValue && (
+            {metaUiValue && (
               <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
                 metaUI image position: {position}
               </span>

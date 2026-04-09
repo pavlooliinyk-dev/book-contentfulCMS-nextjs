@@ -36,11 +36,12 @@ export default async function Page() {
       {heroBook && (
         <HeroBook 
           title={heroBook.title}
+          slug={heroBook.slug}
           coverImage={heroBook.coverImage}
           authors={heroBook.authors}
           numberOfPages={heroBook.numberOfPages}
           externalResourceLink={heroBook.externalResourceLink}
-          metaUI={heroBook.metaUi}
+          metaUi={heroBook.metaUi}
           taxonomies={heroBook.taxonomies}
         />
       )}

@@ -103,11 +103,13 @@ export function useFetch<T = any>(
     setLoading(true);
     setError(null);
 
-    fetcherRef.current = createAbortableFetch();
+    const refetchFetcher = createAbortableFetch();
+    fetcherRef.current = refetchFetcher;
 
     fetcherRef.current.fetch<T>(url)
       .then(result => {
-        if (!refetchController.signal.aborted) {
+        // Check both the refetch controller and main abort controller
+        if (!refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
           setData(result);
         }
       })
@@ -116,12 +118,12 @@ export function useFetch<T = any>(
           (err instanceof DOMException && err.name === 'AbortError') ||
           (isFetchError(err) && err.message.includes('cancelled'));
         
-        if (!isAbortError && !refetchController.signal.aborted) {
+        if (!isAbortError && !refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
           setError(err as Error);
         }
       })
       .finally(() => {
-        if (!refetchController.signal.aborted) {
+        if (!refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
           setLoading(false);
         }
       });

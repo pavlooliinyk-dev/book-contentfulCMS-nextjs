@@ -120,10 +120,10 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   }, [updateURL, fetchBooks]);
 
   const togglePagination = useCallback(() => {
-    setIsInfinite(!isInfinite);
+    setIsInfinite((prev) => !prev);
     setPage(0);
     fetchBooks(0);
-  }, [isInfinite, fetchBooks]);
+  }, [fetchBooks]);
 
   const goToPage = useCallback((direction: number) => {
     const next = page + direction;

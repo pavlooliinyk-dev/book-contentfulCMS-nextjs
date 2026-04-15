@@ -5,6 +5,7 @@ import { getAllBooks, getHomePage } from "@/lib/api";
 import Intro from "./_components/intro";
 import MainNavigation from "./_components/main-navigation";
 import HeroBanner from "./_components/hero-banner";
+import { ErrorBoundary } from "./_components/error-boundary";
 
 const BookList = dynamic(() => import("./_components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,
@@ -34,19 +35,23 @@ export default async function Page() {
       )}
       
       {heroBook && (
-        <HeroBook 
-          title={heroBook.title}
-          slug={heroBook.slug}
-          coverImage={heroBook.coverImage}
-          authors={heroBook.authors}
-          numberOfPages={heroBook.numberOfPages}
-          externalResourceLink={heroBook.externalResourceLink}
-          metaUi={heroBook.metaUi}
-          taxonomies={heroBook.taxonomies}
-        />
+        <ErrorBoundary>
+          <HeroBook 
+            title={heroBook.title}
+            slug={heroBook.slug}
+            coverImage={heroBook.coverImage}
+            authors={heroBook.authors}
+            numberOfPages={heroBook.numberOfPages}
+            externalResourceLink={heroBook.externalResourceLink}
+            metaUi={heroBook.metaUi}
+            taxonomies={heroBook.taxonomies}
+          />
+        </ErrorBoundary>
       )}
       
-      <BookList initialBooks={initialBooks} initialTotal={initialTotal} withFilters={false} />
+      <ErrorBoundary>
+        <BookList initialBooks={initialBooks} initialTotal={initialTotal} withFilters={false} />
+      </ErrorBoundary>
     </div>
   );
 }

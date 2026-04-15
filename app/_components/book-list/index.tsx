@@ -6,7 +6,7 @@ import { useBooksList } from "./useBooksList";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 
-export default function BooksClient({ 
+export default function BooksList({ 
   initialBooks, 
   initialTotal,
   availableTaxonomies = [],

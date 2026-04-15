@@ -15,7 +15,7 @@ interface UseFetchResult<T> {
 /**
  * Custom hook for data fetching with automatic cleanup
  * Handles abort on unmount to prevent memory leaks
- * Prevents duplicate fetches in React Strict Mode
+ * Relies solely on AbortController for lifecycle management (no redundant isMountedRef)
  */
 export function useFetch<T = any>(
   url: string | null,
@@ -28,7 +28,6 @@ export function useFetch<T = any>(
   const [loading, setLoading] = useState(false);
   const fetcherRef = useRef<ReturnType<typeof createAbortableFetch> | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
-  const isMountedRef = useRef(true);
 
   useEffect(() => {
     if (!url || !enabled) return;
@@ -55,8 +54,8 @@ export function useFetch<T = any>(
       try {
         const result = await fetcherRef.current.fetch<T>(url);
         
-        // Only update state if component is still mounted and not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        // Only update state if not aborted
+        if (!abortController.signal.aborted) {
           setData(result);
         }
       } catch (err) {
@@ -70,12 +69,12 @@ export function useFetch<T = any>(
         }
         
         // Only set error if not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        if (!abortController.signal.aborted) {
           setError(err as Error);
         }
       } finally {
         // Only update loading if not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        if (!abortController.signal.aborted) {
           setLoading(false);
         }
       }
@@ -90,17 +89,12 @@ export function useFetch<T = any>(
     };
   }, [url, enabled]);
 
-  // Track component mount state
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
   // Expose refetch function
   const refetch = () => {
     if (!url || !enabled) return;
+    
+    // Get current abort controller to check signal
+    const currentController = abortControllerRef.current;
     
     setLoading(true);
     setError(null);
@@ -113,7 +107,7 @@ export function useFetch<T = any>(
 
     fetcherRef.current.fetch<T>(url)
       .then(result => {
-        if (isMountedRef.current) {
+        if (!currentController?.signal.aborted) {
           setData(result);
         }
       })
@@ -124,12 +118,12 @@ export function useFetch<T = any>(
         if (isFetchError(err) && err.message.includes('cancelled')) {
           return;
         }
-        if (isMountedRef.current) {
+        if (!currentController?.signal.aborted) {
           setError(err as Error);
         }
       })
       .finally(() => {
-        if (isMountedRef.current) {
+        if (!currentController?.signal.aborted) {
           setLoading(false);
         }
       });

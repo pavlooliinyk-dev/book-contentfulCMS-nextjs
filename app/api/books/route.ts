@@ -7,8 +7,22 @@ import { BookCollectionData, BookRaw, Book } from "@/lib/types";
 export async function GET(request: NextRequest) {
   const { isEnabled } = await draftMode();
   const { searchParams } = new URL(request.url);
-  const limit = parseInt(searchParams.get("limit") || "5");
-  const skip = parseInt(searchParams.get("skip") || "0");
+  
+  const MAX_LIMIT = 100;
+  const limit = Math.min(
+    Math.max(1, parseInt(searchParams.get("limit") || "5")),
+    MAX_LIMIT
+  );
+  const skip = Math.max(0, parseInt(searchParams.get("skip") || "0"));
+  
+  // Validate parsed numbers
+  if (isNaN(limit) || isNaN(skip)) {
+    return NextResponse.json(
+      { error: "Invalid limit or skip parameter" },
+      { status: 400 }
+    );
+  }
+  
   const taxonomies = searchParams.get("taxonomies")?.split(",") || [];
 
   const whereClause = taxonomies.length > 0 && taxonomies[0] !== ""

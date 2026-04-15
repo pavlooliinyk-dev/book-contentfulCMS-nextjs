@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SearchAlgolia from "./search-algolia";
+import { ErrorBoundary } from "@/app/_components/error-boundary";
 
 export default async function MoviesPage() {
   return (
@@ -8,7 +9,9 @@ export default async function MoviesPage() {
           go Home
       </Link>
       <h1 className="text-6xl font-bold mb-10">Movies (PLP)</h1>
-      <SearchAlgolia showHits={true}/>
+      <ErrorBoundary>
+        <SearchAlgolia showHits={true}/>
+      </ErrorBoundary>
     </div>
   );
 }

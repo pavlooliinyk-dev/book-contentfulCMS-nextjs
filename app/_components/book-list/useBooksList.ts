@@ -17,8 +17,10 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>(initialFilters);
   const sentinelRef = useRef<HTMLDivElement>(null);
   
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   // Update URL when filters change
-  const updateURL = (filters: string[]) => {
+  const updateURL = useCallback((filters: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
     if (filters.length > 0) {
       params.set('taxonomies', filters.join(','));
@@ -26,14 +28,20 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       params.delete('taxonomies');
     }
     router.push(`?${params.toString()}`, { scroll: false });
-  };
+  }, [searchParams, router]);
 
   const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
+    // Abort any in-flight request before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
     setLoading(true);
     setError(null);
     const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
     
     const controller = new AbortController();
+    abortControllerRef.current = controller;
     
     try {
       const response = await fetch(`/api/books?limit=${limit}&skip=${skip}${taxParam}`, {
@@ -54,23 +62,32 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       const newItems = data.items || [];
       setBooks((prev) => {
         const newBooks = append ? [...prev, ...newItems] : newItems;
-        const unique = newBooks.filter((book: Book, index: number, self: Book[]) =>
-          index === self.findIndex((b: Book) => b.title === book.title)
-        );
+        const seen = new Set<string>();
+        const unique = newBooks.filter((book: Book) => {
+          if (seen.has(book.slug)) return false;
+          seen.add(book.slug);
+          return true;
+        });
         return unique;
       });
       setTotal(data.total);
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') {
-        return; // Silently ignore abort errors
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('Fetch aborted (expected during rapid filter changes)', { skip, currentTaxIds });
+        }
+        return;
       }
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setLoading(false);
+      // Only update loading if this controller hasn't been aborted
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
   }, [limit, selectedTaxIds]);
 
-  const handleFilterChange = (tax: TaxonomyTerm) => {
+  const handleFilterChange = useCallback((tax: TaxonomyTerm) => {
     const taxValue = tax.title;
     const nextIds = selectedTaxIds.includes(taxValue)
       ? selectedTaxIds.filter(id => id !== taxValue)
@@ -80,48 +97,63 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     setPage(0);
     updateURL(nextIds);
     fetchBooks(0, false, nextIds);
-  };
+  }, [selectedTaxIds, updateURL, fetchBooks]);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSelectedTaxIds([]);
     setPage(0);
     updateURL([]);
     fetchBooks(0, false, []);
-  };
+  }, [updateURL, fetchBooks]);
 
-  const togglePagination = () => {
+  const togglePagination = useCallback(() => {
     setIsInfinite(!isInfinite);
     setPage(0);
     fetchBooks(0);
-  };
+  }, [isInfinite, fetchBooks]);
 
-  const goToPage = (direction: number) => {
+  const goToPage = useCallback((direction: number) => {
     const next = page + direction;
     setPage(next);
     fetchBooks(next * limit);
-  };
+  }, [page, fetchBooks, limit]);
 
   useEffect(() => {
     if (!isInfinite || !sentinelRef.current || books.length >= total) return;
 
+    const sentinel = sentinelRef.current;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
-          setPage((p) => {
-            const next = p + 1;
-            // console.log('useBooksList IntersectionObserver -> fetchBooks', next * limit);
-
-            fetchBooks(next * limit, true);
-            return next;
+          setPage((prevPage) => {
+            const nextPage = prevPage + 1;
+            const skip = nextPage * limit;
+            
+            // Use the existing fetchBooks method which handles abort properly
+            fetchBooks(skip, true);
+            
+            return nextPage;
           });
         }
       },
       { rootMargin: "100px" }
     );
 
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [isInfinite, loading, books.length, total, fetchBooks, limit]);
+    observer.observe(sentinel);
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [isInfinite, loading, books.length, total, limit, fetchBooks]);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   return {
     books,

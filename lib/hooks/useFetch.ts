@@ -83,8 +83,9 @@ export function useFetch<T = any>(
     fetchData();
 
     // Cleanup: abort fetch on unmount or when deps change
+    // Use abortControllerRef to ensure we abort any refetch operations too
     return () => {
-      abortController.abort();
+      abortControllerRef.current?.abort();
       fetcherRef.current?.abort();
     };
   }, [url, enabled]);
@@ -97,6 +98,7 @@ export function useFetch<T = any>(
     abortControllerRef.current?.abort();
     fetcherRef.current?.abort();
     
+    // Create new controller for this refetch operation
     const refetchController = new AbortController();
     abortControllerRef.current = refetchController;
     
@@ -108,8 +110,8 @@ export function useFetch<T = any>(
 
     fetcherRef.current.fetch<T>(url)
       .then(result => {
-        // Check both the refetch controller and main abort controller
-        if (!refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
+        // Only update state if this specific refetch wasn't aborted
+        if (!refetchController.signal.aborted) {
           setData(result);
         }
       })
@@ -118,12 +120,14 @@ export function useFetch<T = any>(
           (err instanceof DOMException && err.name === 'AbortError') ||
           (isFetchError(err) && err.message.includes('cancelled'));
         
-        if (!isAbortError && !refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
+        // Only set error if not an abort error and refetch wasn't cancelled
+        if (!isAbortError && !refetchController.signal.aborted) {
           setError(err as Error);
         }
       })
       .finally(() => {
-        if (!refetchController.signal.aborted && !abortControllerRef.current?.signal.aborted) {
+        // Only update loading if this specific refetch wasn't aborted
+        if (!refetchController.signal.aborted) {
           setLoading(false);
         }
       });

@@ -21,12 +21,6 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   // Use ref to avoid stale closures in fetchBooks callback
   const selectedTaxIdsRef = useRef<string[]>(initialFilters);
   
-  // Store router in ref to avoid it being a dependency
-  const routerRef = useRef(router);
-  useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
-  
   // Update URL when filters change
   const updateURL = useCallback((filters: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,8 +29,8 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     } else {
       params.delete('taxonomies');
     }
-    routerRef.current.push(`?${params.toString()}`, { scroll: false });
-  }, [searchParams]);
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [searchParams, router]);
 
   const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds?: string[]) => {
     // Use ref value if currentTaxIds not provided, avoiding stale closure

@@ -75,7 +75,16 @@ const BooksList = memo(function BooksList({
       </div>
 
       {/* Sentinel for infinite scroll */}
-      {isInfinite && books.length < total && <div ref={sentinelRef} className="h-10" />}
+      {isInfinite && books.length < total && (
+        <div 
+          ref={sentinelRef} 
+          className="h-10" 
+          role="status" 
+          aria-label="Loading more books"
+          aria-live="polite"
+          aria-busy={loading}
+        />
+      )}
 
       {loading && (
         <div 

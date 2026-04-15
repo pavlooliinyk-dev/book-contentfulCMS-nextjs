@@ -3,6 +3,12 @@ import CoverImage from "../cover-image";
 import { Book, TaxonomyTerm, Position } from "@/lib/types";
 import Pricing from "../pricing";
 
+/**
+ * Extract position from Contentful taxonomy metadata.
+ * Handles both string values and taxonomy term objects with defensive checks.
+ * @param metaUi - Can be a single taxonomy term, array of terms, or undefined
+ * @returns Position.LEFT or Position.RIGHT
+ */
 function getPosition(metaUi: unknown): Position {
   const value = Array.isArray(metaUi) ? metaUi.find(Boolean) : metaUi;
   

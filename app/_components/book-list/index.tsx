@@ -15,12 +15,15 @@ interface BooksListProps {
   initialFilters?: string[]
 }
 
+const EMPTY_FILTERS: string[] = [];
+const EMPTY_TAXONOMIES: TaxonomyTerm[] = [];
+
 const BooksList = memo(function BooksList({ 
   initialBooks, 
   initialTotal,
-  availableTaxonomies = [],
+  availableTaxonomies = EMPTY_TAXONOMIES,
+  initialFilters = EMPTY_FILTERS,
   withFilters = true,
-  initialFilters = [],
 }: BooksListProps) {
   const LIMIT = 5;
   const {
@@ -72,7 +75,16 @@ const BooksList = memo(function BooksList({
       </div>
 
       {/* Sentinel for infinite scroll */}
-      {isInfinite && books.length < total && <div ref={sentinelRef} className="h-10" />}
+      {isInfinite && books.length < total && (
+        <div 
+          ref={sentinelRef} 
+          className="h-10" 
+          role="status" 
+          aria-label="Loading more books"
+          aria-live="polite"
+          aria-busy={loading}
+        />
+      )}
 
       {loading && (
         <div 

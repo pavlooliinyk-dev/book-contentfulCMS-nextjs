@@ -30,18 +30,12 @@ export function useInfiniteScroll({
   const hasMoreRef = useRef(hasMore);
   const loadingRef = useRef(loading);
   
-  // Keep refs in sync with props
+  // Keep refs in sync with props (combined for efficiency)
   useEffect(() => {
     onLoadMoreRef.current = onLoadMore;
-  }, [onLoadMore]);
-  
-  useEffect(() => {
     hasMoreRef.current = hasMore;
-  }, [hasMore]);
-  
-  useEffect(() => {
     loadingRef.current = loading;
-  }, [loading]);
+  }, [onLoadMore, hasMore, loading]);
   
   // Create observer only once when enabled changes
   useEffect(() => {

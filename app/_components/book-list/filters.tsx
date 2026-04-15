@@ -23,12 +23,12 @@ const Filters = memo(function Filters({
       acc[type].push(tax);
       return acc;
     }, {} as Record<string, TaxonomyTerm[]>),
-    [availableTaxonomies]
+  [availableTaxonomies]
   );
 
   const sortedTypes = useMemo(() => 
     Object.keys(groupedTax).sort(),
-    [groupedTax]
+  [groupedTax]
   );
 
   return (

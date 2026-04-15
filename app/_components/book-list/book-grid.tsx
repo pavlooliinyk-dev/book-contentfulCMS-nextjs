@@ -15,7 +15,9 @@ const BookCard = memo(({ book }: { book: Book }) => {
     <article className="flex flex-col">
       {book.coverImage?.url && (
         <div className="mb-5 relative w-full h-[400px]">
-          <Link href={`/books/${book.slug}`}>
+          <Link href={`/books/${book.slug}`} 
+            className="hover:underline"
+          >
             <Image
               src={book.coverImage.url}
               alt={`Cover image of ${book.title}` || "Book cover"}
@@ -27,7 +29,9 @@ const BookCard = memo(({ book }: { book: Book }) => {
         </div>
       )}
       <h3 className="text-3xl mb-3 leading-snug font-bold">
-        <Link href={`/books/${book.slug}`} className="hover:underline">
+        <Link href={`/books/${book.slug}`} 
+          className="hover:underline"
+        >
           {book.title}
         </Link>
       </h3>

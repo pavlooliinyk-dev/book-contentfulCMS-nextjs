@@ -21,23 +21,25 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   // Use ref to avoid stale closures in fetchBooks callback
   const selectedTaxIdsRef = useRef<string[]>(initialFilters);
   
-  // Store router in ref to avoid it being a dependency
-  const routerRef = useRef(router);
-  useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
-  
-  // Update URL when filters change
+  // Update URL when filters change (prevents redundant pushes)
   const updateURL = useCallback((filters: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (filters.length > 0) {
-      params.set('taxonomies', filters.join(','));
-    } else {
-      params.delete('taxonomies');
+    const currentTaxonomies = params.get('taxonomies');
+    const newTaxonomies = filters.length > 0 ? filters.join(',') : null;
+    
+    // Only push if URL actually changes
+    if (currentTaxonomies !== newTaxonomies) {
+      if (newTaxonomies) {
+        params.set('taxonomies', newTaxonomies);
+      } else {
+        params.delete('taxonomies');
+      }
+      router.push(`?${params.toString()}`, { scroll: false });
     }
-    routerRef.current.push(`?${params.toString()}`, { scroll: false });
-  }, [searchParams]);
+  }, [searchParams, router]);
 
+  // Fetch books with proper abort handling and deduplication
+  // Uses ref for taxIds to avoid stale closures while keeping stable callback
   const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds?: string[]) => {
     // Use ref value if currentTaxIds not provided, avoiding stale closure
     const taxIds = currentTaxIds ?? selectedTaxIdsRef.current;
@@ -120,10 +122,10 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   }, [updateURL, fetchBooks]);
 
   const togglePagination = useCallback(() => {
-    setIsInfinite(!isInfinite);
+    setIsInfinite((prev) => !prev);
     setPage(0);
     fetchBooks(0);
-  }, [isInfinite, fetchBooks]);
+  }, [fetchBooks]);
 
   const goToPage = useCallback((direction: number) => {
     const next = page + direction;

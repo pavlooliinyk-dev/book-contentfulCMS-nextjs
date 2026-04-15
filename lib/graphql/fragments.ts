@@ -24,6 +24,7 @@ export const TAXONOMY_TERM_WITH_PARENT_FIELDS = `
 `;
 
 export const BOOK_GRAPHQL_FIELDS = `
+  sys { id }
   title
   slug
   shortDescription {

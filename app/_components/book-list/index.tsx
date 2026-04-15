@@ -71,7 +71,16 @@ export default function BooksList({
       {/* Sentinel for infinite scroll */}
       {isInfinite && books.length < total && <div ref={sentinelRef} className="h-10" />}
 
-      {loading && <div className="mt-8 text-center text-xl animate-pulse">Loading...</div>}
+      {loading && (
+        <div 
+          className="mt-8 text-center text-xl animate-pulse"
+          role="status" 
+          aria-live="polite"
+        >
+          <span className="sr-only">Loading more books...</span>
+          Loading...
+        </div>
+      )}
 
       {!isInfinite && (
         <div className="mt-12 flex justify-center items-center gap-8">

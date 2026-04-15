@@ -63,6 +63,7 @@ const Filters = memo(function Filters({
           <button 
             onClick={clearFilters}
             className="text-sm text-red-600 hover:underline pt-4"
+            aria-label={`Clear ${selectedTaxIds.length} active filters`}
           >
             Clear all filters ({selectedTaxIds.length})
           </button>
@@ -71,5 +72,7 @@ const Filters = memo(function Filters({
     </aside>
   );
 });
+
+Filters.displayName = 'Filters';
 
 export default Filters;

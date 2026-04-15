@@ -54,6 +54,9 @@ export interface BookRaw {
   metaUi?: Record<string, { position: Position }>;
   authorsCollection?: { items: Author[] };
   taxonomiesCollection?: { items: TaxonomyTerm[] };
+  sys: {
+    id: string;
+  };
 }
 
 // Transformed types (with computed fields like authors array)

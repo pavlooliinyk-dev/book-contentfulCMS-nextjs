@@ -94,7 +94,7 @@ function SearchResults({ showWhenEmpty = false }: { showWhenEmpty?: boolean }) {
 
 export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) {
   // Memoize searchClient to prevent recreation on every render
-  const searchClient = useMemo(() => algoliasearch(appId, searchKey), []);
+  const searchClient = useMemo(() => algoliasearch(appId, searchKey), [appId, searchKey]);
   
   if (!appId || !searchKey || !indexName) {
     return <div className="text-red-600">Algolia env vars are missing.</div>;

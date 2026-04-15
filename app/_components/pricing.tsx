@@ -14,7 +14,7 @@ export default function Pricing({ bookId }: { bookId: string }) {
   const { data: pricing, loading, error } = useFetch<PricingData>(pricingUrl);
 
   if (loading) {
-    return <div className="animate-pulse h-6 w-24 bg-gray-200 rounded"></div>;
+    return <div className="animate-pulse h-6 w-24 bg-gray-200 rounded" aria-live="polite"></div>;
   }
 
   if (error) {

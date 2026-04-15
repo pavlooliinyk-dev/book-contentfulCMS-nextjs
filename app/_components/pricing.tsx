@@ -1,6 +1,7 @@
 'use client';
 
 import { useFetch } from '@/lib/hooks/useFetch';
+import { useMemo } from 'react';
 
 interface PricingData {
   bookId: string;
@@ -9,9 +10,8 @@ interface PricingData {
 }
 
 export default function Pricing({ bookId }: { bookId: string }) {
-  const { data: pricing, loading, error } = useFetch<PricingData>(
-    `/api/pricing?bookId=${bookId}`
-  );
+  const pricingUrl = useMemo(() => `/api/pricing?bookId=${bookId}`, [bookId]);
+  const { data: pricing, loading, error } = useFetch<PricingData>(pricingUrl);
 
   if (loading) {
     return <div className="animate-pulse h-6 w-24 bg-gray-200 rounded"></div>;

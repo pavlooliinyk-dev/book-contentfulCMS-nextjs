@@ -11,7 +11,6 @@ function getPosition(metaUi: unknown): Position {
   }
   
   if (value && typeof value === 'object' && 'position' in value) {
-    console.log('return value 1 ', value.position);
     return value.position === Position.RIGHT ? Position.RIGHT : Position.LEFT;
   }
   

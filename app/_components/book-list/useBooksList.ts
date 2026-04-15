@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Book, TaxonomyTerm } from "@/lib/types";
+import { useInfiniteScroll } from "./useInfiniteScroll";
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {
   const router = useRouter();
@@ -15,11 +16,16 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   const [page, setPage] = useState(0);
   const [isInfinite, setIsInfinite] = useState(true);
   const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>(initialFilters);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   
   const abortControllerRef = useRef<AbortController | null>(null);
   // Use ref to avoid stale closures in fetchBooks callback
   const selectedTaxIdsRef = useRef<string[]>(initialFilters);
+  
+  // Store router in ref to avoid it being a dependency
+  const routerRef = useRef(router);
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
   
   // Update URL when filters change
   const updateURL = useCallback((filters: string[]) => {
@@ -29,8 +35,8 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     } else {
       params.delete('taxonomies');
     }
-    router.push(`?${params.toString()}`, { scroll: false });
-  }, [searchParams, router]);
+    routerRef.current.push(`?${params.toString()}`, { scroll: false });
+  }, [searchParams]);
 
   const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds?: string[]) => {
     // Use ref value if currentTaxIds not provided, avoiding stale closure
@@ -125,34 +131,24 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     fetchBooks(next * limit);
   }, [page, fetchBooks, limit]);
 
-  useEffect(() => {
-    if (!isInfinite || !sentinelRef.current || books.length >= total) return;
+  // Callback for infinite scroll - optimized to avoid recreating observer
+  const handleLoadMore = useCallback(() => {
+    setPage((prevPage) => {
+      const nextPage = prevPage + 1;
+      const skip = nextPage * limit;
+      fetchBooks(skip, true);
+      return nextPage;
+    });
+  }, [fetchBooks, limit]);
 
-    const sentinel = sentinelRef.current;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading) {
-          setPage((prevPage) => {
-            const nextPage = prevPage + 1;
-            const skip = nextPage * limit;
-            
-            // Use the existing fetchBooks method which handles abort properly
-            fetchBooks(skip, true);
-            
-            return nextPage;
-          });
-        }
-      },
-      { rootMargin: "100px" }
-    );
-
-    observer.observe(sentinel);
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, [isInfinite, loading, books.length, total, limit, fetchBooks]);
+  // Use infinite scroll hook with ref callback pattern
+  const sentinelRef = useInfiniteScroll({
+    enabled: isInfinite,
+    onLoadMore: handleLoadMore,
+    hasMore: books.length < total,
+    loading,
+    rootMargin: "100px",
+  });
 
   useEffect(() => {
     return () => {

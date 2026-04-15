@@ -69,7 +69,7 @@ export default function BookGrid({ books }: BookGridProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
       {books.map((book) => (
         <BookCard 
-          key={book.sys?.id || book.title} 
+          key={book.sys?.id} 
           book={book} 
         />
       ))}

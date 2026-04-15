@@ -1,24 +1,27 @@
 "use client";
 
+import { memo } from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 
-export default function BooksList({ 
-  initialBooks, 
-  initialTotal,
-  availableTaxonomies = [],
-  withFilters = true,
-  initialFilters = [],
-}: { 
+interface BooksListProps {
   initialBooks: Book[], 
   initialTotal: number,
   availableTaxonomies?: TaxonomyTerm[]
   withFilters?: boolean
   initialFilters?: string[]
-}) {
+}
+
+const BooksList = memo(function BooksList({ 
+  initialBooks, 
+  initialTotal,
+  availableTaxonomies = [],
+  withFilters = true,
+  initialFilters = [],
+}: BooksListProps) {
   const LIMIT = 5;
   const {
     books,
@@ -105,4 +108,8 @@ export default function BooksList({
       )}
     </section>
   );
-}
+});
+
+BooksList.displayName = 'BooksList';
+
+export default BooksList;

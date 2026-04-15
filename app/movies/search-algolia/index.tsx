@@ -10,11 +10,15 @@ import {
 } from "react-instantsearch";
 import { liteClient as algoliasearch } from "algoliasearch/lite";
 import Image from "next/image";
-import { useMemo } from "react";
 
-const appId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!;
-const searchKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!;
-const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME!;
+const appId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
+const searchKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY;
+const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME;
+
+// Only create client if env vars exist
+const searchClient = appId && searchKey
+  ? algoliasearch(appId, searchKey)
+  : null;
 
 type HitProps = {
   hit: {
@@ -93,10 +97,7 @@ function SearchResults({ showWhenEmpty = false }: { showWhenEmpty?: boolean }) {
 }
 
 export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) {
-  // Memoize searchClient to prevent recreation on every render
-  const searchClient = useMemo(() => algoliasearch(appId, searchKey), [appId, searchKey]);
-  
-  if (!appId || !searchKey || !indexName) {
+  if (!searchClient || !indexName) {
     return <div className="text-red-600">Algolia env vars are missing.</div>;
   }
 

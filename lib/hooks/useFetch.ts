@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { createAbortableFetch, isFetchError } from '../fetcher';
 
 interface UseFetchOptions {
@@ -90,19 +90,18 @@ export function useFetch<T = any>(
   }, [url, enabled]);
 
   // Expose refetch function
-  const refetch = () => {
+  const refetch = useCallback(() => {
     if (!url || !enabled) return;
     
-    // Create new abort controller for refetch
+    // Abort any existing fetch before starting refetch
+    abortControllerRef.current?.abort();
+    fetcherRef.current?.abort();
+    
     const refetchController = new AbortController();
     abortControllerRef.current = refetchController;
     
     setLoading(true);
     setError(null);
-
-    if (fetcherRef.current) {
-      fetcherRef.current.abort();
-    }
 
     fetcherRef.current = createAbortableFetch();
 
@@ -113,16 +112,11 @@ export function useFetch<T = any>(
         }
       })
       .catch(err => {
-        // Consolidate abort error handling
         const isAbortError = 
           (err instanceof DOMException && err.name === 'AbortError') ||
           (isFetchError(err) && err.message.includes('cancelled'));
         
-        if (isAbortError) {
-          return;
-        }
-        
-        if (!refetchController.signal.aborted) {
+        if (!isAbortError && !refetchController.signal.aborted) {
           setError(err as Error);
         }
       })
@@ -131,7 +125,7 @@ export function useFetch<T = any>(
           setLoading(false);
         }
       });
-  };
+  }, [url, enabled]);
 
   return {
     data,

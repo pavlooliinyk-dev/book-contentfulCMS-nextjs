@@ -18,6 +18,8 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   const sentinelRef = useRef<HTMLDivElement>(null);
   
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Use ref to avoid stale closures in fetchBooks callback
+  const selectedTaxIdsRef = useRef<string[]>(initialFilters);
   
   // Update URL when filters change
   const updateURL = useCallback((filters: string[]) => {
@@ -30,7 +32,10 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     router.push(`?${params.toString()}`, { scroll: false });
   }, [searchParams, router]);
 
-  const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
+  const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds?: string[]) => {
+    // Use ref value if currentTaxIds not provided, avoiding stale closure
+    const taxIds = currentTaxIds ?? selectedTaxIdsRef.current;
+    
     // Abort any in-flight request before starting a new one
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -38,7 +43,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     
     setLoading(true);
     setError(null);
-    const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
+    const taxParam = taxIds.length > 0 ? `&taxonomies=${taxIds.join(",")}` : "";
     
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -74,7 +79,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('Fetch aborted (expected during rapid filter changes)', { skip, currentTaxIds });
+          console.debug('Fetch aborted (expected during rapid filter changes)', { skip, taxIds });
         }
         return;
       }
@@ -85,25 +90,27 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
         setLoading(false);
       }
     }
-  }, [limit, selectedTaxIds]);
+  }, [limit]);
 
   const handleFilterChange = useCallback((tax: TaxonomyTerm) => {
     const taxValue = tax.title;
-    const nextIds = selectedTaxIds.includes(taxValue)
-      ? selectedTaxIds.filter(id => id !== taxValue)
-      : [...selectedTaxIds, taxValue];
+    const currentIds = selectedTaxIdsRef.current;
+    const nextIds = currentIds.includes(taxValue)
+      ? currentIds.filter(id => id !== taxValue)
+      : [...currentIds, taxValue];
     
     setSelectedTaxIds(nextIds);
     setPage(0);
     updateURL(nextIds);
     fetchBooks(0, false, nextIds);
-  }, [selectedTaxIds, updateURL, fetchBooks]);
+  }, [updateURL, fetchBooks]);
 
   const clearFilters = useCallback(() => {
-    setSelectedTaxIds([]);
+    const emptyFilters: string[] = [];
+    setSelectedTaxIds(emptyFilters);
     setPage(0);
-    updateURL([]);
-    fetchBooks(0, false, []);
+    updateURL(emptyFilters);
+    fetchBooks(0, false, emptyFilters);
   }, [updateURL, fetchBooks]);
 
   const togglePagination = useCallback(() => {
@@ -154,6 +161,11 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       }
     };
   }, []);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedTaxIdsRef.current = selectedTaxIds;
+  }, [selectedTaxIds]);
 
   return {
     books,

@@ -59,68 +59,69 @@ export async function fetcher<T = any>(
 
   let lastError: Error | null = null;
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const response = await fetch(url, {
-        ...fetchOptions,
-        signal: controller.signal,
-      });
+  try {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url, {
+          ...fetchOptions,
+          signal: controller.signal,
+        });
 
-      clearTimeout(timeoutId);
+        if (!response.ok) {
+          let errorData = null;
+          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
 
-      if (!response.ok) {
-        let errorData = null;
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-
-        // Try to parse error response
-        try {
-          const contentType = response.headers.get('content-type');
-          if (contentType?.includes('application/json')) {
-            errorData = await response.json();
-            errorMessage = errorData?.error || errorData?.message || errorMessage;
+          // Try to parse error response
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType?.includes('application/json')) {
+              errorData = await response.json();
+              errorMessage = errorData?.error || errorData?.message || errorMessage;
+            }
+          } catch (parseError) {
+            // If JSON parsing fails, use default message
+            console.warn('Failed to parse error response:', parseError);
           }
-        } catch (parseError) {
-          // If JSON parsing fails, use default message
-          console.warn('Failed to parse error response:', parseError);
+
+          throw createFetchError(errorMessage, response.status, errorData);
         }
 
-        throw createFetchError(errorMessage, response.status, errorData);
-      }
+        // Parse successful response
+        try {
+          return await response.json();
+        } catch (parseError) {
+          throw new Error('Failed to parse response as JSON');
+        }
+      } catch (error) {
+        lastError = error as Error;
 
-      // Parse successful response
-      try {
-        return await response.json();
-      } catch (parseError) {
-        throw new Error('Failed to parse response as JSON');
-      }
-    } catch (error) {
-      lastError = error as Error;
+        // Handle timeout/abort errors
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          throw createFetchError('Request timeout', 408);
+        }
 
-      // Handle timeout/abort errors
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        clearTimeout(timeoutId);
-        throw createFetchError('Request timeout', 408);
-      }
+        // Handle network errors
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          lastError = createFetchError('Network error: Unable to reach server', 0);
+        }
 
-      // Handle network errors
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        lastError = createFetchError('Network error: Unable to reach server', 0);
-      }
+        // Don't retry on 4xx client errors
+        if (isFetchError(error) && error.status && error.status >= 400 && error.status < 500) {
+          break;
+        }
 
-      // Don't retry on 4xx client errors
-      if (isFetchError(error) && error.status && error.status >= 400 && error.status < 500) {
-        break;
-      }
-
-      // Wait before retrying (except on last attempt)
-      if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        // Wait before retrying (except on last attempt)
+        if (attempt < retries) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        }
       }
     }
-  }
 
-  clearTimeout(timeoutId);
-  throw lastError || new Error('Fetch failed after multiple retries');
+    throw lastError || new Error('Fetch failed after multiple retries');
+  } finally {
+    // Always clear timeout to prevent memory leak
+    clearTimeout(timeoutId);
+  }
 }
 
 /**

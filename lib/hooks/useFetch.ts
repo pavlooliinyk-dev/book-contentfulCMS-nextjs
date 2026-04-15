@@ -93,8 +93,9 @@ export function useFetch<T = any>(
   const refetch = () => {
     if (!url || !enabled) return;
     
-    // Get current abort controller to check signal
-    const currentController = abortControllerRef.current;
+    // Create new abort controller for refetch
+    const refetchController = new AbortController();
+    abortControllerRef.current = refetchController;
     
     setLoading(true);
     setError(null);
@@ -107,23 +108,26 @@ export function useFetch<T = any>(
 
     fetcherRef.current.fetch<T>(url)
       .then(result => {
-        if (!currentController?.signal.aborted) {
+        if (!refetchController.signal.aborted) {
           setData(result);
         }
       })
       .catch(err => {
-        if (err instanceof DOMException && err.name === 'AbortError') {
+        // Consolidate abort error handling
+        const isAbortError = 
+          (err instanceof DOMException && err.name === 'AbortError') ||
+          (isFetchError(err) && err.message.includes('cancelled'));
+        
+        if (isAbortError) {
           return;
         }
-        if (isFetchError(err) && err.message.includes('cancelled')) {
-          return;
-        }
-        if (!currentController?.signal.aborted) {
+        
+        if (!refetchController.signal.aborted) {
           setError(err as Error);
         }
       })
       .finally(() => {
-        if (!currentController?.signal.aborted) {
+        if (!refetchController.signal.aborted) {
           setLoading(false);
         }
       });

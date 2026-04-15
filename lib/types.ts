@@ -54,7 +54,7 @@ export interface BookRaw {
   metaUi?: Record<string, { position: Position }>;
   authorsCollection?: { items: Author[] };
   taxonomiesCollection?: { items: TaxonomyTerm[] };
-  sys: {
+  sys?: {
     id: string;
   };
 }

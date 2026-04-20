@@ -1,11 +1,12 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
+import LoadingSpinner from "../loading-spinner";
 
 interface BooksListProps {
   initialBooks: Book[], 
@@ -26,11 +27,13 @@ const BooksList = memo(function BooksList({
   withFilters = true,
 }: BooksListProps) {
   const LIMIT = 5;
+  
   const {
     books,
     total,
     error,
     loading,
+    isPending,
     page,
     isInfinite,
     selectedTaxIds,
@@ -40,6 +43,44 @@ const BooksList = memo(function BooksList({
     togglePagination,
     goToPage,
   } = useBooksList(initialBooks, initialTotal, LIMIT, initialFilters);
+
+  // Debounce loading state with minimum display time to prevent flashing
+  const [showPending, setShowPending] = useState(false);
+  const showTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      // Clear any pending hide timer
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+      
+      // Show after 150ms delay (avoid showing for very fast operations)
+      showTimerRef.current = setTimeout(() => {
+        setShowPending(true);
+      }, 150);
+    } else {
+      // Clear show timer if operation completes before delay
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
+      
+      // If currently showing, keep visible for minimum 300ms to avoid flash
+      if (showPending) {
+        hideTimerRef.current = setTimeout(() => {
+          setShowPending(false);
+        }, 300);
+      }
+    }
+
+    return () => {
+      if (showTimerRef.current) clearTimeout(showTimerRef.current);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, [loading, showPending]);
 
   if (error) return <div className="mt-8 text-red-600">{error}</div>;
 
@@ -59,7 +100,7 @@ const BooksList = memo(function BooksList({
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-4xl font-bold">
               <Link href={`/books`}>
-                Books ({total})
+                Books ({total}) {showPending ? " - Updating..." : ""}
               </Link>
             </h2>
             <button
@@ -70,7 +111,9 @@ const BooksList = memo(function BooksList({
             </button>
           </div>
 
-          <BookGrid books={books} />
+          <div className={`transition-opacity duration-200 ${showPending ? 'opacity-50' : 'opacity-100'}`}>
+            <BookGrid books={books} />
+          </div>
         </div>
       </div>
 
@@ -86,22 +129,15 @@ const BooksList = memo(function BooksList({
         />
       )}
 
-      {loading && (
-        <div 
-          className="mt-8 text-center text-xl animate-pulse"
-          role="status" 
-          aria-live="polite"
-        >
-          <span className="sr-only">Loading more books...</span>
-          Loading...
-        </div>
+      {(loading || showPending) && (
+        <LoadingSpinner message="Loading more books..." />
       )}
 
       {!isInfinite && (
         <div className="mt-12 flex justify-center items-center gap-8">
           <button
             onClick={() => goToPage(-1)}
-            disabled={page === 0 || loading}
+            disabled={page === 0 || loading || showPending}
             className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
           >
             ← Previous
@@ -111,7 +147,7 @@ const BooksList = memo(function BooksList({
           </span>
           <button
             onClick={() => goToPage(1)}
-            disabled={(page + 1) * LIMIT >= total || loading}
+            disabled={(page + 1) * LIMIT >= total || loading || showPending}
             className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
           >
             Next →

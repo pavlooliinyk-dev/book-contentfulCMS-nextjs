@@ -2,9 +2,9 @@
 
 import React, { memo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Book } from "@/lib/types";
 import Pricing from "../pricing";
+import ContentfulImage from "../contentful-image";
 
 interface BookGridProps {
   books: Book[];
@@ -18,10 +18,11 @@ const BookCard = memo(({ book }: { book: Book }) => {
           <Link href={`/books/${book.slug}`} 
             className="hover:underline"
           >
-            <Image
+            <ContentfulImage
               src={book.coverImage.url}
               alt={`Cover image of ${book.title}` || "Book cover"}
               fill
+              quality={75}
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover hover:opacity-80 transition shadow-md rounded"
             />

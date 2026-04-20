@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useInfiniteScroll } from "./useInfiniteScroll";
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -21,22 +22,24 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   // Use ref to avoid stale closures in fetchBooks callback
   const selectedTaxIdsRef = useRef<string[]>(initialFilters);
   
-  // Update URL when filters change (prevents redundant pushes)
+  // Update URL when filters change without triggering re-render
   const updateURL = useCallback((filters: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
     const currentTaxonomies = params.get('taxonomies');
     const newTaxonomies = filters.length > 0 ? filters.join(',') : null;
     
-    // Only push if URL actually changes
+    // Only update if URL actually changes
     if (currentTaxonomies !== newTaxonomies) {
       if (newTaxonomies) {
         params.set('taxonomies', newTaxonomies);
       } else {
         params.delete('taxonomies');
       }
-      router.push(`?${params.toString()}`, { scroll: false });
+      // Use replaceState to update URL without navigation/re-render
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState(null, '', newUrl);
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   // Fetch books with proper abort handling and deduplication
   // Uses ref for taxIds to avoid stale closures while keeping stable callback
@@ -107,18 +110,22 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       ? currentIds.filter(id => id !== taxValue)
       : [...currentIds, taxValue];
     
-    setSelectedTaxIds(nextIds);
-    setPage(0);
-    updateURL(nextIds);
-    fetchBooks(0, false, nextIds);
+    startTransition(() => {
+      setSelectedTaxIds(nextIds);
+      setPage(0);
+      updateURL(nextIds);
+      fetchBooks(0, false, nextIds);
+    });
   }, [updateURL, fetchBooks]);
 
   const clearFilters = useCallback(() => {
     const emptyFilters: string[] = [];
-    setSelectedTaxIds(emptyFilters);
-    setPage(0);
-    updateURL(emptyFilters);
-    fetchBooks(0, false, emptyFilters);
+    startTransition(() => {
+      setSelectedTaxIds(emptyFilters);
+      setPage(0);
+      updateURL(emptyFilters);
+      fetchBooks(0, false, emptyFilters);
+    });
   }, [updateURL, fetchBooks]);
 
   const togglePagination = useCallback(() => {
@@ -128,9 +135,11 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   }, [fetchBooks]);
 
   const goToPage = useCallback((direction: number) => {
-    const next = page + direction;
-    setPage(next);
-    fetchBooks(next * limit);
+    startTransition(() => {
+      const next = page + direction;
+      setPage(next);
+      fetchBooks(next * limit);
+    });
   }, [page, fetchBooks, limit]);
 
   // Callback for infinite scroll - optimized to avoid recreating observer
@@ -170,6 +179,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     total,
     error,
     loading,
+    isPending,
     page,
     isInfinite,
     selectedTaxIds,

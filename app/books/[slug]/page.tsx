@@ -51,15 +51,15 @@ export default async function BookPage(props: {
         </div>
         <div className="mx-auto max-w-2xl">
           <div className="mb-6 text-lg">
-            {book.authorsCollection?.items && (
+            {book.authors && book.authors.length > 0 && (
               <span className="font-bold">
-                By: {book.authorsCollection.items.map((a: any) => a.name).join(", ")}
+                By: {book.authors.join(", ")}
               </span>
             )}
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
           <Pricing bookId={book.slug} />
-          <StarRatingDisplay rating={book?.rating} size="sm" />
+          <StarRatingDisplay rating={book.rating ?? null} size="sm" />
         </div>
 
         <div className="mx-auto max-w-2xl">
@@ -79,10 +79,10 @@ export default async function BookPage(props: {
             </div>
           )}
         </div>
-        {book.taxonomiesCollection?.items && (
+        {book.taxonomies && book.taxonomies.length > 0 && (
           <div className="mt-8">
             <span className="font-bold">Taxonomies: </span>
-            {book.taxonomiesCollection.items.map((t: any) => t.title).join(", ")}
+            {book.taxonomies.map((t) => t.title).join(", ")}
           </div>
         )}
 

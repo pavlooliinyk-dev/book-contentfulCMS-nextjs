@@ -1,25 +1,30 @@
 "use client";
 
-// import React from "react";
+import { memo } from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 
-export default function BooksClient({ 
-  initialBooks, 
-  initialTotal,
-  availableTaxonomies = [],
-  withFilters = true,
-  initialFilters = [],
-}: { 
+interface BooksListProps {
   initialBooks: Book[], 
   initialTotal: number,
   availableTaxonomies?: TaxonomyTerm[]
   withFilters?: boolean
   initialFilters?: string[]
-}) {
+}
+
+const EMPTY_FILTERS: string[] = [];
+const EMPTY_TAXONOMIES: TaxonomyTerm[] = [];
+
+const BooksList = memo(function BooksList({ 
+  initialBooks, 
+  initialTotal,
+  availableTaxonomies = EMPTY_TAXONOMIES,
+  initialFilters = EMPTY_FILTERS,
+  withFilters = true,
+}: BooksListProps) {
   const LIMIT = 5;
   const {
     books,
@@ -70,9 +75,27 @@ export default function BooksClient({
       </div>
 
       {/* Sentinel for infinite scroll */}
-      {isInfinite && books.length < total && <div ref={sentinelRef} className="h-10" />}
+      {isInfinite && books.length < total && (
+        <div 
+          ref={sentinelRef} 
+          className="h-10" 
+          role="status" 
+          aria-label="Loading more books"
+          aria-live="polite"
+          aria-busy={loading}
+        />
+      )}
 
-      {loading && <div className="mt-8 text-center text-xl animate-pulse">Loading...</div>}
+      {loading && (
+        <div 
+          className="mt-8 text-center text-xl animate-pulse"
+          role="status" 
+          aria-live="polite"
+        >
+          <span className="sr-only">Loading more books...</span>
+          Loading...
+        </div>
+      )}
 
       {!isInfinite && (
         <div className="mt-12 flex justify-center items-center gap-8">
@@ -97,4 +120,8 @@ export default function BooksClient({
       )}
     </section>
   );
-}
+});
+
+BooksList.displayName = 'BooksList';
+
+export default BooksList;

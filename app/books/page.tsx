@@ -1,7 +1,8 @@
 import { draftMode } from "next/headers";
-import BooksClient from "@/app/_components/book-list";
+import BooksList from "@/app/_components/book-list";
 import { getAllBooks, getTaxonomies } from "@/lib/api";
 import Link from "next/link";
+import { ErrorBoundary } from "@/app/_components/error-boundary";
 
 export default async function BooksPage({
   searchParams,
@@ -29,12 +30,14 @@ export default async function BooksPage({
       </Link>
       <h1 className="text-6xl font-bold mb-10">Library (PLP)</h1>
       
-      <BooksClient 
-        initialBooks={items} 
-        initialTotal={total} 
-        availableTaxonomies={taxonomies}
-        initialFilters={initialFilters}
-      />
+      <ErrorBoundary>
+        <BooksList 
+          initialBooks={items} 
+          initialTotal={total} 
+          availableTaxonomies={taxonomies}
+          initialFilters={initialFilters}
+        />
+      </ErrorBoundary>
     </div>
   );
 }

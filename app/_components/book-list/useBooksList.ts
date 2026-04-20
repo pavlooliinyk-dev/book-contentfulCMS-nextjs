@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Book, TaxonomyTerm } from "@/lib/types";
+import { useInfiniteScroll } from "./useInfiniteScroll";
 
 export function useBooksList(initialBooks: Book[], initialTotal: number, limit: number, initialFilters: string[] = []) {
   const router = useRouter();
@@ -15,25 +16,45 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   const [page, setPage] = useState(0);
   const [isInfinite, setIsInfinite] = useState(true);
   const [selectedTaxIds, setSelectedTaxIds] = useState<string[]>(initialFilters);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   
-  // Update URL when filters change
-  const updateURL = (filters: string[]) => {
+  const abortControllerRef = useRef<AbortController | null>(null);
+  // Use ref to avoid stale closures in fetchBooks callback
+  const selectedTaxIdsRef = useRef<string[]>(initialFilters);
+  
+  // Update URL when filters change (prevents redundant pushes)
+  const updateURL = useCallback((filters: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (filters.length > 0) {
-      params.set('taxonomies', filters.join(','));
-    } else {
-      params.delete('taxonomies');
+    const currentTaxonomies = params.get('taxonomies');
+    const newTaxonomies = filters.length > 0 ? filters.join(',') : null;
+    
+    // Only push if URL actually changes
+    if (currentTaxonomies !== newTaxonomies) {
+      if (newTaxonomies) {
+        params.set('taxonomies', newTaxonomies);
+      } else {
+        params.delete('taxonomies');
+      }
+      router.push(`?${params.toString()}`, { scroll: false });
     }
-    router.push(`?${params.toString()}`, { scroll: false });
-  };
+  }, [searchParams, router]);
 
-  const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds = selectedTaxIds) => {
+  // Fetch books with proper abort handling and deduplication
+  // Uses ref for taxIds to avoid stale closures while keeping stable callback
+  const fetchBooks = useCallback(async (skip: number, append = false, currentTaxIds?: string[]) => {
+    // Use ref value if currentTaxIds not provided, avoiding stale closure
+    const taxIds = currentTaxIds ?? selectedTaxIdsRef.current;
+    
+    // Abort any in-flight request before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
     setLoading(true);
     setError(null);
-    const taxParam = currentTaxIds.length > 0 ? `&taxonomies=${currentTaxIds.join(",")}` : "";
+    const taxParam = taxIds.length > 0 ? `&taxonomies=${taxIds.join(",")}` : "";
     
     const controller = new AbortController();
+    abortControllerRef.current = controller;
     
     try {
       const response = await fetch(`/api/books?limit=${limit}&skip=${skip}${taxParam}`, {
@@ -54,74 +75,95 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       const newItems = data.items || [];
       setBooks((prev) => {
         const newBooks = append ? [...prev, ...newItems] : newItems;
-        const unique = newBooks.filter((book: Book, index: number, self: Book[]) =>
-          index === self.findIndex((b: Book) => b.title === book.title)
-        );
+        const seen = new Set<string>();
+        const unique = newBooks.filter((book: Book) => {
+          if (seen.has(book.slug)) return false;
+          seen.add(book.slug);
+          return true;
+        });
         return unique;
       });
       setTotal(data.total);
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') {
-        return; // Silently ignore abort errors
+        if (process.env.NODE_ENV === 'development') {
+          console.debug('Fetch aborted (expected during rapid filter changes)', { skip, taxIds });
+        }
+        return;
       }
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setLoading(false);
+      // Only update loading if this controller hasn't been aborted
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
-  }, [limit, selectedTaxIds]);
+  }, [limit]);
 
-  const handleFilterChange = (tax: TaxonomyTerm) => {
+  const handleFilterChange = useCallback((tax: TaxonomyTerm) => {
     const taxValue = tax.title;
-    const nextIds = selectedTaxIds.includes(taxValue)
-      ? selectedTaxIds.filter(id => id !== taxValue)
-      : [...selectedTaxIds, taxValue];
+    const currentIds = selectedTaxIdsRef.current;
+    const nextIds = currentIds.includes(taxValue)
+      ? currentIds.filter(id => id !== taxValue)
+      : [...currentIds, taxValue];
     
     setSelectedTaxIds(nextIds);
     setPage(0);
     updateURL(nextIds);
     fetchBooks(0, false, nextIds);
-  };
+  }, [updateURL, fetchBooks]);
 
-  const clearFilters = () => {
-    setSelectedTaxIds([]);
+  const clearFilters = useCallback(() => {
+    const emptyFilters: string[] = [];
+    setSelectedTaxIds(emptyFilters);
     setPage(0);
-    updateURL([]);
-    fetchBooks(0, false, []);
-  };
+    updateURL(emptyFilters);
+    fetchBooks(0, false, emptyFilters);
+  }, [updateURL, fetchBooks]);
 
-  const togglePagination = () => {
-    setIsInfinite(!isInfinite);
+  const togglePagination = useCallback(() => {
+    setIsInfinite((prev) => !prev);
     setPage(0);
     fetchBooks(0);
-  };
+  }, [fetchBooks]);
 
-  const goToPage = (direction: number) => {
+  const goToPage = useCallback((direction: number) => {
     const next = page + direction;
     setPage(next);
     fetchBooks(next * limit);
-  };
+  }, [page, fetchBooks, limit]);
+
+  // Callback for infinite scroll - optimized to avoid recreating observer
+  const handleLoadMore = useCallback(() => {
+    setPage((prevPage) => {
+      const nextPage = prevPage + 1;
+      const skip = nextPage * limit;
+      fetchBooks(skip, true);
+      return nextPage;
+    });
+  }, [fetchBooks, limit]);
+
+  // Use infinite scroll hook with ref callback pattern
+  const sentinelRef = useInfiniteScroll({
+    enabled: isInfinite,
+    onLoadMore: handleLoadMore,
+    hasMore: books.length < total,
+    loading,
+    rootMargin: "100px",
+  });
 
   useEffect(() => {
-    if (!isInfinite || !sentinelRef.current || books.length >= total) return;
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading) {
-          setPage((p) => {
-            const next = p + 1;
-            // console.log('useBooksList IntersectionObserver -> fetchBooks', next * limit);
-
-            fetchBooks(next * limit, true);
-            return next;
-          });
-        }
-      },
-      { rootMargin: "100px" }
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [isInfinite, loading, books.length, total, fetchBooks, limit]);
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedTaxIdsRef.current = selectedTaxIds;
+  }, [selectedTaxIds]);
 
   return {
     books,

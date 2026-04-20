@@ -20,7 +20,8 @@ export default function HeroBanner({ heroBanner, title, imageWithTextSection }: 
         src={heroBanner.url} 
         alt={title || "Hero banner"}
         fill
-        priority
+        fetchPriority="high"
+        loading="eager"
         sizes="100vw"
         className="object-cover rounded-lg shadow-lg"
       />

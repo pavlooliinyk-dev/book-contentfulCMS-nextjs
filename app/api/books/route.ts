@@ -1,29 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { draftMode } from "next/headers";
 import { fetchGraphQL } from "@/lib/api";
-
-const BOOK_GRAPHQL_FIELDS = `
-  title
-  shortDescription {
-    json
-  }
-  coverImage {
-    url
-  }
-  numberOfPages
-  externalResourceLink
-  authorsCollection {
-    items {
-      name
-    }
-  }
-`;
+import { BOOK_GRAPHQL_FIELDS } from "@/lib/graphql/fragments";
+import { BookCollectionData, BookRaw, Book } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const { isEnabled } = await draftMode();
   const { searchParams } = new URL(request.url);
-  const limit = parseInt(searchParams.get("limit") || "5");
-  const skip = parseInt(searchParams.get("skip") || "0");
+  
+  const MAX_LIMIT = 100;
+  const limit = Math.min(
+    Math.max(1, parseInt(searchParams.get("limit") || "5")),
+    MAX_LIMIT
+  );
+  const skip = Math.max(0, parseInt(searchParams.get("skip") || "0"));
+  
+  // Validate parsed numbers
+  if (isNaN(limit) || isNaN(skip)) {
+    return NextResponse.json(
+      { error: "Invalid limit or skip parameter" },
+      { status: 400 }
+    );
+  }
+  
   const taxonomies = searchParams.get("taxonomies")?.split(",") || [];
 
   const whereClause = taxonomies.length > 0 && taxonomies[0] !== ""
@@ -31,7 +30,7 @@ export async function GET(request: NextRequest) {
     : "";
 
   try {
-    const result = await fetchGraphQL(
+    const result = await fetchGraphQL<BookCollectionData>(
       `query {
         bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC, preview: ${isEnabled ? "true" : "false"}${whereClause}) {
           total
@@ -47,21 +46,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ errors: result.errors }, { status: 500 });
     }
 
-    const bookCollection = result?.data?.bookCollection || { items: [], total: 0 };
+    const items = result?.data?.bookCollection?.items || [];
+    const total = result?.data?.bookCollection?.total || 0;
     
-    // Generate virtual slugs from titles
-    bookCollection.items = bookCollection.items.map((book: any) => ({
+    // Transform to Book type with authors and taxonomies arrays
+    const formattedItems: Book[] = items.map((book: BookRaw) => ({
       ...book,
-      slug: book.title
-        ? book.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/[\s_-]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-        : "",
+      authors: book.authorsCollection?.items?.map((item) => item.name) || [],
+      taxonomies: book.taxonomiesCollection?.items || [],
     }));
 
-    return NextResponse.json(bookCollection);
+    return NextResponse.json({ items: formattedItems, total });
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }

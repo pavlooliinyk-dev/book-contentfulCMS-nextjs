@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { createAbortableFetch, isFetchError } from '../fetcher';
 
 interface UseFetchOptions {
@@ -15,7 +15,7 @@ interface UseFetchResult<T> {
 /**
  * Custom hook for data fetching with automatic cleanup
  * Handles abort on unmount to prevent memory leaks
- * Prevents duplicate fetches in React Strict Mode
+ * Relies solely on AbortController for lifecycle management (no redundant isMountedRef)
  */
 export function useFetch<T = any>(
   url: string | null,
@@ -26,9 +26,8 @@ export function useFetch<T = any>(
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
-  const fetcherRef = useRef<ReturnType<typeof createAbortableFetch>>();
-  const abortControllerRef = useRef<AbortController>();
-  const isMountedRef = useRef(true);
+  const fetcherRef = useRef<ReturnType<typeof createAbortableFetch> | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | undefined>(undefined);
 
   useEffect(() => {
     if (!url || !enabled) return;
@@ -55,8 +54,8 @@ export function useFetch<T = any>(
       try {
         const result = await fetcherRef.current.fetch<T>(url);
         
-        // Only update state if component is still mounted and not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        // Only update state if not aborted
+        if (!abortController.signal.aborted) {
           setData(result);
         }
       } catch (err) {
@@ -70,12 +69,12 @@ export function useFetch<T = any>(
         }
         
         // Only set error if not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        if (!abortController.signal.aborted) {
           setError(err as Error);
         }
       } finally {
         // Only update loading if not aborted
-        if (!abortController.signal.aborted && isMountedRef.current) {
+        if (!abortController.signal.aborted) {
           setLoading(false);
         }
       }
@@ -84,56 +83,55 @@ export function useFetch<T = any>(
     fetchData();
 
     // Cleanup: abort fetch on unmount or when deps change
+    // Use abortControllerRef to ensure we abort any refetch operations too
     return () => {
-      abortController.abort();
+      abortControllerRef.current?.abort();
       fetcherRef.current?.abort();
     };
   }, [url, enabled]);
 
-  // Track component mount state
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
   // Expose refetch function
-  const refetch = () => {
+  const refetch = useCallback(() => {
     if (!url || !enabled) return;
+    
+    // Abort any existing fetch before starting refetch
+    abortControllerRef.current?.abort();
+    fetcherRef.current?.abort();
+    
+    // Create new controller for this refetch operation
+    const refetchController = new AbortController();
+    abortControllerRef.current = refetchController;
     
     setLoading(true);
     setError(null);
 
-    if (fetcherRef.current) {
-      fetcherRef.current.abort();
-    }
-
-    fetcherRef.current = createAbortableFetch();
+    const refetchFetcher = createAbortableFetch();
+    fetcherRef.current = refetchFetcher;
 
     fetcherRef.current.fetch<T>(url)
       .then(result => {
-        if (isMountedRef.current) {
+        // Only update state if this specific refetch wasn't aborted
+        if (!refetchController.signal.aborted) {
           setData(result);
         }
       })
       .catch(err => {
-        if (err instanceof DOMException && err.name === 'AbortError') {
-          return;
-        }
-        if (isFetchError(err) && err.message.includes('cancelled')) {
-          return;
-        }
-        if (isMountedRef.current) {
+        const isAbortError = 
+          (err instanceof DOMException && err.name === 'AbortError') ||
+          (isFetchError(err) && err.message.includes('cancelled'));
+        
+        // Only set error if not an abort error and refetch wasn't cancelled
+        if (!isAbortError && !refetchController.signal.aborted) {
           setError(err as Error);
         }
       })
       .finally(() => {
-        if (isMountedRef.current) {
+        // Only update loading if this specific refetch wasn't aborted
+        if (!refetchController.signal.aborted) {
           setLoading(false);
         }
       });
-  };
+  }, [url, enabled]);
 
   return {
     data,

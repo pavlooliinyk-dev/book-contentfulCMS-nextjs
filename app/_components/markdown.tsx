@@ -16,7 +16,7 @@ interface AssetLink {
 
 interface Content {
   json: any;
-  links: {
+  links?: {
     assets: AssetLink;
   };
 }
@@ -43,7 +43,7 @@ export function Markdown({ content }: { content: Content }) {
       [BLOCKS.EMBEDDED_ASSET]: (node: any) => (
         <RichTextAsset
           id={node.data.target.sys.id}
-          assets={content.links.assets.block}
+          assets={content.links?.assets?.block}
         />
       ),
     },

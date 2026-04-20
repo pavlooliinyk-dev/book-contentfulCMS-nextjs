@@ -12,7 +12,10 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   // Get parameters from app configuration
-  const appParams = sdk.parameters.installation as any || {};
+  const appParams = sdk.parameters.installation as {
+    maxStars?: number;
+    starColor?: string;
+  } || {};
   const maxStars = appParams.maxStars || 5;
   const color = appParams.starColor || '#FFD700'; // Default gold color
 

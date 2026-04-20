@@ -215,31 +215,43 @@ async function seedBooks() {
       
       const entryFields = {
         title: { 'en-US': book.title },
+        slug: { 'en-US': book.slug },
         shortDescription: {
-          'en-US': {
-            nodeType: 'document',
-            data: {},
-            content: [
-              {
-                nodeType: 'paragraph',
-                data: {},
-                content: [
-                  {
-                    nodeType: 'text',
-                    value: book.shortDescription,
-                    marks: [],
-                    data: {},
-                  },
-                ],
-              },
-            ],
-          },
+          'en-US': typeof book.shortDescription === 'string' 
+            ? {
+              nodeType: 'document',
+              data: {},
+              content: [
+                {
+                  nodeType: 'paragraph',
+                  data: {},
+                  content: [
+                    {
+                      nodeType: 'text',
+                      value: book.shortDescription,
+                      marks: [],
+                      data: {},
+                    },
+                  ],
+                },
+              ],
+            }
+            : book.shortDescription.json // Use the rich text json directly
         },
         numberOfPages: { 'en-US': book.numberOfPages },
         externalResourceLink: { 'en-US': book.externalResourceLink },
-        metaUi: { 'en-US': book.metaUI || null },
         genre: { 'en-US': book.taxonomies?.map(t => t.title) || [] },
       };
+
+      // Add rating if present
+      if (book.rating) {
+        entryFields.rating = { 'en-US': book.rating };
+      }
+
+      // Add metaUi if present
+      if (book.metaUi) {
+        entryFields.metaUi = { 'en-US': book.metaUi };
+      }
 
       if (authorLinks.length > 0) {
         entryFields.authors = { 'en-US': authorLinks };

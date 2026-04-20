@@ -27,7 +27,7 @@ function Footer() {
   return (
     <footer className="bg-accent-1 border-t border-accent-2">
       <div className="container mx-auto px-5">
-        <div className="text-red-200">Footer</div>        
+        <div className="text-red-600">Footer</div>        
       </div>
     </footer>
   );

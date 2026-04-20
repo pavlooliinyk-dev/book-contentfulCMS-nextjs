@@ -33,8 +33,8 @@ npm install
 # Copy the values from .env.local (already in this repo) or create your own
 
 # 3. Set up Contentful content model and seed data
-npm run setup    # Creates content types in Contentful
-npm run seed     # Populates with sample books
+npm run migrate  # Creates content types (Book, Author, TaxonomyTerm, HomePage)
+npm run seed     # Populates with 7 sample books, authors, and taxonomies
 
 # 4. Start development server
 npm run dev
@@ -96,7 +96,7 @@ cms-contentful-app/
 │   ├── constants.ts              # App constants
 │   └── hooks/                    # Custom React hooks
 │
-├── cli-scripts/                  # Contentful automation
+├── cms-cli-scripts/                  # Contentful automation
 │   ├── setup.js                  # Initialize content model
 │   ├── seed-books.js             # Populate sample data
 │   ├── migration.js              # Content type definitions
@@ -163,14 +163,16 @@ The project uses these Contentful content types:
 | Field | Type | Description |
 |-------|------|-------------|
 | `title` | Text | Book title (required) |
-| `shortDescription` | Rich Text | Book description |
+| `slug` | Text | URL-friendly identifier (unique, auto-validated: `^[a-z0-9]+(?:-[a-z0-9]+)*$`) |
+| `shortDescription` | Rich Text | Book description with formatting (bold, italic) |
 | `coverImage` | Asset | Cover image (required) |
 | `numberOfPages` | Integer | Page count |
-| `rating` | Number | Star rating (1-5) |
+| `rating` | Integer | Star rating (1-5, validated in CMS) |
 | `externalResourceLink` | Text | External link |
 | `authors` | References | Links to Author entries |
-| `taxonomies` | References | Genre, audience, language tags |
-| `metaUi` | JSON | UI metadata (positioning, etc.) |
+| `genre` | Reference | Primary genre category |
+| `taxonomies` | References | Additional tags (audience, language, etc.) |
+| `metaUi` | Object | UI metadata (e.g., image positioning: `{position: 'left'}`) |
 
 ### 2. **Author**
 | Field | Type | Description |
@@ -193,6 +195,20 @@ The project uses these Contentful content types:
 | `title` | Text | Page title |
 | `heroBanner` | Asset | Hero image |
 | `imageWithTextSection` | JSON | Dynamic section data |
+
+---
+
+## 🔧 Migration 
+
+Content model defined in `cms-cms-cli-scripts/content-types/` (taxonomyTerm.js, author.js, book.js, homePage.js).
+
+**Setup:**
+```bash
+npm run migrate  # Create content types
+npm run seed     # Populate 7 sample books
+```
+
+See [cms-cms-cli-scripts/content-types/README.md](cms-cli-scripts/content-types/README.md) for details.
 
 ---
 
@@ -227,31 +243,45 @@ The project uses these Contentful content types:
 
 ---
 
-## ➕ How to Add a New Feature to the Books System
+## ➕ How to Add a New Field to the Book Content Type
 
 ### Example: Adding a "Publication Year" Field
 
-#### Step 1: Update Content Model (Migration)
+#### Step 1: Update Content Type Definition
 
-Create or edit `cli-scripts/migration.js`:
+Edit [cms-cli-scripts/content-types/book.js](cms-cli-scripts/content-types/book.js):
 
 ```javascript
+// Add the new field to the Book content type
 book.createField("publicationYear")
   .name("Publication Year")
   .type("Integer")
-  .required(false);
+  .required(false)
+  .validations([
+    {
+      range: {
+        min: 1000,
+        max: new Date().getFullYear() + 10
+      }
+    }
+  ]);
 ```
 
-Run migration:
+**Run migration to apply changes:**
 ```bash
 npm run migrate
 ```
 
-Or add field manually in Contentful UI:
+This updates your Contentful space with the new field.
+
+**Alternative**: Add manually in Contentful UI (not recommended for team projects):
 1. Go to **Content model > Book**
 2. Click **Add field** → **Integer**
 3. Set **Field ID**: `publicationYear`, **Name**: "Publication Year"
-4. Save
+4. Add validation: Min 1000, Max current year + 10
+5. Save
+
+> **💡 Best Practice**: Always use migrations to keep content model in sync across environments and team members.
 
 #### Step 2: Update GraphQL Query ([lib/api.ts](lib/api.ts))
 
@@ -301,7 +331,7 @@ Update [app/books/[slug]/page.tsx](app/books/[slug]/page.tsx):
 
 #### Step 5: Update Seed Data (Optional)
 
-Add to `cli-scripts/books.json`:
+Add to `cms-cli-scripts/books.json`:
 
 ```json
 {
@@ -342,13 +372,16 @@ Merge to `main` branch to automatically:
 | `npm run dev` | Start development server (localhost:3000) |
 | `npm run build` | Build for production |
 | `npm start` | Start production server |
-| `npm run setup` | Initialize Contentful content model |
-| `npm run seed` | Populate Contentful with sample books |
-| `npm run migrate` | Run content type migrations |
+| `npm run migrate` | **Create content types** - Run migrations to set up content model (schema) |
+| `npm run seed` | **Populate data** - Create sample books from `books.json` (requires migrate first) |
 | `npm run setup-app` | Install custom Contentful app dependencies |
 | `npm run start-app` | Start Contentful custom app (localhost:3001) |
 | `npm run lint` | Run ESLint |
 | `npm run lint:fix` | Fix ESLint errors |
+
+> **💡 First-time setup workflow:**
+> 1. `npm run migrate` - Creates all content types (Book, Author, TaxonomyTerm, HomePage)
+> 2. `npm run seed` - Populates with 7 sample books, authors, and taxonomies
 
 ---
 
@@ -647,7 +680,7 @@ Example: Creating a "Series Selector" field
 
 ### Adding a New Book Source
 
-1. Create seeder function in `cli-scripts/`
+1. Create seeder function in `cms-cli-scripts/`
 2. Update `books.json` schema
 3. Modify `seed-books.js` to handle new structure
 4. Document in README

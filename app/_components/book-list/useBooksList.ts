@@ -117,7 +117,6 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     total,
     error,
     loading: loading || filtersPending || pagination.isPending,
-    isPending: filtersPending || pagination.isPending,
     page: pagination.page,
     isInfinite: pagination.isInfinite,
     selectedTaxIds,

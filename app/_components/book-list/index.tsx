@@ -33,7 +33,6 @@ const BooksList = memo(function BooksList({
     total,
     error,
     loading,
-    isPending,
     page,
     isInfinite,
     selectedTaxIds,
@@ -94,7 +93,7 @@ const BooksList = memo(function BooksList({
         />
       )}
 
-      {(loading || showPending) && (
+      {(showPending) && (
         <LoadingSpinner message="Loading more books..." />
       )}
 
@@ -102,7 +101,7 @@ const BooksList = memo(function BooksList({
         <div className="mt-12 flex justify-center items-center gap-8">
           <button
             onClick={() => goToPage(-1)}
-            disabled={page === 0 || loading || showPending}
+            disabled={page === 0 || showPending}
             className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
           >
             ← Previous
@@ -112,7 +111,7 @@ const BooksList = memo(function BooksList({
           </span>
           <button
             onClick={() => goToPage(1)}
-            disabled={(page + 1) * BOOKS_DEFAULT_LIMIT >= total || loading || showPending}
+            disabled={(page + 1) * BOOKS_DEFAULT_LIMIT >= total || showPending}
             className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
           >
             Next →

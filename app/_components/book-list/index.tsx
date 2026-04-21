@@ -1,12 +1,14 @@
 "use client";
 
-import { memo, useState, useEffect, useRef } from "react";
+import { memo } from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
+import { useDebouncedPending } from "./useDebouncedPending";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 import LoadingSpinner from "../loading-spinner";
+import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
 
 interface BooksListProps {
   initialBooks: Book[], 
@@ -25,9 +27,7 @@ const BooksList = memo(function BooksList({
   availableTaxonomies = EMPTY_TAXONOMIES,
   initialFilters = EMPTY_FILTERS,
   withFilters = true,
-}: BooksListProps) {
-  const LIMIT = 5;
-  
+}: BooksListProps) {  
   const {
     books,
     total,
@@ -42,45 +42,10 @@ const BooksList = memo(function BooksList({
     clearFilters,
     togglePagination,
     goToPage,
-  } = useBooksList(initialBooks, initialTotal, LIMIT, initialFilters);
+  } = useBooksList(initialBooks, initialTotal, BOOKS_DEFAULT_LIMIT, initialFilters);
 
-  // Debounce loading state with minimum display time to prevent flashing
-  const [showPending, setShowPending] = useState(false);
-  const showTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (loading) {
-      // Clear any pending hide timer
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = null;
-      }
-      
-      // Show after 150ms delay (avoid showing for very fast operations)
-      showTimerRef.current = setTimeout(() => {
-        setShowPending(true);
-      }, 150);
-    } else {
-      // Clear show timer if operation completes before delay
-      if (showTimerRef.current) {
-        clearTimeout(showTimerRef.current);
-        showTimerRef.current = null;
-      }
-      
-      // If currently showing, keep visible for minimum 300ms to avoid flash
-      if (showPending) {
-        hideTimerRef.current = setTimeout(() => {
-          setShowPending(false);
-        }, 300);
-      }
-    }
-
-    return () => {
-      if (showTimerRef.current) clearTimeout(showTimerRef.current);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    };
-  }, [loading, showPending]);
+  // Debounce loading state to prevent flashing on fast operations
+  const showPending = useDebouncedPending(loading);
 
   if (error) return <div className="mt-8 text-red-600">{error}</div>;
 
@@ -100,7 +65,7 @@ const BooksList = memo(function BooksList({
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-4xl font-bold">
               <Link href={`/books`}>
-                Books ({total}) {showPending ? " - Updating..." : ""}
+                Books ({books.length} of {total}) {showPending ? " - Updating..." : ""}
               </Link>
             </h2>
             <button
@@ -143,11 +108,11 @@ const BooksList = memo(function BooksList({
             ← Previous
           </button>
           <span className="font-mono text-lg">
-            Page {page + 1} of {Math.ceil(total / LIMIT)}
+            Page {page + 1} of {Math.ceil(total / BOOKS_DEFAULT_LIMIT)}
           </span>
           <button
             onClick={() => goToPage(1)}
-            disabled={(page + 1) * LIMIT >= total || loading || showPending}
+            disabled={(page + 1) * BOOKS_DEFAULT_LIMIT >= total || loading || showPending}
             className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
           >
             Next →

@@ -3,6 +3,7 @@ import BooksList from "@/app/_components/book-list";
 import { getAllBooks, getTaxonomies } from "@/lib/api";
 import Link from "next/link";
 import { ErrorBoundary } from "@/app/_components/error-boundary";
+import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
 
 export default async function BooksPage({
   searchParams,
@@ -19,7 +20,7 @@ export default async function BooksPage({
     : [];
   
   const [{ items, total }, taxonomies] = await Promise.all([
-    getAllBooks(isEnabled, 10, 0, initialFilters), // Fetch first page of books with filters
+    getAllBooks(isEnabled, BOOKS_DEFAULT_LIMIT, 0, initialFilters), // Fetch first page of books with filters
     getTaxonomies(isEnabled),
   ]);
   

@@ -12,7 +12,6 @@ export function TailwindUtilities() {
   useEffect(() => {
     let cancelled = false;
     
-    // @ts-expect-error - CSS import for lazy loading
     import("./utilities.css")
       .then(() => {
         if (!cancelled) {

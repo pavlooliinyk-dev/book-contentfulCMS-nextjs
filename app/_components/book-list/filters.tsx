@@ -32,38 +32,55 @@ const Filters = memo(function Filters({
   );
 
   return (
-    <aside className="w-full lg:w-64 shrink-0">
+    <aside 
+      className="w-full lg:w-64 shrink-0" 
+      role="complementary" 
+      aria-label="Book filters"
+    >
       <div className="space-y-8 lg:sticky lg:top-10">
         <h3 className="text-xl font-bold border-b pb-2">Filters</h3>
+        
+        {/* Screen reader announcement for filter changes */}
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {selectedTaxIds.length > 0 
+            ? `${selectedTaxIds.length} filter${selectedTaxIds.length === 1 ? '' : 's'} active`
+            : 'No filters active'
+          }
+        </div>
+
         <div className="grid grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
           {sortedTypes.map((type) => (
-            <div key={type} className="space-y-3">
-              <h4 className="capitalize font-semibold text-gray-500 text-sm tracking-wider">
+            <fieldset key={type} className="space-y-3">
+              <legend className="capitalize font-semibold text-gray-500 text-sm tracking-wider">
                 {type}
-              </h4>
+              </legend>
               <div className="flex flex-col gap-2">
                 {groupedTax[type].map((tax: TaxonomyTerm) => (
-                  <label key={tax.sys.id} className="flex items-center gap-3 cursor-pointer group">
+                  <label 
+                    key={tax.sys.id} 
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
                     <input
                       type="checkbox"
                       checked={selectedTaxIds.includes(tax.title)}
                       onChange={() => handleFilterChange(tax)}
-                      className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
+                      className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black focus:ring-2 focus:ring-offset-2 focus-visible:outline-none cursor-pointer"
+                      aria-label={`Filter by ${tax.title}`}
                     />
-                    <span className="text-sm group-hover:text-black transition-colors">
+                    <span className="text-sm group-hover:text-black transition-colors select-none">
                       {tax.title}
                     </span>
                   </label>
                 ))}
               </div>
-            </div>
+            </fieldset>
           ))}
         </div>
         {selectedTaxIds.length > 0 && (
           <button 
             onClick={clearFilters}
-            className="text-sm text-red-600 hover:underline pt-4"
-            aria-label={`Clear ${selectedTaxIds.length} active filters`}
+            className="text-sm text-red-600 hover:underline pt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 rounded px-1"
+            aria-label={`Clear ${selectedTaxIds.length} active filter${selectedTaxIds.length === 1 ? '' : 's'}`}
           >
             Clear all filters ({selectedTaxIds.length})
           </button>

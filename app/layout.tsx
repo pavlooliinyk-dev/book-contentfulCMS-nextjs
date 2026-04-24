@@ -41,6 +41,10 @@ export default async function RootLayout({
   const { isEnabled } = await draftMode();
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <link rel="preconnect" href="https://images.ctfassets.net" />
+        <link rel="preconnect" href={`${EXAMPLE_PATH}`} />
+      </head>
       <body>
         <TailwindUtilities />
         {isEnabled && (

@@ -1,11 +1,6 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import SearchAlgoliaClient from "./SearchAlgoliaClient";
 import { ErrorBoundary } from "@/app/_components/error-boundary";
-
-const SearchAlgolia = dynamic(() => import("./search-algolia"), {
-  ssr: false,
-  loading: () => <div className="h-96 animate-pulse bg-gray-100 rounded-lg" />,
-});
 
 export default async function MoviesPage() {
   return (
@@ -15,7 +10,7 @@ export default async function MoviesPage() {
       </Link>
       <h1 className="text-6xl font-bold mb-10">Movies (PLP)</h1>
       <ErrorBoundary>
-        <SearchAlgolia showHits={true}/>
+        <SearchAlgoliaClient showHits={true}/>
       </ErrorBoundary>
     </div>
   );

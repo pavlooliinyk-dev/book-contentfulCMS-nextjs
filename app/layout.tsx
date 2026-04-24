@@ -42,7 +42,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <link rel="preconnect" href="https://vercel.live" />
+        <link rel="preconnect" href="https://vercel.live" crossOrigin="anonymous" />
       </head>
       <body>
         <TailwindUtilities />

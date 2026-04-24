@@ -72,6 +72,20 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     }
   }, [limit]);
 
+
+  const debouncedFetch = useCallback(
+    (() => {
+      let timer: NodeJS.Timeout;
+      return (skip: number, append: boolean, taxIds?: string[]) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          fetchBooks(skip, append, taxIds);
+        }, 750);
+      };
+    })(),
+    [fetchBooks]
+  );
+
   // Initialize filters hook
   const {
     selectedTaxIds,
@@ -83,7 +97,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     initialFilters,
     onFilterChange: (filters) => {
       pagination.resetPage();
-      fetchBooks(0, false, filters);
+      debouncedFetch(0, false, filters);
     },
   });
 

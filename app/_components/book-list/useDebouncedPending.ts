@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useDebounce } from "./useDebounce";
 
 /**
  * Debounces a pending/loading state to prevent UI flashing on fast operations.
@@ -13,25 +14,18 @@ export function useDebouncedPending(
   showDelay = 0,
   hideDelay = 300
 ): boolean {
+  const debouncedShow = useDebounce(isPending, showDelay);
+  const debouncedHide = useDebounce(isPending, hideDelay);
+  
   const [showPending, setShowPending] = useState(false);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-
     if (isPending) {
-      timer = setTimeout(() => {
-        setShowPending(true);
-      }, showDelay);
+      if (debouncedShow) setShowPending(true);
     } else {
-      timer = setTimeout(() => {
-        setShowPending(false);
-      }, hideDelay);
+      if (!debouncedHide) setShowPending(false);
     }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isPending, showDelay, hideDelay]);
+  }, [isPending, debouncedShow, debouncedHide]);
 
   return showPending;
 }

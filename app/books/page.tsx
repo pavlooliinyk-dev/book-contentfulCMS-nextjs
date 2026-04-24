@@ -37,6 +37,7 @@ export default async function BooksPage({
           initialTotal={total} 
           availableTaxonomies={taxonomies}
           initialFilters={initialFilters}
+          priorityFirstImage
         />
       </ErrorBoundary>
     </div>

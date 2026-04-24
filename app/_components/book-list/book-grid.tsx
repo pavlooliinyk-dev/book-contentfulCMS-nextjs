@@ -8,9 +8,10 @@ import ContentfulImage from "../contentful-image";
 
 interface BookGridProps {
   books: Book[];
+  priorityFirstImage?: boolean;
 }
 
-const BookCard = memo(({ book }: { book: Book }) => {
+const BookCard = memo(({ book, priority }: { book: Book; priority?: boolean }) => {
   return (
     <article className="flex flex-col">
       {book.coverImage?.url && (
@@ -25,6 +26,9 @@ const BookCard = memo(({ book }: { book: Book }) => {
               quality={75}
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover hover:opacity-80 transition shadow-md rounded"
+              priority={priority}
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : "auto"}
             />
           </Link>
         </div>
@@ -69,13 +73,14 @@ const BookCard = memo(({ book }: { book: Book }) => {
 
 BookCard.displayName = "BookCard";
 
-export default function BookGrid({ books }: BookGridProps) {
+export default function BookGrid({ books, priorityFirstImage }: BookGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-      {books.map((book) => (
+      {books.map((book, index) => (
         <BookCard 
           key={book.sys?.id} 
           book={book} 
+          priority={priorityFirstImage && index === 0}
         />
       ))}
     </div>

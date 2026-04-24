@@ -16,6 +16,7 @@ interface BooksListProps {
   availableTaxonomies?: TaxonomyTerm[]
   withFilters?: boolean
   initialFilters?: string[]
+  priorityFirstImage?: boolean
 }
 
 const EMPTY_FILTERS: string[] = [];
@@ -27,6 +28,7 @@ const BooksList = memo(function BooksList({
   availableTaxonomies = EMPTY_TAXONOMIES,
   initialFilters = EMPTY_FILTERS,
   withFilters = true,
+  priorityFirstImage = false,
 }: BooksListProps) {  
   const {
     books,
@@ -76,7 +78,7 @@ const BooksList = memo(function BooksList({
           </div>
 
           <div className={`transition-opacity duration-200 ${showPending ? 'opacity-50' : 'opacity-100'}`}>
-            <BookGrid books={books} />
+            <BookGrid books={books} priorityFirstImage={priorityFirstImage} />
           </div>
         </div>
       </div>

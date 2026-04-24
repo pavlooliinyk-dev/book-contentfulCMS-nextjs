@@ -42,8 +42,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <link rel="preconnect" href="https://images.ctfassets.net" />
-        <link rel="preconnect" href={`${EXAMPLE_PATH}`} />
+        <link rel="preconnect" href="https://vercel.live" />
       </head>
       <body>
         <TailwindUtilities />

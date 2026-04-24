@@ -21,7 +21,7 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
       abortControllerRef.current.abort();
     }
     
-    setLoading(true);
+    
     setError(null);
     const taxParam = taxIds && taxIds.length > 0 ? `&taxonomies=${taxIds.join(",")}` : "";
     
@@ -73,10 +73,12 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
   }, [limit]);
 
 
+  // Debounced version of fetchBooks to prevent rapid calls during filter changes
   const debouncedFetch = useCallback(
     (() => {
       let timer: NodeJS.Timeout;
       return (skip: number, append: boolean, taxIds?: string[]) => {
+        setLoading(true);
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           fetchBooks(skip, append, taxIds);

@@ -1,6 +1,11 @@
 import Link from "next/link";
-import SearchAlgolia from "./search-algolia";
+import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/app/_components/error-boundary";
+
+const SearchAlgolia = dynamic(() => import("./search-algolia"), {
+  ssr: false,
+  loading: () => <div className="h-96 animate-pulse bg-gray-100 rounded-lg" />,
+});
 
 export default async function MoviesPage() {
   return (

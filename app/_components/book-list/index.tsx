@@ -2,13 +2,17 @@
 
 import { memo } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import { useDebouncedPending } from "./useDebouncedPending";
-import Filters from "./filters";
 import BookGrid from "./book-grid";
 import LoadingSpinner from "../loading-spinner";
 import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
+
+const Filters = dynamic(() => import("./filters"), {
+  ssr: true,
+});
 
 interface BooksListProps {
   initialBooks: Book[], 

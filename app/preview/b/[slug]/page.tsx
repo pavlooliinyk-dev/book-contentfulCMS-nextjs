@@ -13,22 +13,23 @@ interface IStudio {
   locale?: string;
 }
 
+console.log("process.env:", process.env);
+
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID!,
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
 });
 
 const previewClient = createClient({
   space: process.env.CONTENTFUL_SPACE_ID!,
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN!,
-  host: "preview.contentful.com",
+  accessToken: process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN!,
+  host: "https://book-contentful-cms-nextj-git-485118-pavlooliinyk-devs-projects.vercel.app",
 });
 
-const experienceTypeId =
-  process.env.NEXT_PUBLIC_CTF_STUDIO_EXPERIENCE_TYPE_ID || "page";
+const experienceTypeId = "page";
+
 
 const StudioWrapper: FC<IStudio> = ({ slug, locale = "en-US" }) => {
-  // studioComponentAndTokenRegistration();
   const isPreviewMode = true; // TO DO
   const { experience, isLoading, error } = useFetchBySlug({
     client: isPreviewMode ? previewClient : client,

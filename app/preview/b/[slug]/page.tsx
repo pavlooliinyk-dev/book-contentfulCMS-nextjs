@@ -4,12 +4,9 @@ import {
   ExperienceRoot,
   useFetchBySlug,
 } from "@contentful/experiences-sdk-react";
-// import { Skeleton } from "@/components/ui/skeleton";
 
 import { createClient } from "contentful";
 import { notFound } from "next/navigation";
-
-// import { studioComponentAndTokenRegistration } from "@/lib/studio-component-registration";
 
 interface IStudio {
   slug: string;

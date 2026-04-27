@@ -70,8 +70,8 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
         setLoading(false);
       }
     }
-  }, [limit]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limit]); 
 
   // Debounced version of fetchBooks to prevent rapid calls during filter changes
   const debouncedFetch = useCallback(
@@ -142,4 +142,4 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     togglePagination: pagination.togglePagination,
     goToPage: pagination.goToPage,
   };
-}
+};

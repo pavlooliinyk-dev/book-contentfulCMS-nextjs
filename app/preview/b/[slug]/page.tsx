@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, Suspense } from "react";
+import { FC, Suspense } from "react";
 import {
   ExperienceRoot,
   useFetchBySlug,
@@ -9,7 +9,7 @@ import {
 import { createClient } from "contentful";
 import { notFound } from "next/navigation";
 
-import { studioComponentAndTokenRegistration } from "@/lib/studio-component-registration";
+// import { studioComponentAndTokenRegistration } from "@/lib/studio-component-registration";
 
 interface IStudio {
   slug: string;
@@ -31,7 +31,7 @@ const experienceTypeId =
   process.env.NEXT_PUBLIC_CTF_STUDIO_EXPERIENCE_TYPE_ID || "page";
 
 const StudioWrapper: FC<IStudio> = ({ slug, locale = "en-US" }) => {
-  studioComponentAndTokenRegistration();
+  // studioComponentAndTokenRegistration();
   const isPreviewMode = true; // TO DO
   const { experience, isLoading, error } = useFetchBySlug({
     client: isPreviewMode ? previewClient : client,

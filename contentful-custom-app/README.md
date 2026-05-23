@@ -4,10 +4,30 @@ Displays API usage statistics in your Contentful space with quota monitoring and
 
 ## Installation
 
+### Prerequisites
+
+- Node.js and npm installed
+- Contentful CLI installed globally:
+
+```bash
+npm install -g contentful-cli
+```
+
+For installation and usage details, see the official Contentful CLI documentation:
+https://www.contentful.com/developers/docs/tutorials/cli/installation/
+
+- Logged in to Contentful CLI and using your target space:
+
+```bash
+contentful login
+contentful space use <space-id>
+```
+
+
 ### Step 1: Install Dependencies
 
 ```bash
-cd contentful-app
+cd contentful-custom-app
 npm install
 ```
 

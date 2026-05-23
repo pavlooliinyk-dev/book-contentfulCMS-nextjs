@@ -19,9 +19,26 @@ This is a **book catalog application** featuring:
 ## 🎯 Quick Start (New Developers)
 
 ### Prerequisites
-- Node.js 18+ and npm
+- Node.js 18+ and npm installed
 - A [Contentful account](https://www.contentful.com/sign-up/) (free tier works)
 - Git
+- Contentful CLI installed globally:
+
+```bash
+npm install -g contentful-cli
+```
+
+For installation and usage details, see the official Contentful CLI documentation:
+https://www.contentful.com/developers/docs/tutorials/cli/installation/
+
+- Logged in to Contentful CLI and using your target space:
+
+```bash
+contentful login
+contentful space use <space-id>
+```
+
+Run these commands before `npm run migrate` and `npm run seed`.
 
 ### Installation & Setup
 
@@ -32,11 +49,15 @@ npm install
 # 2. Set up environment variables (see Configuration section below)
 # Copy the values from .env.local (already in this repo) or create your own
 
-# 3. Set up Contentful content model and seed data
+# 3. Authenticate Contentful CLI and select your space
+contentful login
+contentful space use <space-id>
+
+# 4. Set up Contentful content model and seed data
 npm run migrate  # Creates content types (Book, Author, TaxonomyTerm, HomePage)
 npm run seed     # Populates with 7 sample books, authors, and taxonomies
 
-# 4. Start development server
+# 5. Start development server
 npm run dev
 ```
 

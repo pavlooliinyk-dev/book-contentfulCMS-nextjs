@@ -9,7 +9,7 @@
     "migrate": "contentful space migration cms-cli-scripts/migration.js",
     "seed": "node ./cms-cli-scripts/seed-books.js",
     "setup-app": "node setup-contentful-app.js",
-    "start-app": "cd contentful-app && npm start",
+    "start-app": "cd contentful-custom-app && npm start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },

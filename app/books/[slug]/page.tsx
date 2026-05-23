@@ -59,7 +59,7 @@ export default async function BookPage(props: {
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
           <Pricing bookId={book.slug} />
-          <StarRatingDisplay rating={book.rating ?? null} size="sm" />
+          <StarRatingDisplay rating={book.rating ?? null} size="sm" colorStar="text-red-500" />
         </div>
 
         <div className="mx-auto max-w-2xl">

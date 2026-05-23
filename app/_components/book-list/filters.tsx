@@ -38,7 +38,11 @@ const Filters = memo(function Filters({
       aria-label="Book filters"
     >
       <div className="space-y-8 lg:sticky lg:top-10">
+<<<<<<< HEAD
         <div className="text-xl font-bold border-b pb-2">Filters</div>
+=======
+        <h3 className="text-xl font-bold border-b pb-2">Filters</h3>
+>>>>>>> main
         
         {/* Screen reader announcement for filter changes */}
         <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">

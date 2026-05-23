@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Book, TaxonomyTerm } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import { useDebouncedPending } from "./useDebouncedPending";
+<<<<<<< HEAD
 import BookGrid from "./book-grid";
 import LoadingSpinner from "../loading-spinner";
 import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
@@ -13,6 +14,12 @@ import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
 const Filters = dynamic(() => import("./filters"), {
   ssr: true,
 });
+=======
+import Filters from "./filters";
+import BookGrid from "./book-grid";
+import LoadingSpinner from "../loading-spinner";
+import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
+>>>>>>> main
 
 interface BooksListProps {
   initialBooks: Book[], 
@@ -32,7 +39,10 @@ const BooksList = memo(function BooksList({
   availableTaxonomies = EMPTY_TAXONOMIES,
   initialFilters = EMPTY_FILTERS,
   withFilters = true,
+<<<<<<< HEAD
   priorityFirstImage = false,
+=======
+>>>>>>> main
 }: BooksListProps) {  
   const {
     books,
@@ -82,7 +92,11 @@ const BooksList = memo(function BooksList({
           </div>
 
           <div className={`transition-opacity duration-200 ${showPending ? 'opacity-50' : 'opacity-100'}`}>
+<<<<<<< HEAD
             <BookGrid books={books} priorityFirstImage={priorityFirstImage} />
+=======
+            <BookGrid books={books} />
+>>>>>>> main
           </div>
         </div>
       </div>

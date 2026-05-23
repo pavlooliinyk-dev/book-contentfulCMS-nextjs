@@ -1,11 +1,10 @@
-import React from 'react';
-
 interface StarRatingDisplayProps {
   rating: number | null;
   maxStars?: number;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
+  colorStar?: string;
 }
 
 /**
@@ -29,6 +28,7 @@ interface StarRatingDisplayProps {
 export function StarRatingDisplay({ 
   rating, 
   maxStars = 5, 
+  colorStar = 'text-yellow-500',
   size = 'md',
   showLabel = false,
   className = ''
@@ -57,7 +57,7 @@ export function StarRatingDisplay({
           <svg
             key={index}
             className={`${starSizes[size]} ${
-              index < rating ? 'text-yellow-500' : 'text-gray-300'
+              index < rating ? colorStar : 'text-gray-300'
             }`}
             fill="currentColor"
             viewBox="0 0 24 24"
@@ -93,7 +93,7 @@ export function BookCardExample() {
     <div className="book-card">
       <h3>{book.fields?.title}</h3>
       {/* Use optional chaining - rating may not exist in draft mode */}
-      <StarRatingDisplay rating={book.fields?.rating} size="sm" />
+      <StarRatingDisplay rating={book.fields?.rating} size="sm" colorStar="text-blue-500" />
     </div>
   );
 }
@@ -121,6 +121,7 @@ export function BookDetailExample() {
         size="lg" 
         showLabel 
         className="my-4"
+        colorStar="text-red-500"
       />
     </div>
   );

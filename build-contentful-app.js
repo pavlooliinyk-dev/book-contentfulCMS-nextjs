@@ -10,7 +10,7 @@ if (process.env.SKIP_CONTENTFUL_APP === 'true') {
 
 console.log('🏗️  Building Contentful App...\n');
 
-const contentfulAppDir = path.join(__dirname, 'contentful-app');
+const contentfulAppDir = path.join(__dirname, 'contentful-custom-app');
 const buildDir = path.join(contentfulAppDir, 'build');
 const publicDir = path.join(__dirname, 'public', 'contentful-app');
 
@@ -32,7 +32,7 @@ try {
   console.log('📦 Installing dependencies...');
   try {
     // Use npm install instead of npm ci for better Vercel compatibility
-    execSync('npm install --prefer-offline --no-audit --loglevel=error', { 
+    execSync('npm install --prefer-offline --no-audit --loglevel=error  --legacy-peer-deps', { 
       stdio: 'inherit',
       cwd: contentfulAppDir 
     });

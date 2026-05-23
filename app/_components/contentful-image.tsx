@@ -43,8 +43,6 @@ function getOptimizedContentfulUrl(
   return url.toString();
 }
 
-<<<<<<< HEAD
-=======
 /**
  * Custom loader that bypasses Next.js image optimization
  * since we're already optimizing through Contentful's Image API
@@ -53,7 +51,6 @@ const contentfulLoader = ({ src }: { src: string }) => {
   return src;
 };
 
->>>>>>> main
 export default function ContentfulImage({ 
   src, 
   width, 
@@ -64,14 +61,9 @@ export default function ContentfulImage({
   sizes,
   ...props 
 }: ContentfulImageProps) {
-<<<<<<< HEAD
-  // For fill images, dynamically calculate width based on sizes prop
-  const optimizationWidth = fill && sizes ? parseInt(sizes.match(/\d+/)?.[0] || '1920') : width;
-=======
   // For fill images, use a reasonable max width (e.g., 1920px for typical screens)
   // Otherwise use the provided width
   const optimizationWidth = fill ? 1920 : width;
->>>>>>> main
   const optimizedSrc = getOptimizedContentfulUrl(src, optimizationWidth, quality);
   
   return (
@@ -83,10 +75,7 @@ export default function ContentfulImage({
       fill={fill}
       quality={quality}
       sizes={sizes}
-<<<<<<< HEAD
-=======
       loader={contentfulLoader}
->>>>>>> main
       {...props}
     />
   );

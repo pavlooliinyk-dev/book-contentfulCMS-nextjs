@@ -73,38 +73,6 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]); 
 
-<<<<<<< HEAD
-  // Debounced version of fetchBooks to prevent rapid calls during filter changes
-  const debouncedFetch = useCallback(
-    (() => {
-      let timer: NodeJS.Timeout;
-      return (skip: number, append: boolean, taxIds?: string[]) => {
-        setLoading(true);
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          fetchBooks(skip, append, taxIds);
-        }, 750);
-      };
-    })(),
-    [fetchBooks]
-  );
-
-  // Initialize filters hook
-  const {
-    selectedTaxIds,
-    selectedTaxIdsRef,
-    handleFilterChange: handleFilterChangeBase,
-    clearFilters: clearFiltersBase,
-    isPending: filtersPending,
-  } = useBookFilters({
-    initialFilters,
-    onFilterChange: (filters) => {
-      pagination.resetPage();
-      debouncedFetch(0, false, filters);
-    },
-  });
-
-=======
   // Initialize filters hook
   const {
     selectedTaxIds,
@@ -120,7 +88,6 @@ export function useBooksList(initialBooks: Book[], initialTotal: number, limit: 
     },
   });
 
->>>>>>> main
   // Initialize pagination hook
   const pagination = useBookPagination({
     limit,

@@ -19,7 +19,7 @@ This is a **book catalog application** featuring:
 ## 🎯 Quick Start (New Developers)
 
 ### Prerequisites
-- Node.js 18+ and npm installed
+- Node.js 20.19+ or 22.20+ and npm installed
 - A [Contentful account](https://www.contentful.com/sign-up/) (free tier works)
 - Git
 - Contentful CLI installed globally:

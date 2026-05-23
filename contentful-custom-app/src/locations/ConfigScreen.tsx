@@ -1,5 +1,5 @@
 import { Heading, Form, Paragraph, FormControl, TextInput } from '@contentful/f36-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ConfigScreenProps {
   sdk: any;
@@ -15,11 +15,16 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
     maxStars: 5,
     starColor: '#FFD700',
   });
+  const parametersRef = useRef(parameters);
+
+  useEffect(() => {
+    parametersRef.current = parameters;
+  }, [parameters]);
 
   useEffect(() => {
     sdk.app.onConfigure(() => {
       return {
-        parameters,
+        parameters: parametersRef.current,
         targetState: {
           EditorInterface: {},
         },
@@ -34,17 +39,17 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
     });
 
     sdk.app.setReady();
-  }, [sdk, parameters]);
+  }, [sdk]);
 
   const handleMaxStarsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0 && value <= 10) {
-      setParameters({ ...parameters, maxStars: value });
+      setParameters((currentParameters) => ({ ...currentParameters, maxStars: value }));
     }
   };
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setParameters({ ...parameters, starColor: e.target.value });
+    setParameters((currentParameters) => ({ ...currentParameters, starColor: e.target.value }));
   };
 
   return (

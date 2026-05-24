@@ -8,6 +8,8 @@ interface StarRatingFieldProps {
   sdk: FieldAppSDK;
 }
 
+
+
 export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   const currentValue = sdk.field.getValue();
   const [rating, setRating] = useState<number | null>(

@@ -21,6 +21,7 @@ interface StarRatingDisplayProps {
  * - Validates rating is a number before rendering
  * - Handles edge cases from draft/preview mode
  * - Expects scalar rating value from CMS
+ * - Expects scalar rating value from CMS
  * 
  * @example
  * // On Book List/Grid
@@ -66,6 +67,7 @@ export function StarRatingDisplay({
   };
 
 
+
   return (
     <div className={`flex items-center gap-1 ${className}`}>
       <div className="flex gap-0.5">
@@ -74,8 +76,12 @@ export function StarRatingDisplay({
             key={index}
             className={`${starSizes[size]} ${
               index < ratingValue ? '' : 'text-gray-300'
+              index < ratingValue ? '' : 'text-gray-300'
             }`}
             fill="currentColor"
+            style={{
+              color: index < ratingValue ? color : '#d1d5db',
+            }}
             style={{
               color: index < ratingValue ? color : '#d1d5db',
             }}
@@ -87,6 +93,7 @@ export function StarRatingDisplay({
       </div>
       {showLabel && (
         <span className={`${sizeClasses[size]} text-gray-600 font-medium ml-1`}>
+          {ratingValue}/{maxStars}
           {ratingValue}/{maxStars}
         </span>
       )}

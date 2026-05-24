@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { Markdown } from "@/app/_components/markdown";
 import { getAllBooks, getBookBySlug, getRatingDisplayConfig } from "@/lib/api";
+import { getAllBooks, getBookBySlug, getRatingDisplayConfig } from "@/lib/api";
 import { BOOKS_MAX_LIMIT } from "@/lib/constants";
 import CoverImage from "@/app/_components/cover-image";
 import { StarRatingDisplay } from "@/app/_components/star-rating-display";
@@ -29,6 +30,12 @@ export default async function BookPage(props: {
     getRatingDisplayConfig(isEnabled),
   ]);
 
+  const [book, ratingDisplayConfig] = await Promise.all([
+    getBookBySlug(slug, isEnabled),
+    getRatingDisplayConfig(isEnabled),
+  ]);
+
+  console.log('[DEBUG]: BookPage init book', { book });
   if (!book) {
     notFound();
   }
@@ -62,6 +69,12 @@ export default async function BookPage(props: {
             {book.numberOfPages && <span className="ml-4">{book.numberOfPages} pages</span>}
           </div>
           <Pricing bookId={book.slug} />
+          <StarRatingDisplay
+            rating={book.rating ?? null}
+            size="sm"
+            color={ratingDisplayConfig.color}
+            maxStars={ratingDisplayConfig.maxStars}
+          />
           <StarRatingDisplay
             rating={book.rating ?? null}
             size="sm"

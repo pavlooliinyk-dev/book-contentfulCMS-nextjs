@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo } from 'react';
 import { useFetch } from '@/lib/hooks/useFetch';
 
 interface PricingData {
@@ -8,10 +9,26 @@ interface PricingData {
   availability: string;
 }
 
-export default function Pricing({ bookId }: { bookId: string }) {
+interface PricingProps {
+  bookId: string;
+}
+
+function Pricing({ bookId }: PricingProps) {
   const { data: pricing, loading, error } = useFetch<PricingData>(
     `/api/pricing?bookId=${bookId}`
   );
+
+  const availabilityClassName = useMemo(() => {
+    if (!pricing) return 'bg-yellow-100 text-yellow-800';
+    if (pricing.availability === 'in stock') return 'bg-green-100 text-green-800';
+    if (pricing.availability === 'out of stock') return 'bg-red-100 text-red-800';
+    return 'bg-yellow-100 text-yellow-800';
+  }, [pricing]);
+
+  const formattedPrice = useMemo(() => {
+    if (!pricing) return '';
+    return `$${pricing.price.toFixed(2)}`;
+  }, [pricing]);
 
   if (loading) {
     return <div className="animate-pulse h-6 w-24 bg-gray-200 rounded"></div>;
@@ -40,15 +57,15 @@ export default function Pricing({ bookId }: { bookId: string }) {
   return (
     <div className="flex items-center gap-3 my-2">
       <span className="text-2xl font-bold text-green-700">
-        ${pricing.price.toFixed(2)}
+        {formattedPrice}
       </span>
-      <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
-        pricing.availability === 'in stock' ? 'bg-green-100 text-green-800' :
-          pricing.availability === 'out of stock' ? 'bg-red-100 text-red-800' :
-            'bg-yellow-100 text-yellow-800'
-      }`}>
+      <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${availabilityClassName}`}>
         {pricing.availability}
       </span>
     </div>
   );
 }
+
+Pricing.displayName = 'Pricing';
+
+export default memo(Pricing);

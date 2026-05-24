@@ -25,7 +25,7 @@ export function useFetch<T = any>(
   
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() => Boolean(url && enabled));
   const fetcherRef = useRef<ReturnType<typeof createAbortableFetch> | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
 

@@ -9,7 +9,8 @@ import {
   BookRaw,
   TaxonomyTerm,
   HomePage,
-  RatingDisplayConfig
+  RatingDisplayConfig,
+  ImageWithTextSection
 } from './types';
 import { 
   BOOKS_DEFAULT_LIMIT, 
@@ -17,6 +18,10 @@ import {
   DEFAULT_RATING_COLOR,
   DEFAULT_RATING_MAX_STARS
 } from './constants';
+
+function isValidMaxStars(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 10;
+}
 
 export async function fetchGraphQL<T = unknown>(
   query: string, 
@@ -153,7 +158,7 @@ export async function getHomePage(preview: boolean): Promise<HomePage | null> {
   }
   
   // Parse imageWithTextSection if it exists
-  let imageWithTextSection: any = null;
+  let imageWithTextSection: ImageWithTextSection | undefined;
   if (homePageRaw.imageWithTextSection) {
     try {
       imageWithTextSection = typeof homePageRaw.imageWithTextSection === 'string' 
@@ -161,7 +166,7 @@ export async function getHomePage(preview: boolean): Promise<HomePage | null> {
         : homePageRaw.imageWithTextSection;
     } catch (e) {
       console.error('Error parsing imageWithTextSection:', e);
-      imageWithTextSection = null;
+      imageWithTextSection = undefined;
     }
   }
   
@@ -174,13 +179,12 @@ export async function getHomePage(preview: boolean): Promise<HomePage | null> {
 
 export async function getRatingDisplayConfig(preview: boolean): Promise<RatingDisplayConfig> {
   const homePage = await getHomePage(preview);
-  const rawConfig = homePage?.imageWithTextSection?.ratingDisplayConfig || {};
+  const rawConfig: Partial<RatingDisplayConfig> = homePage?.imageWithTextSection?.ratingDisplayConfig || {};
 
   const color = typeof rawConfig.color === 'string' ? rawConfig.color : DEFAULT_RATING_COLOR;
-  const maxStars =
-    typeof rawConfig.maxStars === 'number' && rawConfig.maxStars >= 1 && rawConfig.maxStars <= 10
-      ? rawConfig.maxStars
-      : DEFAULT_RATING_MAX_STARS;
+  const maxStars = isValidMaxStars(rawConfig.maxStars)
+    ? rawConfig.maxStars
+    : DEFAULT_RATING_MAX_STARS;
 
   return { color, maxStars };
 }

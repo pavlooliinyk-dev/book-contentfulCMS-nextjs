@@ -1,11 +1,16 @@
 import { Document } from "@contentful/rich-text-types";
 
-export const Position = {
+export const PositionX = {
   RIGHT: "right",
   LEFT: "left",
 } as const;
+export const PositionY = {
+  TOP: "top",
+  BOTTOM: "bottom",
+} as const;
 
-export type Position = typeof Position[keyof typeof Position];
+export type PositionX = typeof PositionX[keyof typeof PositionX];
+export type PositionY = typeof PositionY[keyof typeof PositionY];
 
 // Raw GraphQL response types (as returned from Contentful)
 export interface Author {
@@ -51,7 +56,7 @@ export interface BookRaw {
   numberOfPages?: number;
   rating?: number | null;
   externalResourceLink?: string;
-  metaUi?: Record<string, { position: Position }>;
+  metaUi?: Record<string, { position: PositionX }>;
   authorsCollection?: { items: Author[] };
   taxonomiesCollection?: { items: TaxonomyTerm[] };
   sys?: {
@@ -65,10 +70,16 @@ export interface Book extends Omit<BookRaw, 'authorsCollection' | 'taxonomiesCol
   taxonomies: TaxonomyTerm[];
 }
 
+export interface ImageWithTextSection {
+  position?: PositionY | PositionX;
+  ratingDisplayConfig?: RatingDisplayConfig;
+  text?: string;
+}
+
 export interface HomePage {
   title: string;
   heroBanner?: { url: string };
-  imageWithTextSection?: any; // JSON object parsed from string
+  imageWithTextSection?: ImageWithTextSection;
 }
 
 export interface RatingDisplayConfig {
@@ -103,7 +114,7 @@ export interface HomePageCollectionData {
     items: Array<{
       title: string;
       heroBanner?: { url: string };
-      imageWithTextSection?: string;
+      imageWithTextSection?: ImageWithTextSection;
     }>;
   };
 }

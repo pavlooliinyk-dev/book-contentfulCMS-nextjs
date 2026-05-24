@@ -26,7 +26,7 @@ export default async function BooksPage({
   ]);
 
   console.log('** [DEBUG]: BooksPage init, items, ratingDisplayConfig', 
-     ratingDisplayConfig );
+    ratingDisplayConfig );
   
   return (
     <div className="container mx-auto px-5 pt-10">

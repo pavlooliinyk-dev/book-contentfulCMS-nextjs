@@ -68,7 +68,8 @@ Update app URL in Contentful to production URL. Requires HTTPS.
 npm start
 ```
 
-Then update your Contentful app definition to point to `http://localhost:3001`.
+Then update your Contentful app definition to point to `http://localhost:3001/contentful-app/`.
+For prod Contentful app definition point to `{production_base_url}/contentful-app/`.
 
 ### Build for Production
 

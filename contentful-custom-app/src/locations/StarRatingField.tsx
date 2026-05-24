@@ -1,9 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
-import { FieldExtensionSDK } from '@contentful/app-sdk';
+import { FieldAppSDK } from '@contentful/app-sdk';
 import { Box } from '@contentful/f36-components';
+import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from '../constants';
+import './StarRatingField.css';
 
 interface StarRatingFieldProps {
-  sdk: FieldExtensionSDK;
+  sdk: FieldAppSDK;
 }
 
 
@@ -21,16 +23,12 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     maxStars?: number;
     starColor?: string;
   } || {};
-  const maxStars = appParams.maxStars || 5;
-  const starColor = appParams.starColor || '#FFD700';
+  const maxStars = appParams.maxStars || DEFAULT_RATING_MAX_STARS;
+  const starColor = appParams.starColor || DEFAULT_RATING_COLOR;
 
-  // console.log('[DEBUG]: StarRatingField init', { rating, maxStars, starColor });
-  
   useEffect(() => {
     // Auto-resize to content height
     sdk.window.startAutoResizer();
-
-    console.log('[DEBUG]: Auto-resize to content height done');
 
     // Check if field is disabled (read-only mode for published entries)
     const checkDisabled = () => {
@@ -89,30 +87,19 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
 
   return (
       <Box
-        style={{
-          display: 'flex',
-          gap: '8px',
-          padding: '8px 0',
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-          opacity: isDisabled ? 0.6 : 1,
-          marginBottom: '16px',
-        }}
+        className={`star-rating-field ${isDisabled ? 'is-disabled' : ''}`}
         onMouseLeave={() => handleStarHover(null)}
       >
         {stars.map((starIndex) => (
           <svg
             key={starIndex}
+            className={`star-rating-field__star ${hoveredStar === starIndex ? 'is-hovered' : ''}`}
             width="32"
             height="32"
             viewBox="0 0 24 24"
             fill={getStarFill(starIndex)}
             stroke={starColor}
             strokeWidth="1"
-            style={{
-              cursor: isDisabled ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s ease',
-              transform: hoveredStar === starIndex ? 'scale(1.1)' : 'scale(1)',
-            }}
             onClick={() => handleStarClick(starIndex)}
             onMouseEnter={() => handleStarHover(starIndex)}
           >
@@ -120,15 +107,7 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
           </svg>
         ))}
         {rating !== null && (
-          <span
-            style={{
-              marginLeft: '8px',
-              alignSelf: 'center',
-              fontSize: '14px',
-              color: '#666',
-              fontWeight: 500,
-            }}
-          >
+          <span className="star-rating-field__label">
             {rating} / {maxStars}
           </span>
         )}

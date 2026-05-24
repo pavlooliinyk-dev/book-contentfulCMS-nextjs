@@ -1,5 +1,6 @@
 import { Heading, Form, Paragraph, FormControl, TextInput } from '@contentful/f36-components';
 import { useEffect, useRef, useState } from 'react';
+import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from '../constants';
 
 interface ConfigScreenProps {
   sdk: any;
@@ -12,8 +13,8 @@ interface AppParameters {
 
 export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
   const [parameters, setParameters] = useState<AppParameters>({
-    maxStars: 5,
-    starColor: '#FFD700',
+    maxStars: DEFAULT_RATING_MAX_STARS,
+    starColor: DEFAULT_RATING_COLOR,
   });
   const parametersRef = useRef(parameters);
 
@@ -62,8 +63,8 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
                 [locale]: {
                   ...imageWithTextSection,
                   ratingDisplayConfig: {
-                    color: nextParameters.starColor || '#FFD700',
-                    maxStars: nextParameters.maxStars || 5,
+                    color: nextParameters.starColor || DEFAULT_RATING_COLOR,
+                    maxStars: nextParameters.maxStars || DEFAULT_RATING_MAX_STARS,
                   },
                 },
               },
@@ -72,8 +73,10 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
         );
 
         await sdk.cma.entry.publish({ entryId: homePageEntry.sys.id }, updatedEntry);
+        sdk.notifier.success('Rating config synced to Home Page successfully.');
       } catch (error) {
         console.error('Failed to sync rating config to Home Page:', error);
+        sdk.notifier.error(`Failed to sync rating config: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 
@@ -90,8 +93,8 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
 
     sdk.app.getParameters().then((params: AppParameters) => {
       setParameters({
-        maxStars: params?.maxStars || 5,
-        starColor: params?.starColor || '#FFD700',
+        maxStars: params?.maxStars || DEFAULT_RATING_MAX_STARS,
+        starColor: params?.starColor || DEFAULT_RATING_COLOR,
       });
     });
 
@@ -137,10 +140,10 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
             type="text"
             value={parameters.starColor}
             onChange={handleColorChange}
-            placeholder="#FFD700"
+            placeholder={DEFAULT_RATING_COLOR}
           />
           <FormControl.HelpText>
-            Hex color code for the stars (default: #FFD700 - gold)
+            Hex color code for the stars (default: {DEFAULT_RATING_COLOR} - gold)
           </FormControl.HelpText>
         </FormControl>
 

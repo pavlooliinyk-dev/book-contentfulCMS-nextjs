@@ -13,15 +13,18 @@ import {
 } from './types';
 import { 
   BOOKS_DEFAULT_LIMIT, 
-  TAXONOMIES_MAX_LIMIT 
+  TAXONOMIES_MAX_LIMIT,
+  DEFAULT_RATING_COLOR,
+  DEFAULT_RATING_MAX_STARS
 } from './constants';
 
 export async function fetchGraphQL<T = unknown>(
   query: string, 
   preview = false
 ): Promise<GraphQLResponse<T>> {
+  const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master';
   const response = await fetch(
-    `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
+    `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`,
     {
       method: "POST",
       headers: {
@@ -173,11 +176,11 @@ export async function getRatingDisplayConfig(preview: boolean): Promise<RatingDi
   const homePage = await getHomePage(preview);
   const rawConfig = homePage?.imageWithTextSection?.ratingDisplayConfig || {};
 
-  const color = typeof rawConfig.color === 'string' ? rawConfig.color : '#FFD700';
+  const color = typeof rawConfig.color === 'string' ? rawConfig.color : DEFAULT_RATING_COLOR;
   const maxStars =
     typeof rawConfig.maxStars === 'number' && rawConfig.maxStars >= 1 && rawConfig.maxStars <= 10
       ? rawConfig.maxStars
-      : 5;
+      : DEFAULT_RATING_MAX_STARS;
 
   return { color, maxStars };
 }

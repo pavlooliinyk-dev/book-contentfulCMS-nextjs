@@ -1,13 +1,18 @@
 import { useEffect, useState, useCallback } from 'react';
 import { FieldExtensionSDK } from '@contentful/app-sdk';
-import { /* @vite-ignore */ Box } from '@contentful/f36-components';
+import { Box } from '@contentful/f36-components';
 
 interface StarRatingFieldProps {
   sdk: FieldExtensionSDK;
 }
 
+
+
 export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
-  const [value, setValue] = useState<number | null>(sdk.field.getValue() || null);
+  const currentValue = sdk.field.getValue();
+  const [rating, setRating] = useState<number | null>(
+    typeof currentValue === 'number' ? currentValue : null
+  );
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -17,9 +22,9 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     starColor?: string;
   } || {};
   const maxStars = appParams.maxStars || 5;
-  const color = appParams.starColor || '#FFD700'; // Default gold color
+  const starColor = appParams.starColor || '#FFD700';
 
-  console.log('[DEBUG]: StarRatingField init', { value, maxStars, color });
+  // console.log('[DEBUG]: StarRatingField init', { rating, maxStars, starColor });
   
   useEffect(() => {
     // Auto-resize to content height
@@ -37,7 +42,7 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
 
     // Listen for external value changes
     const detachValueChangeHandler = sdk.field.onValueChanged((newValue: number | null) => {
-      setValue(newValue);
+      setRating(typeof newValue === 'number' ? newValue : null);
     });
 
     // Listen for disabled state changes
@@ -56,11 +61,11 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     (starValue: number) => {
       if (isDisabled) return;
 
-      const newValue = value === starValue ? null : starValue;
-      setValue(newValue);
-      sdk.field.setValue(newValue);
+      const newRating = rating === starValue ? null : starValue;
+      setRating(newRating);
+      sdk.field.setValue(newRating);
     },
-    [value, isDisabled, sdk]
+    [rating, isDisabled, sdk]
   );
 
   const handleStarHover = useCallback(
@@ -73,9 +78,9 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   );
 
   const getStarFill = (starIndex: number): string => {
-    const displayValue = hoveredStar !== null ? hoveredStar : value;
+    const displayValue = hoveredStar !== null ? hoveredStar : rating;
     if (displayValue && starIndex <= displayValue) {
-      return color;
+      return starColor;
     }
     return '#e0e0e0'; // Gray for empty stars
   };
@@ -83,49 +88,50 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   const stars = Array.from({ length: maxStars }, (_, i) => i + 1);
 
   return (
-    <Box
-      style={{
-        display: 'flex',
-        gap: '8px',
-        padding: '8px 0',
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
-        opacity: isDisabled ? 0.6 : 1,
-      }}
-      onMouseLeave={() => handleStarHover(null)}
-    >
-      {stars.map((starIndex) => (
-        <svg
-          key={starIndex}
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill={getStarFill(starIndex)}
-          stroke={color}
-          strokeWidth="1"
-          style={{
-            cursor: isDisabled ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s ease',
-            transform: hoveredStar === starIndex ? 'scale(1.1)' : 'scale(1)',
-          }}
-          onClick={() => handleStarClick(starIndex)}
-          onMouseEnter={() => handleStarHover(starIndex)}
-        >
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-      {value !== null && (
-        <span
-          style={{
-            marginLeft: '8px',
-            alignSelf: 'center',
-            fontSize: '14px',
-            color: '#666',
-            fontWeight: 500,
-          }}
-        >
-          {value} / {maxStars}
-        </span>
-      )}
-    </Box>
+      <Box
+        style={{
+          display: 'flex',
+          gap: '8px',
+          padding: '8px 0',
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          opacity: isDisabled ? 0.6 : 1,
+          marginBottom: '16px',
+        }}
+        onMouseLeave={() => handleStarHover(null)}
+      >
+        {stars.map((starIndex) => (
+          <svg
+            key={starIndex}
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill={getStarFill(starIndex)}
+            stroke={starColor}
+            strokeWidth="1"
+            style={{
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+              transform: hoveredStar === starIndex ? 'scale(1.1)' : 'scale(1)',
+            }}
+            onClick={() => handleStarClick(starIndex)}
+            onMouseEnter={() => handleStarHover(starIndex)}
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        ))}
+        {rating !== null && (
+          <span
+            style={{
+              marginLeft: '8px',
+              alignSelf: 'center',
+              fontSize: '14px',
+              color: '#666',
+              fontWeight: 500,
+            }}
+          >
+            {rating} / {maxStars}
+          </span>
+        )}
+      </Box>
   );
 };

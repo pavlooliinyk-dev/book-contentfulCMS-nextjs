@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { Book, TaxonomyTerm } from "@/lib/types";
+import { Book, TaxonomyTerm, RatingDisplayConfig } from "@/lib/types";
 import { useBooksList } from "./useBooksList";
 import { useDebouncedPending } from "./useDebouncedPending";
 import Filters from "./filters";
@@ -16,10 +16,15 @@ interface BooksListProps {
   availableTaxonomies?: TaxonomyTerm[]
   withFilters?: boolean
   initialFilters?: string[]
+  ratingDisplayConfig?: RatingDisplayConfig
 }
 
 const EMPTY_FILTERS: string[] = [];
 const EMPTY_TAXONOMIES: TaxonomyTerm[] = [];
+const DEFAULT_RATING_DISPLAY_CONFIG: RatingDisplayConfig = {
+  color: '#FFD700',
+  maxStars: 5,
+};
 
 const BooksList = memo(function BooksList({ 
   initialBooks, 
@@ -27,6 +32,7 @@ const BooksList = memo(function BooksList({
   availableTaxonomies = EMPTY_TAXONOMIES,
   initialFilters = EMPTY_FILTERS,
   withFilters = true,
+  ratingDisplayConfig = DEFAULT_RATING_DISPLAY_CONFIG,
 }: BooksListProps) {  
   const {
     books,
@@ -76,7 +82,7 @@ const BooksList = memo(function BooksList({
           </div>
 
           <div className={`transition-opacity duration-200 ${showPending ? 'opacity-50' : 'opacity-100'}`}>
-            <BookGrid books={books} />
+            <BookGrid books={books} ratingDisplayConfig={ratingDisplayConfig} />
           </div>
         </div>
       </div>

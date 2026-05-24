@@ -72,8 +72,6 @@ npm run setup-app   # Install app dependencies
 npm run start-app   # Start at localhost:3001
 ```
 
-See [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for installation instructions.
-
 ---
 
 ## 🏗️ Tech Stack
@@ -662,7 +660,6 @@ fetch(..., { next: { tags: ['books'] } })
 - [Rich Text Rendering](https://www.contentful.com/developers/docs/tutorials/general/rich-text-and-react/)
 
 ### This Codebase
-- Check [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) for custom app development
 - Review [app/_components/book-list](app/_components/book-list) for client-side patterns
 - See [lib/api.ts](lib/api.ts) for all available API functions
 
@@ -713,12 +710,6 @@ Example: Creating a "Series Selector" field
 - Add JSDoc comments for complex functions
 - Run `npm run lint:fix` before committing
 
----
-
-## 🔗 Related Documentation
-
-- [CONTENTFUL-APP-GUIDE.md](./CONTENTFUL-APP-GUIDE.md) - Custom app development
-- [VERCEL-TROUBLESHOOTING.md](./VERCEL-TROUBLESHOOTING.md) - Deployment issues
 
 ---
 

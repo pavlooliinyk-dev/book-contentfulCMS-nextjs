@@ -2,17 +2,27 @@
 
 import React, { memo } from "react";
 import Link from "next/link";
-import { Book } from "@/lib/types";
+import { Book, RatingDisplayConfig } from "@/lib/types";
 import Pricing from "../pricing";
 import ContentfulImage from "../contentful-image";
+import { StarRatingDisplay } from "../star-rating-display";
 
 interface BookGridProps {
   books: Book[];
+  ratingDisplayConfig?: RatingDisplayConfig;
 }
 
-const BookCard = memo(({ book }: { book: Book }) => {
-  return (
-    <article className="flex flex-col">
+const DEFAULT_RATING_DISPLAY_CONFIG: RatingDisplayConfig = {
+  color: '#FFD700',
+  maxStars: 5,
+};
+
+const BookCard = memo(
+  ({ book, ratingDisplayConfig }: { book: Book; ratingDisplayConfig?: RatingDisplayConfig }) => {
+    const resolvedRatingDisplayConfig = ratingDisplayConfig || DEFAULT_RATING_DISPLAY_CONFIG;
+
+    return (
+      <article className="flex flex-col">
       {book.coverImage?.url && (
         <div className="mb-5 relative w-full h-[400px]">
           <Link href={`/books/${book.slug}`} 
@@ -37,6 +47,15 @@ const BookCard = memo(({ book }: { book: Book }) => {
         </Link>
       </h3>
       {book.slug && <Pricing bookId={book.slug} />}
+      <div className="mb-4">
+        <StarRatingDisplay
+          rating={book.rating ?? null}
+          size="sm"
+          color={resolvedRatingDisplayConfig.color}
+          maxStars={resolvedRatingDisplayConfig.maxStars}
+          showLabel
+        />
+      </div>
       <div className="text-lg mb-4 text-gray-700">
         {book.authors && book.authors.length > 0 && (
           <span className="font-semibold">
@@ -63,19 +82,21 @@ const BookCard = memo(({ book }: { book: Book }) => {
           {book.taxonomies.map((t) => t.title).join(", ")}
         </div>
       )}
-    </article>
-  );
-});
+      </article>
+    );
+  }
+);
 
 BookCard.displayName = "BookCard";
 
-export default function BookGrid({ books }: BookGridProps) {
+export default function BookGrid({ books, ratingDisplayConfig }: BookGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
       {books.map((book) => (
         <BookCard 
           key={book.sys?.id} 
           book={book} 
+          ratingDisplayConfig={ratingDisplayConfig}
         />
       ))}
     </div>

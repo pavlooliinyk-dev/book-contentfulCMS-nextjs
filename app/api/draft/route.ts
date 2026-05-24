@@ -15,6 +15,13 @@ export async function GET(request: NextRequest) {
   // Enable Draft Mode
   (await draftMode()).enable();
 
-  // Redirect to the path from the fetched url or fallback to the root
-  redirect(slug || "/");
+  // Accept either a full path (/books/my-book) or a bare slug (my-book).
+  // Bare slugs are normalized to the book detail route.
+  const redirectPath = !slug
+    ? "/"
+    : slug.startsWith("/")
+      ? slug
+      : `/books/${slug}`;
+
+  redirect(redirectPath);
 }

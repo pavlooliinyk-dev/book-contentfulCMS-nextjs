@@ -22,7 +22,64 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
   }, [parameters]);
 
   useEffect(() => {
-    sdk.app.onConfigure(() => {
+    const syncRatingConfigToHomePage = async (nextParameters: AppParameters) => {
+      try {
+        const locale = sdk.locales?.default || 'en-US';
+        const homePageEntries = await sdk.cma.entry.getMany({
+          query: {
+            content_type: 'homePage',
+            limit: 1,
+          },
+        });
+
+        const homePageEntry = homePageEntries?.items?.[0];
+        if (!homePageEntry) {
+          console.warn('Home Page entry not found. Skipping rating config sync.');
+          return;
+        }
+
+        const rawImageWithTextSection = homePageEntry.fields?.imageWithTextSection?.[locale];
+        let imageWithTextSection: Record<string, any> = {};
+
+        if (typeof rawImageWithTextSection === 'string') {
+          try {
+            imageWithTextSection = JSON.parse(rawImageWithTextSection);
+          } catch {
+            imageWithTextSection = {};
+          }
+        } else if (rawImageWithTextSection && typeof rawImageWithTextSection === 'object') {
+          imageWithTextSection = rawImageWithTextSection;
+        }
+
+        const updatedEntry = await sdk.cma.entry.update(
+          { entryId: homePageEntry.sys.id },
+          {
+            ...homePageEntry,
+            fields: {
+              ...homePageEntry.fields,
+              imageWithTextSection: {
+                ...(homePageEntry.fields?.imageWithTextSection || {}),
+                [locale]: {
+                  ...imageWithTextSection,
+                  ratingDisplayConfig: {
+                    color: nextParameters.starColor || '#FFD700',
+                    maxStars: nextParameters.maxStars || 5,
+                  },
+                },
+              },
+            },
+          }
+        );
+
+        await sdk.cma.entry.publish({ entryId: homePageEntry.sys.id }, updatedEntry);
+      } catch (error) {
+        console.error('Failed to sync rating config to Home Page:', error);
+      }
+    };
+
+    sdk.app.onConfigure(async () => {
+      await syncRatingConfigToHomePage(parametersRef.current);
+
       return {
         parameters: parametersRef.current,
         targetState: {
@@ -55,7 +112,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
   return (
     <div style={{ margin: '80px', maxWidth: '800px' }}>
       <Form>
-        <Heading>Goodreads Rating Field Configuration</Heading>
+        <Heading>Goodreads Rating Field Configuration:</Heading>
         <Paragraph>
           Configure the star rating field extension for your content types.
         </Paragraph>

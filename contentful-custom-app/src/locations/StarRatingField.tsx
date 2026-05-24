@@ -3,12 +3,9 @@ import { FieldAppSDK } from '@contentful/app-sdk';
 import { Box } from '@contentful/f36-components';
 import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from '../constants';
 import './StarRatingField.css';
-
 interface StarRatingFieldProps {
   sdk: FieldAppSDK;
 }
-
-
 
 export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
   const currentValue = sdk.field.getValue();

@@ -12,20 +12,16 @@ if (!rootElement) {
 }
 
 const root = createRoot(rootElement);
-console.log('init StarRatingField', locations);
 
 // Show loading state immediately
 root.render(<div style={{ padding: '20px', textAlign: 'center' }}>Loading Contentful App...</div>);
 
 init((sdk: any) => {
-  console.log('SDK initialized :: ', { location: sdk.location, ids: sdk.ids });
 
   try {
     if (sdk.location.is(locations.LOCATION_APP_CONFIG)) {
-      console.log('Rendering ConfigScreen', locations.LOCATION_APP_CONFIG);
       root.render(<ConfigScreen sdk={sdk as any} />);
     } else if (sdk.location.is(locations.LOCATION_ENTRY_FIELD)) {
-      console.log('Rendering StarRatingField', locations.LOCATION_ENTRY_FIELD);
       root.render(<StarRatingField sdk={sdk as any} />);
     } else {
       console.warn('Unknown location:', sdk.location);
@@ -38,7 +34,6 @@ init((sdk: any) => {
       );
     }
   } catch (error) {
-    console.error('Render error:', error);
     root.render(
       <div style={{ padding: '20px', color: 'red' }}>
         <h2>Error</h2>

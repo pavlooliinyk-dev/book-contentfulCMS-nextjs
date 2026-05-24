@@ -69,12 +69,6 @@ export default async function BookPage(props: {
             color={ratingDisplayConfig.color}
             maxStars={ratingDisplayConfig.maxStars}
           />
-          <StarRatingDisplay
-            rating={book.rating ?? null}
-            size="sm"
-            color={ratingDisplayConfig.color}
-            maxStars={ratingDisplayConfig.maxStars}
-          />
         </div>
 
         <div className="mx-auto max-w-2xl">

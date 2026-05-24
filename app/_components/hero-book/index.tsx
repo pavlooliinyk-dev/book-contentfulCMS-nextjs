@@ -1,6 +1,6 @@
 import { memo } from "react";
 import CoverImage from "../cover-image";
-import { Book, TaxonomyTerm, Position } from "@/lib/types";
+import { Book, TaxonomyTerm, PositionX } from "@/lib/types";
 import Pricing from "../pricing";
 
 /**
@@ -9,18 +9,18 @@ import Pricing from "../pricing";
  * @param metaUi - Can be a single taxonomy term, array of terms, or undefined
  * @returns Position.LEFT or Position.RIGHT
  */
-function getPosition(metaUi: unknown): Position {
+function getPosition(metaUi: unknown): PositionX {
   const value = Array.isArray(metaUi) ? metaUi.find(Boolean) : metaUi;
   
   if (typeof value === 'string') {
-    return value === Position.RIGHT ? Position.RIGHT : Position.LEFT;
+    return value === PositionX.RIGHT ? PositionX.RIGHT : PositionX.LEFT;
   }
   
   if (value && typeof value === 'object' && 'position' in value) {
-    return value.position === Position.RIGHT ? Position.RIGHT : Position.LEFT;
+    return value.position === PositionX.RIGHT ? PositionX.RIGHT : PositionX.LEFT;
   }
   
-  return Position.LEFT;
+  return PositionX.LEFT;
 }
 
 const HeroBook = memo(function HeroBook({
@@ -34,7 +34,7 @@ const HeroBook = memo(function HeroBook({
   taxonomies,
 }: Book) {
   const position = getPosition(metaUi);
-  const flexDirection = position === Position.RIGHT ? "md:flex-row-reverse" : "";
+  const flexDirection = position === PositionX.RIGHT ? "md:flex-row-reverse" : "";
   
   return (
     <section className="mb-20 bg-gray-200 p-6">

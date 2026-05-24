@@ -1,0 +1,35 @@
+.star-rating-field {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  opacity: 1;
+  margin-bottom: 16px;
+}
+
+.star-rating-field.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.star-rating-field__star {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: scale(1);
+}
+
+.star-rating-field.is-disabled .star-rating-field__star {
+  cursor: not-allowed;
+}
+
+.star-rating-field__star.is-hovered {
+  transform: scale(1.1);
+}
+
+.star-rating-field__label {
+  margin-left: 8px;
+  align-self: center;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}

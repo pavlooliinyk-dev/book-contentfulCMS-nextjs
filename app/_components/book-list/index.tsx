@@ -8,7 +8,7 @@ import { useDebouncedPending } from "./useDebouncedPending";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 import LoadingSpinner from "../loading-spinner";
-import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
+import { BOOKS_DEFAULT_LIMIT, DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from "@/lib/constants";
 
 interface BooksListProps {
   initialBooks: Book[], 
@@ -22,8 +22,8 @@ interface BooksListProps {
 const EMPTY_FILTERS: string[] = [];
 const EMPTY_TAXONOMIES: TaxonomyTerm[] = [];
 const DEFAULT_RATING_DISPLAY_CONFIG: RatingDisplayConfig = {
-  color: '#FFD700',
-  maxStars: 5,
+  color: DEFAULT_RATING_COLOR,
+  maxStars: DEFAULT_RATING_MAX_STARS,
 };
 
 const BooksList = memo(function BooksList({ 

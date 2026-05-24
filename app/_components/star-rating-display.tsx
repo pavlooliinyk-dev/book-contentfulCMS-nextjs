@@ -1,4 +1,5 @@
 import React from 'react';
+import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from '@/lib/constants';
 
 interface StarRatingDisplayProps {
   rating: number | null;
@@ -30,15 +31,12 @@ interface StarRatingDisplayProps {
  */
 export function StarRatingDisplay({ 
   rating, 
-  maxStars = 5,
-  color = '#FFD700',
+  maxStars = DEFAULT_RATING_MAX_STARS,
+  color = DEFAULT_RATING_COLOR,
   size = 'md',
   showLabel = false,
   className = ''
 }: StarRatingDisplayProps) {
-  // Handle null/undefined
-
-  // console.log('[DEBUG]: StarRatingDisplay init', { rating, size, showLabel });
   if (!rating) {
     return null;
   }
@@ -92,29 +90,6 @@ export function StarRatingDisplay({
           {ratingValue}/{maxStars}
         </span>
       )}
-    </div>
-  );
-}
-
-/**
- * Usage Example in Book Grid Component
- * 
- * CONTENTFUL BEST PRACTICE: Use optional chaining (?.) for CMS fields
- */
-export function BookCardExample() {
-  // This would come from your Contentful API
-  const book = {
-    fields: {
-      title: 'Sample Book',
-      rating: 4,
-    }
-  };
-
-  return (
-    <div className="book-card">
-      <h3>{book.fields?.title}</h3>
-      {/* Use optional chaining - rating may not exist in draft mode */}
-      <StarRatingDisplay rating={book.fields?.rating} size="sm" />
     </div>
   );
 }

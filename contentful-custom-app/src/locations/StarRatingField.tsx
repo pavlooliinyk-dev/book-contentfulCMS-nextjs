@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { FieldExtensionSDK } from '@contentful/app-sdk';
 import { Box } from '@contentful/f36-components';
+import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from '../constants';
 
 interface StarRatingFieldProps {
   sdk: FieldExtensionSDK;
@@ -21,16 +22,12 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     maxStars?: number;
     starColor?: string;
   } || {};
-  const maxStars = appParams.maxStars || 5;
-  const starColor = appParams.starColor || '#FFD700';
+  const maxStars = appParams.maxStars || DEFAULT_RATING_MAX_STARS;
+  const starColor = appParams.starColor || DEFAULT_RATING_COLOR;
 
-  // console.log('[DEBUG]: StarRatingField init', { rating, maxStars, starColor });
-  
   useEffect(() => {
     // Auto-resize to content height
     sdk.window.startAutoResizer();
-
-    console.log('[DEBUG]: Auto-resize to content height done');
 
     // Check if field is disabled (read-only mode for published entries)
     const checkDisabled = () => {

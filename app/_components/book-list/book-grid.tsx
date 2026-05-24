@@ -1,8 +1,9 @@
 "use client";
 
-import React, { memo } from "react";
+import { memo } from "react";
 import Link from "next/link";
 import { Book, RatingDisplayConfig } from "@/lib/types";
+import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from "@/lib/constants";
 import Pricing from "../pricing";
 import ContentfulImage from "../contentful-image";
 import { StarRatingDisplay } from "../star-rating-display";
@@ -13,8 +14,8 @@ interface BookGridProps {
 }
 
 const DEFAULT_RATING_DISPLAY_CONFIG: RatingDisplayConfig = {
-  color: '#FFD700',
-  maxStars: 5,
+  color: DEFAULT_RATING_COLOR,
+  maxStars: DEFAULT_RATING_MAX_STARS,
 };
 
 const BookCard = memo(

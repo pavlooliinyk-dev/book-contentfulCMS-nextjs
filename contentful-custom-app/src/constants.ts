@@ -1,0 +1,2 @@
+export const DEFAULT_RATING_COLOR = '#FFD700';
+export const DEFAULT_RATING_MAX_STARS = 5;

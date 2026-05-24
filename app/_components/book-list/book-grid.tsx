@@ -2,12 +2,9 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { Book, RatingDisplayConfig } from "@/lib/types";
-import { DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from "@/lib/constants";
+import { Book } from "@/lib/types";
 import Pricing from "../pricing";
 import ContentfulImage from "../contentful-image";
-import { StarRatingDisplay } from "../star-rating-display";
-
 interface BookGridProps {
   books: Book[];
 }

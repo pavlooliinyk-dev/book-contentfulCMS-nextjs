@@ -76,12 +76,8 @@ export function StarRatingDisplay({
             key={index}
             className={`${starSizes[size]} ${
               index < ratingValue ? '' : 'text-gray-300'
-              index < ratingValue ? '' : 'text-gray-300'
             }`}
             fill="currentColor"
-            style={{
-              color: index < ratingValue ? color : '#d1d5db',
-            }}
             style={{
               color: index < ratingValue ? color : '#d1d5db',
             }}

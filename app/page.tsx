@@ -50,7 +50,11 @@ export default async function Page() {
       )}
       
       <ErrorBoundary>
-        <BookList initialBooks={initialBooks} initialTotal={initialTotal} withFilters={false} />
+        <BookList 
+          initialBooks={initialBooks}
+          initialTotal={initialTotal} 
+          withFilters={false} 
+        />
       </ErrorBoundary>
     </div>
   );

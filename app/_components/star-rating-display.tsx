@@ -38,6 +38,7 @@ export function StarRatingDisplay({
   showLabel = false,
   className = ''
 }: StarRatingDisplayProps) {
+  
   if (!rating) {
     return null;
   }

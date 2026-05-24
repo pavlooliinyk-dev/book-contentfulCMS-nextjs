@@ -23,6 +23,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
   }, [parameters]);
 
   useEffect(() => {
+    // Sync rating config to Home Page entry on app configuration
     const syncRatingConfigToHomePage = async (nextParameters: AppParameters) => {
       try {
         const locale = sdk.locales?.default || 'en-US';
@@ -80,6 +81,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
       }
     };
 
+    // Handle app configuration save
     sdk.app.onConfigure(async () => {
       await syncRatingConfigToHomePage(parametersRef.current);
 
@@ -91,6 +93,7 @@ export const ConfigScreen = ({ sdk }: ConfigScreenProps) => {
       };
     });
 
+    // Load initial parameters from app configuration
     sdk.app.getParameters().then((params: AppParameters) => {
       setParameters({
         maxStars: params?.maxStars || DEFAULT_RATING_MAX_STARS,

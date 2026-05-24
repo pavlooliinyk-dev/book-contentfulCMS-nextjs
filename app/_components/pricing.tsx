@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useMemo } from 'react';
 import { useFetch } from '@/lib/hooks/useFetch';
 
 interface PricingData {
@@ -17,32 +17,6 @@ function Pricing({ bookId }: PricingProps) {
   const { data: pricing, loading, error } = useFetch<PricingData>(
     `/api/pricing?bookId=${bookId}`
   );
-  const renderCountRef = useRef(0);
-  renderCountRef.current += 1;
-  console.log('Pricing render', {
-    bookId,
-    renderCount: renderCountRef.current,
-  });
-  const lastDebugSnapshot = useRef<string | null>(null);
-
-  useEffect(() => {
-    // if (process.env.NODE_ENV !== 'development') return;
-
-    const snapshot = {
-      bookId,
-      loading,
-      hasPricing: Boolean(pricing),
-      price: pricing?.price,
-      availability: pricing?.availability,
-      error: error?.message,
-    };
-
-    const serializedSnapshot = JSON.stringify(snapshot);
-    if (lastDebugSnapshot.current === serializedSnapshot) return;
-
-    lastDebugSnapshot.current = serializedSnapshot;
-    console.debug('Pricing state:', snapshot);
-  }, [bookId, loading, pricing, error]);
 
   const availabilityClassName = useMemo(() => {
     if (!pricing) return 'bg-yellow-100 text-yellow-800';

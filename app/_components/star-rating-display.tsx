@@ -3,6 +3,7 @@ import React from 'react';
 interface StarRatingDisplayProps {
   rating: number | null;
   maxStars?: number;
+  color?: string;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
@@ -18,6 +19,7 @@ interface StarRatingDisplayProps {
  * - Uses defensive type checking for CMS data (rating may be null/undefined)
  * - Validates rating is a number before rendering
  * - Handles edge cases from draft/preview mode
+ * - Expects scalar rating value from CMS
  * 
  * @example
  * // On Book List/Grid
@@ -28,13 +30,28 @@ interface StarRatingDisplayProps {
  */
 export function StarRatingDisplay({ 
   rating, 
-  maxStars = 5, 
+  maxStars = 5,
+  color = '#FFD700',
   size = 'md',
   showLabel = false,
   className = ''
 }: StarRatingDisplayProps) {
-  // Defensive check: Contentful fields can be null, undefined, or unexpected types
-  if (!rating || typeof rating !== 'number' || rating < 1 || rating > maxStars) {
+  // Handle null/undefined
+
+  // console.log('[DEBUG]: StarRatingDisplay init', { rating, size, showLabel });
+  if (!rating) {
+    return null;
+  }
+
+  const ratingValue = rating;
+
+  // Defensive check: rating must be a valid number
+  if (
+    ratingValue === null ||
+    typeof ratingValue !== 'number' ||
+    ratingValue < 1 ||
+    ratingValue > maxStars
+  ) {
     return null;
   }
 
@@ -50,6 +67,7 @@ export function StarRatingDisplay({
     lg: 'w-6 h-6'
   };
 
+
   return (
     <div className={`flex items-center gap-1 ${className}`}>
       <div className="flex gap-0.5">
@@ -57,9 +75,12 @@ export function StarRatingDisplay({
           <svg
             key={index}
             className={`${starSizes[size]} ${
-              index < rating ? 'text-yellow-500' : 'text-gray-300'
+              index < ratingValue ? '' : 'text-gray-300'
             }`}
             fill="currentColor"
+            style={{
+              color: index < ratingValue ? color : '#d1d5db',
+            }}
             viewBox="0 0 24 24"
           >
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -68,7 +89,7 @@ export function StarRatingDisplay({
       </div>
       {showLabel && (
         <span className={`${sizeClasses[size]} text-gray-600 font-medium ml-1`}>
-          {rating}/{maxStars}
+          {ratingValue}/{maxStars}
         </span>
       )}
     </div>
@@ -85,7 +106,7 @@ export function BookCardExample() {
   const book = {
     fields: {
       title: 'Sample Book',
-      rating: 4, // From star-rating field (can be null)
+      rating: 4,
     }
   };
 
@@ -98,30 +119,3 @@ export function BookCardExample() {
   );
 }
 
-/**
- * Usage Example in Book Detail Component
- * 
- * CONTENTFUL BEST PRACTICE: Use optional chaining (?.) for CMS fields
- */
-export function BookDetailExample() {
-  // This would come from your Contentful API
-  const book = {
-    fields: {
-      title: 'Sample Book',
-      rating: 5, // From star-rating field (can be null)
-    }
-  };
-
-  return (
-    <div className="book-detail">
-      <h1>{book.fields?.title}</h1>
-      {/* Use optional chaining - rating may not exist in draft mode */}
-      <StarRatingDisplay 
-        rating={book.fields?.rating} 
-        size="lg" 
-        showLabel 
-        className="my-4"
-      />
-    </div>
-  );
-}

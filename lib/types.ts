@@ -71,6 +71,11 @@ export interface HomePage {
   imageWithTextSection?: any; // JSON object parsed from string
 }
 
+export interface RatingDisplayConfig {
+  color: string;
+  maxStars: number;
+}
+
 // GraphQL collection response types
 export interface GraphQLResponse<T> {
   data?: T;

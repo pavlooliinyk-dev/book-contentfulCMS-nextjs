@@ -8,7 +8,8 @@ import {
   Book,
   BookRaw,
   TaxonomyTerm,
-  HomePage
+  HomePage,
+  RatingDisplayConfig
 } from './types';
 import { 
   BOOKS_DEFAULT_LIMIT, 
@@ -166,4 +167,17 @@ export async function getHomePage(preview: boolean): Promise<HomePage | null> {
     heroBanner: homePageRaw.heroBanner,
     imageWithTextSection,
   };
+}
+
+export async function getRatingDisplayConfig(preview: boolean): Promise<RatingDisplayConfig> {
+  const homePage = await getHomePage(preview);
+  const rawConfig = homePage?.imageWithTextSection?.ratingDisplayConfig || {};
+
+  const color = typeof rawConfig.color === 'string' ? rawConfig.color : '#FFD700';
+  const maxStars =
+    typeof rawConfig.maxStars === 'number' && rawConfig.maxStars >= 1 && rawConfig.maxStars <= 10
+      ? rawConfig.maxStars
+      : 5;
+
+  return { color, maxStars };
 }

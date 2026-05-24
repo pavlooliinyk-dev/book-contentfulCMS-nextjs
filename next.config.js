@@ -10,4 +10,13 @@ module.exports = {
       new URL('https://image.tmdb.org/**')
     ],
   },
+  // custom contentful-app (reting stars)
+  async rewrites() {
+    return [
+      {
+        source: '/contentful-app',
+        destination: '/contentful-app/index.html',
+      },
+    ];
+  },
 };

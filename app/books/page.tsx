@@ -1,6 +1,6 @@
 import { draftMode } from "next/headers";
 import BooksList from "@/app/_components/book-list";
-import { getAllBooks, getTaxonomies } from "@/lib/api";
+import { getAllBooks, getTaxonomies, getRatingDisplayConfig } from "@/lib/api";
 import Link from "next/link";
 import { ErrorBoundary } from "@/app/_components/error-boundary";
 import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
@@ -19,10 +19,14 @@ export default async function BooksPage({
     ? (Array.isArray(taxonomiesParam) ? taxonomiesParam : taxonomiesParam.split(','))
     : [];
   
-  const [{ items, total }, taxonomies] = await Promise.all([
+  const [{ items, total }, taxonomies, ratingDisplayConfig] = await Promise.all([
     getAllBooks(isEnabled, BOOKS_DEFAULT_LIMIT, 0, initialFilters), // Fetch first page of books with filters
     getTaxonomies(isEnabled),
+    getRatingDisplayConfig(isEnabled),
   ]);
+
+  console.log('** [DEBUG]: BooksPage init, items, ratingDisplayConfig', 
+    ratingDisplayConfig );
   
   return (
     <div className="container mx-auto px-5 pt-10">
@@ -37,6 +41,7 @@ export default async function BooksPage({
           initialTotal={total} 
           availableTaxonomies={taxonomies}
           initialFilters={initialFilters}
+          ratingDisplayConfig={ratingDisplayConfig}
         />
       </ErrorBoundary>
     </div>

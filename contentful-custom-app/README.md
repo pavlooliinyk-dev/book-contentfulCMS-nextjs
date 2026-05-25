@@ -1,117 +1,133 @@
-# Contentful API Usage Dashboard
+# Contentful Star Rating App
 
-Displays API usage statistics in your Contentful space with quota monitoring and visual alerts.
+Custom Contentful app that renders an interactive star rating field for Integer fields.
 
-## Installation
+It supports:
+- App-level configuration for max stars and default star color
+- Optional field instance color override
+- Rating value storage as Integer
+- Read-only behavior for disabled/published contexts
 
-### Prerequisites
+## Prerequisites
 
-- Node.js and npm installed
-- Contentful CLI installed globally:
+- Node.js and npm
+- Contentful account and space access
+- Contentful CLI installed global
+
+Optional CLI setup:
 
 ```bash
 npm install -g contentful-cli
-```
-
-For installation and usage details, see the official Contentful CLI documentation:
-https://www.contentful.com/developers/docs/tutorials/cli/installation/
-
-- Logged in to Contentful CLI and using your target space:
-
-```bash
 contentful login
 contentful space use <space-id>
 ```
 
+Official CLI docs:
+https://www.contentful.com/developers/docs/tutorials/cli/installation/
 
-### Step 1: Install Dependencies
+## Local Development
+
+From the repository root:
+
+```bash
+npm run setup-app
+npm run start-app
+```
+
+Or directly in this folder:
 
 ```bash
 cd contentful-custom-app
 npm install
-```
-
-### Step 2: Run Locally for Development
-
-```bash
 npm start
 ```
 
-This will start a local development server at `http://localhost:3001`.
+Dev server runs at:
+http://localhost:3001
 
-### Step 3: Create App in Contentful
+## Contentful App Definition
 
-1. **Apps** → **Manage app definitions** → **Create app**
-2. Name: API Usage Dashboard, URL: `http://localhost:3001`
-3. Enable locations: **Home** + **App configuration**
-4. Save
+Create or update your app definition in Contentful:
 
-### Step 4: Install & View
+1. Go to Apps -> Manage app definitions -> Create app
+2. Set app name (for example: Goodreads Rating App)
+3. Set app URL to http://localhost:3001 for local development
+4. Enable locations:
+	- App configuration
+	- Entry field (Integer)
+5. Save and install the app in your space/environment
 
-**Apps** → **Custom apps** → Install → Navigate to **Home**
+Then attach the app to an Integer field in your content type editor settings.
 
-## Deployment
+## Configuration
 
-```bash
-npm run build
-npx vercel --prod  # or npx netlify deploy --prod --dir=build
-```
+In App configuration, set:
+- Maximum Stars (default: 5)
+- Star Color (default: #FFD700)
 
-Update app URL in Contentful to production URL. Requires HTTPS.
+The field component also supports an optional instance parameter:
+- starColorOverride
 
+## Build and Deployment
 
-## Development
-
-### Local Development with Hot Reload
-
-```bash
-npm start
-```
-
-Then update your Contentful app definition to point to `http://localhost:3001/contentful-app/`.
-For prod Contentful app definition point to `{production_base_url}/contentful-app/`.
-
-### Build for Production
+Build locally from this folder:
 
 ```bash
 npm run build
 ```
 
-The build output will be in the `build` folder.
+Output is created in:
+- build/
+
+In this repository, production deployment is typically handled by the root build script, which copies this app into:
+- public/contentful-app/
+
+Important:
+- The Vite base path is configured in vite.config.ts.
+- If you deploy under a different domain/path, update the base value before building.
 
 ## Troubleshooting
 
-### App doesn't load in Contentful
-- Make sure your app URL is accessible via HTTPS (except for localhost during development)
-- Check browser console for CORS errors
-- Verify the app is installed in your space
+### App does not load in Contentful
+- Confirm the app URL is reachable (HTTPS required in production)
+- Verify the app is installed in the correct space/environment
+- Check browser console for CORS or CSP errors
 
-### No usage data showing
-- The app requires access to the Contentful Management API
-- Check that you have proper permissions in the space
-- Usage data is only available for the current month
+### Field UI does not appear
+- Confirm the app is attached to an Integer field
+- Confirm the Entry field location is enabled in app definition
 
 ### Build errors
+
+macOS/Linux:
+
 ```bash
-# Clear cache and reinstall
 rm -rf node_modules build
+npm install
+npm run build
+```
+
+Windows PowerShell:
+
+```powershell
+Remove-Item -Recurse -Force node_modules, build
 npm install
 npm run build
 ```
 
 ## Tech Stack
 
-- **React** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Contentful App SDK** - Contentful integration
-- **Contentful Forma 36** - Contentful's design system
-- **Contentful Management SDK** - API usage data
+- React
+- TypeScript
+- Vite
+- Contentful App SDK
+- Contentful Forma 36
 
 ## License
 
-Private - for internal use
+Private - internal use.
 
 ## Support
 
-For issues or questions, consult the [Contentful Apps documentation](https://www.contentful.com/developers/docs/extensibility/app-framework/).
+Contentful App Framework docs:
+https://www.contentful.com/developers/docs/extensibility/app-framework/

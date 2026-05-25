@@ -21,7 +21,8 @@ export const StarRatingField = ({ sdk }: StarRatingFieldProps) => {
     starColor?: string;
   } || {};
   const maxStars = appParams.maxStars || DEFAULT_RATING_MAX_STARS;
-  const starColor = appParams.starColor || DEFAULT_RATING_COLOR;
+  const starColorOverride= sdk.parameters.instance?.starColorOverride as string | undefined;
+  const starColor = starColorOverride || appParams.starColor || DEFAULT_RATING_COLOR;
 
   useEffect(() => {
     // Auto-resize to content height

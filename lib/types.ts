@@ -13,7 +13,7 @@ export type PositionX = typeof PositionX[keyof typeof PositionX];
 export type PositionY = typeof PositionY[keyof typeof PositionY];
 
 // Raw GraphQL response types (as returned from Contentful)
-export interface Author {
+interface Author {
   name: string;
 }
 

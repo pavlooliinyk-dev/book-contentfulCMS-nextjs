@@ -8,7 +8,7 @@ export interface FetchError extends Error {
   isFetchError: true;
 }
 
-export function createFetchError(
+function createFetchError(
   message: string,
   status?: number,
   data?: any
@@ -38,7 +38,7 @@ interface FetchOptions extends RequestInit {
 /**
  * Enhanced fetch with automatic retries, timeout, and proper error handling
  */
-export async function fetcher<T = any>(
+async function fetcher<T = any>(
   url: string,
   options: FetchOptions = {}
 ): Promise<T> {

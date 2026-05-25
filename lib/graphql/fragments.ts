@@ -12,7 +12,7 @@ export const TAXONOMY_TERM_GRAPHQL_FIELDS = `
   }
 `;
 
-export const TAXONOMY_TERM_WITH_PARENT_FIELDS = `
+const TAXONOMY_TERM_WITH_PARENT_FIELDS = `
   ${TAXONOMY_TERM_GRAPHQL_FIELDS}
   parent {
     ... on Entry {

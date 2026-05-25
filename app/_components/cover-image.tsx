@@ -1,30 +1,28 @@
 import ContentfulImage from "./contentful-image";
 import Link from "next/link";
 
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function CoverImage({
   title,
   url,
   slug,
+  priority = false,
+  sizes,
 }: {
   title: string;
   url: string;
   slug?: string;
+  priority?: boolean;
+  sizes?: string;
 }) {
   const image = (
     <ContentfulImage
       alt={`Cover Image for ${title}`}
-      priority
+      priority={priority}
       width={1200}
       height={600}
-      quality={80}
-      className={cn("shadow-small", 
-        slug ? "hover:shadow-medium transition-shadow duration-200 hover:opacity-75" : ""
-      )}
+      className={`shadow-small${slug ? " hover:shadow-medium transition-shadow duration-200 hover:opacity-75" : ""}`}
       src={url}
+      sizes={sizes}
     />
   );
 

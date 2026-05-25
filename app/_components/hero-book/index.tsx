@@ -48,7 +48,9 @@ const HeroBook = memo(function HeroBook({
               <CoverImage 
                 title={title || "Book Cover"} 
                 slug={""} 
-                url={coverImage.url} 
+                url={coverImage.url}
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             )}
           </div>

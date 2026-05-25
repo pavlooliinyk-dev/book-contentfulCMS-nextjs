@@ -1,14 +1,16 @@
 "use client";
 
 import { memo } from "react";
-import Link from "next/link";
-import { Book, TaxonomyTerm, RatingDisplayConfig } from "@/lib/types";
+import { Book, TaxonomyTerm } from "@/lib/types";
+import { BOOKS_DEFAULT_LIMIT } from "@/lib/constants";
 import { useBooksList } from "./hooks/useBooksList";
 import { useDebouncedPending } from "./hooks/useDebouncedPending";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
+import BookListHeader from "../book-list-header";
+import ButtonPagination from "../button-pagination";
+import InfiniteScrollSentinel from "../infinite-scroll-sentinel";
 import LoadingSpinner from "../loading-spinner";
-import { BOOKS_DEFAULT_LIMIT, DEFAULT_RATING_COLOR, DEFAULT_RATING_MAX_STARS } from "@/lib/constants";
 
 interface BooksListProps {
   initialBooks: Book[], 
@@ -61,19 +63,13 @@ const BooksList = memo(function BooksList({
         )}
 
         <div className="flex-1">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-4xl font-bold">
-              <Link href={`/books`}>
-                Books ({books.length} of {total}) {showPending ? " - Updating..." : ""}
-              </Link>
-            </h2>
-            <button
-              onClick={togglePagination}
-              className="text-sm bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition"
-            >
-              {isInfinite ? "Switch to Buttons" : "Switch to Infinite Scroll"}
-            </button>
-          </div>
+          <BookListHeader
+            bookCount={books.length}
+            total={total}
+            isInfinite={isInfinite}
+            showPending={showPending}
+            onTogglePagination={togglePagination}
+          />
 
           <div className={`transition-opacity duration-200 ${showPending ? 'opacity-50' : 'opacity-100'}`}>
             <BookGrid books={books} />
@@ -81,42 +77,22 @@ const BooksList = memo(function BooksList({
         </div>
       </div>
 
-      {/* Sentinel for infinite scroll */}
       {isInfinite && books.length < total && (
-        <div 
-          ref={sentinelRef} 
-          className="h-10" 
-          role="status" 
-          aria-label="Loading more books"
-          aria-live="polite"
-          aria-busy={loading}
-        />
+        <InfiniteScrollSentinel sentinelRef={sentinelRef} loading={loading} />
       )}
 
-      {(showPending) && (
+      {showPending && (
         <LoadingSpinner message="Loading more books..." />
       )}
 
       {!isInfinite && (
-        <div className="mt-12 flex justify-center items-center gap-8">
-          <button
-            onClick={() => goToPage(-1)}
-            disabled={page === 0 || showPending}
-            className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
-          >
-            ← Previous
-          </button>
-          <span className="font-mono text-lg">
-            Page {page + 1} of {Math.ceil(total / BOOKS_DEFAULT_LIMIT)}
-          </span>
-          <button
-            onClick={() => goToPage(1)}
-            disabled={(page + 1) * BOOKS_DEFAULT_LIMIT >= total || showPending}
-            className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
-          >
-            Next →
-          </button>
-        </div>
+        <ButtonPagination
+          page={page}
+          total={total}
+          limit={BOOKS_DEFAULT_LIMIT}
+          disabled={showPending}
+          onGoToPage={goToPage}
+        />
       )}
     </section>
   );

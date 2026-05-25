@@ -50,7 +50,7 @@ export default async function BookPage(props: {
         </h1>
         <div className="mb-8 sm:mx-0 md:mb-16">
           {book.coverImage?.url && (
-            <CoverImage title={book.title} url={book.coverImage.url} slug={book.slug}/>
+            <CoverImage title={book.title} url={book.coverImage.url} slug={book.slug} priority sizes="100vw"/>
           )}
         </div>
         <div className="mx-auto max-w-2xl">

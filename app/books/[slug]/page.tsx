@@ -29,7 +29,6 @@ export default async function BookPage(props: {
     getRatingDisplayConfig(isEnabled),
   ]);
 
-  console.log('[DEBUG]: BookPage init book', { book });
   if (!book) {
     notFound();
   }

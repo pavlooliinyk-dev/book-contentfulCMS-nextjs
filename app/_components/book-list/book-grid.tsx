@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Book } from "@/lib/types";
 import Pricing from "../pricing";
 import ContentfulImage from "../contentful-image";
+
 interface BookGridProps {
   books: Book[];
 }
@@ -38,7 +39,7 @@ const BookCard = memo(({
           {book.title}
         </Link>
       </h3>
-      {book.slug && <Pricing bookId={book.slug} />}
+      {book?.slug && <Pricing bookId={book.slug} />}
 
       <div className="text-lg mb-4 text-gray-700">
         {book.authors && book.authors.length > 0 && (

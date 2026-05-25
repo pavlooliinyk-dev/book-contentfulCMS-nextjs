@@ -23,23 +23,25 @@ export async function GET(request: NextRequest) {
     );
   }
   
-  const taxonomies = searchParams.get("taxonomies")?.split(",") || [];
+  const taxonomies = searchParams.get("taxonomies")?.split(",").filter(Boolean) || [];
 
-  const whereClause = taxonomies.length > 0 && taxonomies[0] !== ""
-    ? `, where: { genre_contains_all: ${JSON.stringify(taxonomies)} }`
-    : "";
+  const variables: Record<string, unknown> = { limit, skip };
+  if (taxonomies.length > 0) {
+    variables.where = { genre_contains_all: taxonomies };
+  }
 
   try {
     const result = await fetchGraphQL<BookCollectionData>(
-      `query {
-        bookCollection(limit: ${limit}, skip: ${skip}, order: title_DESC, preview: ${isEnabled ? "true" : "false"}${whereClause}) {
+      `query GetBooks($limit: Int!, $skip: Int!, $where: BookFilter) {
+        bookCollection(limit: $limit, skip: $skip, order: title_DESC, preview: ${isEnabled ? "true" : "false"}, where: $where) {
           total
           items {
             ${BOOK_GRAPHQL_FIELDS}
           }
         }
       }`,
-      isEnabled
+      isEnabled,
+      variables
     );
 
     if (result.errors) {

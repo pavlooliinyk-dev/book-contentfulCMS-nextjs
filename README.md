@@ -572,7 +572,7 @@ const { items } = await getAllBooks(false, 20); // Instead of 100
 **Debug**:
 ```typescript
 // In lib/api.ts, add logging
-const result = await fetchGraphQL(query, preview);
+const result = await fetchGraphQL(query, preview, variables);
 console.log('GraphQL Result:', JSON.stringify(result, null, 2));
 ```
 

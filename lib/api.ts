@@ -25,7 +25,8 @@ function isValidMaxStars(value: unknown): value is number {
 
 export async function fetchGraphQL<T = unknown>(
   query: string, 
-  preview = false
+  preview = false,
+  variables?: Record<string, unknown>
 ): Promise<GraphQLResponse<T>> {
   const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master';
   const response = await fetch(
@@ -40,7 +41,7 @@ export async function fetchGraphQL<T = unknown>(
             : process.env.CONTENTFUL_ACCESS_TOKEN
         }`,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
       next: { tags: ["books"] },
     },
   );
@@ -57,9 +58,9 @@ export async function getBookBySlug(
   preview: boolean
 ): Promise<Book | undefined> {
   const result = await fetchGraphQL<BookCollectionData>(
-    `query {
+    `query GetBookBySlug($slug: String!) {
       bookCollection(
-        where: { slug: "${slug}" },
+        where: { slug: $slug },
         limit: 1,
         preview: ${preview ? "true" : "false"}
       ) {
@@ -70,6 +71,7 @@ export async function getBookBySlug(
       }
     }`,
     preview,
+    { slug },
   );
 
   const bookRaw = result?.data?.bookCollection?.items?.[0];
@@ -92,18 +94,19 @@ export async function getAllBooks(
   skip = 0,
   taxIds: string[] = []
 ): Promise<{ items: Book[], total: number }> {
-  const whereClause = taxIds.length > 0 
-    ? `, where: { genre_contains_all: ${JSON.stringify(taxIds)} }`
-    : "";
+  const variables: Record<string, unknown> = { limit, skip };
+  if (taxIds.length > 0) {
+    variables.where = { genre_contains_all: taxIds };
+  }
 
   const entries = await fetchGraphQL<BookCollectionData>(
-    `query {
+    `query GetAllBooks($limit: Int!, $skip: Int!, $where: BookFilter) {
       bookCollection(
         preview: ${isDraftMode ? "true" : "false"}, 
-        limit: ${limit}, 
-        skip: ${skip},
-        order: title_DESC
-        ${whereClause}
+        limit: $limit, 
+        skip: $skip,
+        order: title_DESC,
+        where: $where
       ) {
         total
         items {
@@ -112,6 +115,7 @@ export async function getAllBooks(
       }
     }`,
     isDraftMode,
+    variables,
   );
   const items = entries?.data?.bookCollection?.items || [];
   const total = entries?.data?.bookCollection?.total || 0;

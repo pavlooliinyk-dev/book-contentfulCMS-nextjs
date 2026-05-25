@@ -17,9 +17,10 @@ export async function GET(request: NextRequest) {
 
   // Accept either a full path (/books/my-book) or a bare slug (my-book).
   // Bare slugs are normalized to the book detail route.
+  // Restrict to relative paths only to prevent open redirect (e.g. //evil.com).
   const redirectPath = !slug
     ? "/"
-    : slug.startsWith("/")
+    : /^\/[^/]/.test(slug)
       ? slug
       : `/books/${slug}`;
 

@@ -46,7 +46,7 @@ const BooksList = memo(function BooksList({
   // Debounce loading state to prevent flashing on fast operations
   const showPending = useDebouncedPending(loading);
 
-  if (error) return <div className="mt-8 text-red-600">{error}</div>;
+  if (error) throw new Error(error);
 
   return (
     <section className="mt-12 pb-20">

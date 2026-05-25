@@ -47,7 +47,7 @@ function Pricing({ bookId }: PricingProps) {
     
     return (
       <div className="text-sm text-red-600">
-        Error: {error.message || 'Failed to load pricing'}
+        Failed to load pricing
       </div>
     );
   }

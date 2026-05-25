@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreBinaries": [
+    "contentful"
+  ],
+  "ignoreFiles": [
+    "public/contentful-app/**",
+    "contentful-custom-app/**",
+    "cms-cli-scripts/content-types/**",
+    "cms-cli-scripts/migration.js"
+  ],
+  "tags": [
+    "-lintignore"
+  ]
+}

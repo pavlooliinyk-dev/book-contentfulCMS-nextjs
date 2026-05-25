@@ -63,6 +63,8 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) 🎉
 
+> **⚠️ Note on Assets:** The seed script creates book entries but does **not** upload cover images or other assets. Because `coverImage` is a **required** field on the Book content type, seeded entries will remain in **draft** state and cannot be published until a cover image is linked. To add assets, upload them manually through the [Contentful web app](https://app.contentful.com/) (Media section) or via the Contentful CLI, then link them to the corresponding book entries.
+
 ### 🆕 Contentful Custom App (API Usage Dashboard)
 
 Monitor your Contentful API usage directly in your space:
@@ -586,7 +588,32 @@ console.log('GraphQL Result:', JSON.stringify(result, null, 2));
 - Verify `coverImage` field in GraphQL query includes `url`
 - Check Next.js `next.config.js` has Contentful domain in `images.remotePatterns`
 
-#### 5. TypeScript Errors After Adding Field
+#### 5. No Images After Seeding (Missing Assets)
+**Problem**: `npm run seed` creates book entries but does not upload cover images — assets must be added separately. Because `coverImage` is a **required** field, seeded entries will remain in **draft** and cannot be published until an image is linked.
+
+**Solution — Option A: Upload via Contentful Web App (recommended for small sets)**
+1. Go to [app.contentful.com](https://app.contentful.com/) → your space → **Media**
+2. Click **Add asset** → **Single asset**, fill in the title, and upload the image file
+3. Click **Publish** to make the asset available
+4. Navigate to **Content** and open a book entry
+5. Click the **Cover Image** field → **Link existing asset** → select the uploaded image
+6. Click **Publish** on the book entry
+7. Repeat for each book
+
+**Solution — Option B: Not implemented. Upload via Contentful CLI (recommended for bulk)**
+
+First export assets from a reference space (e.g. a demo space with images already set up):
+```bash
+contentful space export --space-id <source-space-id> --content-file assets-export.json
+```
+
+Then import into your own space:
+```bash
+contentful space import --space-id <your-space-id> --content-file assets-export.json
+```
+
+
+#### 6. TypeScript Errors After Adding Field
 - Update TypeScript interfaces
 - Restart TS server: `Cmd/Ctrl + Shift + P` → "Restart TS Server"
 

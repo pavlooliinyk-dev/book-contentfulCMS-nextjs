@@ -3,8 +3,8 @@
 import { memo } from "react";
 import Link from "next/link";
 import { Book, TaxonomyTerm, RatingDisplayConfig } from "@/lib/types";
-import { useBooksList } from "./useBooksList";
-import { useDebouncedPending } from "./useDebouncedPending";
+import { useBooksList } from "./hooks/useBooksList";
+import { useDebouncedPending } from "./hooks/useDebouncedPending";
 import Filters from "./filters";
 import BookGrid from "./book-grid";
 import LoadingSpinner from "../loading-spinner";

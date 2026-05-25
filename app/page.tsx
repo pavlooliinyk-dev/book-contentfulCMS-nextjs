@@ -2,10 +2,10 @@ import { draftMode } from "next/headers";
 import dynamic from "next/dynamic";
 
 import { getAllBooks, getHomePage } from "@/lib/api";
-import Intro from "./_components/intro";
-import MainNavigation from "./_components/main-navigation";
-import HeroBanner from "./_components/hero-banner";
-import { ErrorBoundary } from "./_components/error-boundary";
+import Intro from "@/app/_components/intro";
+import MainNavigation from "@/app/_components/main-navigation";
+import HeroBanner from "@/app/_components/hero-banner";
+import { ErrorBoundary } from "@/app/_components/error-boundary";
 
 const BookList = dynamic(() => import("./_components/book-list"), {
   loading: () => <div className="mt-12 text-center text-gray-500">Loading books...</div>,

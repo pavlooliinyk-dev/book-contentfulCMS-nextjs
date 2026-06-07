@@ -118,3 +118,37 @@ export interface HomePageCollectionData {
     }>;
   };
 }
+
+// Quiz related types
+export interface QuizAnswer {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  questionType: 'single' | 'multiple';
+  answers: QuizAnswer[];
+  order: number;
+}
+
+export interface Quiz {
+  sys: {
+    id: string;
+  };
+  title: string;
+  slug: string;
+  description?: RichTextContent;
+  questions: QuizQuestion[];
+  passingScore: number;
+  published: boolean;
+}
+
+export interface QuizCollectionData {
+  quizCollection: {
+    items: Quiz[];
+    total: number;
+  };
+}

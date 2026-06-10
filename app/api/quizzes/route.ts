@@ -78,34 +78,47 @@ export async function GET(request: NextRequest) {
       };
 
       if (questionId) {
-        // First try to fetch the question node directly via GraphQL by id
-        const GET_QUESTION_BY_ID = `
-          query GetQuestionById($id: String!, $locale: String!) {
-            quizQuestionCollection(limit: 1, where: { sys: { id: $id } }, locale: $locale) {
-              items {
-                ...QuestionFields
-              }
-            }
-          }
-          ${QUESTION_FRAGMENT}
-          ${ANSWER_FRAGMENT}
-        `;
+        // Simplified: try Contentful Delivery/Preview REST API to fetch the entry by id
+        const envName = process.env.CONTENTFUL_ENVIRONMENT || 'master';
+        const spaceId = process.env.CONTENTFUL_SPACE_ID;
+        const token = isEnabled ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN : process.env.CONTENTFUL_ACCESS_TOKEN;
+        const apiHost = isEnabled ? 'preview.contentful.com' : 'cdn.contentful.com';
 
-        try {
-          const qres = await fetchGraphQL<any>(GET_QUESTION_BY_ID, isEnabled, { id: questionId, locale: 'en-US' });
-          const qnode = qres?.data?.quizQuestionCollection?.items?.[0] || null;
-          if (qnode && qnode.sys && (qnode.title || qnode.text || qnode.answersCollection)) {
-            return NextResponse.json({ item, question: qnode });
+        if (spaceId && token) {
+          try {
+            const entryUrl = `https://${apiHost}/spaces/${spaceId}/environments/${envName}/entries/${questionId}?include=10&access_token=${token}`;
+            const entryRes = await fetch(entryUrl);
+            if (entryRes.ok) {
+              const entryJson = await entryRes.json();
+
+              // build index from includes
+              const index: Record<string, any> = {};
+              (entryJson.includes?.Entry || []).forEach((e: any) => {
+                if (e?.sys?.id) index[e.sys.id] = e;
+              });
+
+              const resolveNode = (node: any): any => {
+                if (!node || !node.sys) return node;
+                const entry = index[node.sys.id] || node;
+                const resolved: Record<string, any> = { sys: entry.sys, ...(entry.fields || {}) };
+                for (const [k, v] of Object.entries(resolved)) {
+                  if (Array.isArray(v)) resolved[k] = v.map((it: any) => (it && it.sys ? resolveNode(it) : it));
+                  else if (v && typeof v === 'object' && v.sys) resolved[k] = resolveNode(v);
+                }
+                return resolved;
+              };
+
+              const resolvedQuestion = resolveNode({ sys: entryJson.sys });
+              return NextResponse.json({ item, question: resolvedQuestion });
+            }
+          } catch (e) {
+            console.error('Error fetching entry from Contentful REST API:', e);
           }
-        } catch (e) {
-          // ignore and fallback to resolving includes
-          console.error('Error fetching question by id:', e);
         }
 
-        // Fallback: Try to resolve includes to find the requested node
+        // Fallback: try resolving includes from the GraphQL result
         const resolvedFirst = resolveLinks(result);
         if (resolvedFirst) {
-          // Depth-first search for the node
           const findNodeById = (node: any, id: string | null): any | null => {
             if (!node || !id) return null;
             if (node.sys?.id === id) return node;

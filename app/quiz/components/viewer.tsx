@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Quiz } from '@/lib/types';
-import { getQuizBySlug } from '@/lib/api';
 import QuestionRenderer from '@/app/_components/quiz-viewer/question-renderer';
 import ProgressBar from '@/app/_components/quiz-viewer/progress-bar';
 import { useRouter } from 'next/navigation';
@@ -14,8 +13,7 @@ interface QuizViewerProps {
 export default function QuizViewer({ quizData }: QuizViewerProps) {
   const router = useRouter();
   const [quiz, setQuiz] = useState<Quiz | null>(quizData);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [quizQuestionId, setQuizQuestionId] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, string[]>
@@ -23,47 +21,12 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // console.log('QuizViewer mounted with quiz:', quiz?.questions, quiz.questions.length) ;
-
-  // Fetch quiz on mount
-  // useEffect(() => {
-  //   const fetchQuiz = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const fetchedQuiz = await getQuizBySlug(slug, false);
-  //       if (!fetchedQuiz) {
-  //         setError('Quiz not found');
-  //         return;
-  //       }
-  //       setQuiz(fetchedQuiz);
-  //     } catch (err) {
-  //       console.error('Error fetching quiz:', err);
-  //       setError('Failed to load quiz');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchQuiz();
-  // }, [slug]);
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center min-h-screen">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-  //         <p>Loading quiz...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  if (error || !quiz) {
+  if (!quiz) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-600 font-semibold mb-4">
-            {error || 'Quiz not found'}
+            {'Quiz not found'}
           </p>
           <button
             onClick={() => router.back()}
@@ -91,34 +54,35 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     );
   }
 
-  const _currentQuestion = JSON.parse( quiz.questions as unknown as string);
-  const currentQuestion = _currentQuestion[currentQuestionIndex];
-  console.log('currentQuestion:', currentQuestion) ;
-  const currentAnswers = selectedAnswers[currentQuestion.id] || [];
-  const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
+  // console.log('quiz.firstQuestion:', quiz.firstQuestion) ;
+
+  const currentQuestion = quiz.firstQuestion;
+  const currentAnswers = selectedAnswers[currentQuestion.sys.id] || [];
+  // const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
+  const isLastQuestion = false; // For now, since we are only rendering the first question
   const isAnswered = currentAnswers.length > 0;
   
 
   const handleAnswerSelect = (answerId: string, isSelected: boolean) => {
     setSelectedAnswers((prev) => {
-      const answers = prev[currentQuestion.id] || [];
+      const answers = prev[currentQuestion.sys.id] || [];
       if (isSelected) {
         // Single choice: replace, Multiple choice: add
-        if (currentQuestion.questionType === 'single') {
+        if (currentQuestion.answerType === 'single') {
           return {
             ...prev,
-            [currentQuestion.id]: [answerId],
+            [currentQuestion.sys.id]: [answerId],
           };
         } else {
           return {
             ...prev,
-            [currentQuestion.id]: [...answers, answerId],
+            [currentQuestion.sys.id]: [...answers, answerId],
           };
         }
       } else {
         return {
           ...prev,
-          [currentQuestion.id]: answers.filter((id) => id !== answerId),
+          [currentQuestion.sys.id]: answers.filter((id) => id !== answerId),
         };
       }
     });
@@ -133,6 +97,9 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
       handleSubmit();
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setQuizQuestionId(selectedAnswers[currentQuestion.sys.id]?.[0] || null) ;
+      console.log('Next question index, currentAnswers:', selectedAnswers) ;
+      // get next question ID from selected answer's nextQuestion field from api
     }
   };
 
@@ -187,7 +154,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
         <QuestionRenderer
           question={currentQuestion}
           selectedAnswerIds={currentAnswers}
-          onAnswerSelect={handleAnswerSelect}
+          handleAnswerSelect={handleAnswerSelect}
           questionNumber={currentQuestionIndex + 1}
           totalQuestions={quiz.questions.length}
         />

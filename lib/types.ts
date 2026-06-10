@@ -133,6 +133,27 @@ export interface QuizQuestion {
   answers: QuizAnswer[];
   order: number;
 }
+export interface QuizQuestionLinked {
+  sys: {
+    id: string;
+  };
+  title: string;
+  text: string;
+  answerType: 'single' | 'multiple';
+  answersCollection: {
+    items: {
+      sys: {
+        id: string;
+      };
+      text: string;
+      nextQuestion: {
+        sys: {
+          id: string;
+        };
+      } | null;
+    }[];
+  };
+}
 
 export interface Quiz {
   sys: {
@@ -144,6 +165,7 @@ export interface Quiz {
   questions: QuizQuestion[];
   passingScore: number;
   published: boolean;
+  firstQuestion: QuizQuestionLinked;
 }
 
 export interface QuizCollectionData {

@@ -202,7 +202,7 @@ export async function getQuizBySlug(slug: string, preview = false): Promise<Quiz
   const result = await fetchGraphQL<QuizCollectionData>(
     GET_QUIZ_BY_SLUG,
     preview,
-    { slug },
+    { slug, locale: "en-US" },
   );
 
   return result?.data?.quizCollection?.items?.[0] || null;

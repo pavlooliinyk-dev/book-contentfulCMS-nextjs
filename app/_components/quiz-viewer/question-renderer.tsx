@@ -1,12 +1,12 @@
 'use client';
 
-import { QuizQuestion } from '@/lib/types';
+import { QuizQuestion, QuizQuestionLinked } from '@/lib/types';
 import { useState } from 'react';
 
 interface QuestionRendererProps {
-  question: QuizQuestion;
+  question: QuizQuestionLinked;
   selectedAnswerIds: string[];
-  onAnswerSelect: (answerId: string, isSelected: boolean) => void;
+  handleAnswerSelect: (answerId: string, isSelected: boolean) => void;
   questionNumber: number;
   totalQuestions: number;
 }
@@ -14,11 +14,11 @@ interface QuestionRendererProps {
 export default function QuestionRenderer({
   question,
   selectedAnswerIds,
-  onAnswerSelect,
+  handleAnswerSelect,
   questionNumber,
   totalQuestions,
 }: QuestionRendererProps) {
-  const isSingleChoice = question.questionType === 'single';
+  const isSingleChoice = question.answerType === 'single';
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
@@ -31,17 +31,17 @@ export default function QuestionRenderer({
 
       {/* Question Text */}
       <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
-        {question.question}
+        {question.text}
       </h2>
 
       {/* Answers */}
       <div className="space-y-3">
-        {question.answers.map((answer) => {
-          const isSelected = selectedAnswerIds.includes(answer.id);
+        {question.answersCollection.items.map((answer) => {
+          const isSelected = selectedAnswerIds.includes(answer.sys.id);
 
           return (
             <label
-              key={answer.id}
+              key={answer.sys.id}
               className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 isSelected
                   ? 'border-blue-500 bg-blue-50'
@@ -50,16 +50,16 @@ export default function QuestionRenderer({
             >
               <input
                 type={isSingleChoice ? 'radio' : 'checkbox'}
-                name={`question-${question.id}`}
-                value={answer.id}
+                name={`question-${question.sys.id}`}
+                value={answer.text}
                 checked={isSelected}
                 onChange={(e) =>
-                  onAnswerSelect(answer.id, e.currentTarget.checked)
+                  handleAnswerSelect(answer.sys.id, e.currentTarget.checked)
                 }
                 className="w-5 h-5 cursor-pointer"
               />
               <span className="ml-4 text-lg text-gray-800">
-                {answer.text}
+                {answer.text} - {answer.sys.id}
               </span>
             </label>
           );

@@ -79,7 +79,33 @@ const SAMPLE_QUIZZES = [
         ])
       },
       passingScore: { 'en-US': 70 },
-      published: { 'en-US': true }
+      published: { 'en-US': true },
+      
+      firstQuestion: {
+        "title": "firstQuestion → Question A",
+        "text": "firstQuestion → Question A",
+        "answerType": "single",
+        "answersCollection": {
+          "items": [
+            {
+              "text": "Answer 1 → nextQuestion → Question B",
+              "nextQuestion": {
+                "sys": {
+                  "id": "4DqJKTQWN8LGYgstrwkY9L"
+                }
+              }
+            },
+            {
+              "nextQuestion": null,
+              "text": "Answer 2 → nextQuestion → Question C"
+            },
+            {
+              "nextQuestion": null,
+              "text": "Answer 3 → nextQuestion → Question B"
+            }
+          ]
+        }
+      },
     }
   },
   {
@@ -232,6 +258,44 @@ async function seedQuizzes() {
         console.log(`   Fields keys: ${Object.keys(quizData.fields).join(', ')}`);
         
         const entry = await environment.createEntry('quiz', quizData);
+
+        // -----------
+        // TODO: Create and publish taxonomies first if they exist
+        // const answersLinks = [];
+        // if (quizData.firstQuestion.answersCollection && Array.isArray(quizData.firstQuestion.answersCollection.items)) {
+        //   for (const answer of quizData.firstQuestion.answersCollection.items) {
+        //     try {
+        //       console.log(`  Creating answer: ${answer.text}`);
+        //       const answerFields = {
+        //         text: { 'en-US': answer.text },
+        //         nextQuestion: answer.nextQuestion ? {
+        //           sys: {
+        //             type: 'Link',
+        //             linkType: 'Entry',
+        //             id: answer.nextQuestion.sys.id
+        //           }
+        //         } : null
+        //       };
+              
+        //       // todo: Check if it already exists to avoid duplicates
+        //       let taxonEntry = await environment.createEntry('answersCollection', {
+        //           fields: answerFields,
+        //         });
+        //         await taxonEntry.publish();
+
+        //       answersLinks.push({
+        //         sys: {
+        //           type: 'Link',
+        //           linkType: 'Entry',
+        //           id: taxonEntry.sys.id
+        //         }
+        //       });
+        //     } catch (e) {
+        //       console.error(`  Error creating taxonomy ${taxon.title}:`, e.message);
+        //     }
+        //   }
+        // }
+        //
         console.log(`✔ Entry created with ID: ${entry.sys.id}`);
         const published = await entry.publish();
         console.log(`✔ Created & published quiz: "${published.fields.title['en-US']}"`);

@@ -2,6 +2,38 @@
  * GraphQL Fragments for Quiz queries
  */
 
+export const ANSWER_FRAGMENT = `
+  fragment AnswerFields on QuizAnswer {
+    sys {
+      id
+    }
+    text
+    nextQuestion {
+      sys {
+        id
+      }
+    }
+  }
+`;
+
+export const QUESTION_FRAGMENT = `
+  fragment QuestionFields on QuizQuestion {
+    sys {
+      id
+    }
+    title
+    text
+    answerType
+    answersCollection {
+      items {
+        ... on QuizAnswer {
+          ...AnswerFields
+        }
+      }
+    }
+  }
+`;
+
 export const QUIZ_FRAGMENT = `
   fragment QuizFields on Quiz {
     sys {
@@ -15,6 +47,11 @@ export const QUIZ_FRAGMENT = `
     questions
     passingScore
     published
+    firstQuestion {
+      ... on QuizQuestion {
+        ...QuestionFields
+      }
+    }
   }
 `;
 
@@ -27,6 +64,8 @@ export const GET_QUIZ_BY_SLUG = `
     }
   }
   ${QUIZ_FRAGMENT}
+  ${QUESTION_FRAGMENT}
+  ${ANSWER_FRAGMENT}
 `;
 
 export const GET_ALL_QUIZZES = `

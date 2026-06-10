@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Quiz } from '@/lib/types';
+import { useState, useEffect } from 'react';
+import { Quiz, QuizQuestionLinked } from '@/lib/types';
 import QuestionRenderer from '@/app/_components/quiz-viewer/question-renderer';
 import ProgressBar from '@/app/_components/quiz-viewer/progress-bar';
 import { useRouter } from 'next/navigation';
@@ -21,6 +21,31 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
+  const isEmbeddedQuestion = (n: unknown): n is QuizQuestionLinked => {
+    if (typeof n !== 'object' || n === null) return false;
+    const obj = n as Record<string, unknown>;
+    const sys = obj['sys'] as Record<string, unknown> | undefined;
+    return Boolean(sys && typeof sys['id'] === 'string' && (typeof obj['title'] === 'string' || typeof obj['text'] === 'string'));
+  };
+
+  const computeTotalFromQuiz = (q: Quiz) => {
+    const visited = new Set<string>();
+    const stack: QuizQuestionLinked[] = [q.firstQuestion];
+    while (stack.length) {
+      const node = stack.shift();
+      if (!node || !node.sys?.id || visited.has(node.sys.id)) continue;
+      visited.add(node.sys.id);
+      const items = node.answersCollection?.items || [];
+      for (const ans of items) {
+        const next = ans.nextQuestion;
+        if (next && isEmbeddedQuestion(next)) {
+          stack.push(next);
+        }
+      }
+    }
+    return Math.max(visited.size, 1);
+  };
+
   if (!quiz) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -39,11 +64,15 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     );
   }
 
+  useEffect(() => {
+    if (!submitted) return;
+    const url = `/quiz/${quiz.slug}/results?score=${score}&total=${computeTotalFromQuiz(quiz)}&answers=${encodeURIComponent(JSON.stringify(selectedAnswers))}`;
+    // Navigate after render to avoid setState during render
+    router.push(url);
+  }, [submitted, score, selectedAnswers, quiz?.slug]);
+
   if (submitted) {
-    // Redirect to results page
-    router.push(
-      `/quiz/${quiz.slug}/results?score=${score}&total=${quiz.questions.length}&answers=${encodeURIComponent(JSON.stringify(selectedAnswers))}`
-    );
+    // Show loading state while navigation happens
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -54,54 +83,139 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     );
   }
 
-  // console.log('quiz.firstQuestion:', quiz.firstQuestion) ;
+  const [loadedQuestions, setLoadedQuestions] = useState<Record<string, QuizQuestionLinked>>(() => (quiz?.firstQuestion?.sys?.id ? { [quiz.firstQuestion.sys.id]: quiz.firstQuestion } : {}));
 
-  const currentQuestion = quiz.firstQuestion;
+  useEffect(() => {
+    if (quiz?.firstQuestion?.sys?.id && !loadedQuestions[quiz.firstQuestion.sys.id]) {
+      setLoadedQuestions({ [quiz.firstQuestion.sys.id]: quiz.firstQuestion });
+      setQuizQuestionId(quiz.firstQuestion.sys.id);
+    }
+  }, [quiz]);
+
+  const findNodeById = (node: QuizQuestionLinked, id: string): QuizQuestionLinked | null => {
+    if (!node) return null;
+    if (node.sys?.id === id) return node;
+    const items = node.answersCollection?.items || [];
+    for (const ans of items) {
+      const next = ans.nextQuestion;
+      if (next && isEmbeddedQuestion(next)) {
+        const found = findNodeById(next, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const currentQuestion: QuizQuestionLinked = (() => {
+    if (quizQuestionId) {
+      if (quiz.firstQuestion.sys.id === quizQuestionId) return quiz.firstQuestion;
+      if (loadedQuestions[quizQuestionId]) return loadedQuestions[quizQuestionId];
+      const found = findNodeById(quiz.firstQuestion, quizQuestionId);
+      if (found) {
+        // Avoid calling setState during render; just return the found node
+        return found;
+      }
+    }
+    return quiz.firstQuestion;
+  })();
+
   const currentAnswers = selectedAnswers[currentQuestion.sys.id] || [];
-  // const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  const isLastQuestion = false; // For now, since we are only rendering the first question
   const isAnswered = currentAnswers.length > 0;
-  
 
   const handleAnswerSelect = (answerId: string, isSelected: boolean) => {
     setSelectedAnswers((prev) => {
       const answers = prev[currentQuestion.sys.id] || [];
       if (isSelected) {
-        // Single choice: replace, Multiple choice: add
         if (currentQuestion.answerType === 'single') {
-          return {
-            ...prev,
-            [currentQuestion.sys.id]: [answerId],
-          };
+          return { ...prev, [currentQuestion.sys.id]: [answerId] };
         } else {
-          return {
-            ...prev,
-            [currentQuestion.sys.id]: [...answers, answerId],
-          };
+          return { ...prev, [currentQuestion.sys.id]: Array.from(new Set([...answers, answerId])) };
         }
       } else {
-        return {
-          ...prev,
-          [currentQuestion.sys.id]: answers.filter((id) => id !== answerId),
-        };
+        return { ...prev, [currentQuestion.sys.id]: answers.filter((id) => id !== answerId) };
       }
     });
   };
 
-  const handleNext = () => {
+  const getTotalQuestions = () => {
+    const visited = new Set<string>();
+    let count = 0;
+    const stack: QuizQuestionLinked[] = [quiz.firstQuestion];
+    while (stack.length > 0) {
+      const node = stack.shift();
+      if (!node || !node.sys?.id || visited.has(node.sys.id)) continue;
+      visited.add(node.sys.id);
+      count++;
+      const items = node.answersCollection?.items || [];
+      for (const ans of items) {
+        const next = ans.nextQuestion;
+        if (next && isEmbeddedQuestion(next)) {
+          stack.push(next);
+        }
+      }
+    }
+    return Math.max(count, Object.keys(loadedQuestions).length, 1);
+  };
+
+  const totalQuestions = getTotalQuestions();
+
+  const isLastQuestion = (() => {
+    const selectedId = currentAnswers[0];
+    if (!selectedId) return false;
+    const answerItem = (currentQuestion.answersCollection?.items || []).find((a) => a.sys?.id === selectedId);
+    if (!answerItem) return true; // if answer not found, treat as last
+    const next = answerItem.nextQuestion;
+    if (!next) return true;
+    if (isEmbeddedQuestion(next)) return false;
+    // next is a link object without embedded content
+    return !(next.sys && typeof next.sys.id === 'string');
+  })();
+
+  const handleNext = async () => {
     if (!isAnswered) {
       alert('Please select an answer before proceeding');
       return;
     }
-    if (isLastQuestion) {
-      handleSubmit();
+
+    const selectedId = currentAnswers[0];
+    const answerItem = (currentQuestion.answersCollection?.items || []).find((a) => a.sys.id === selectedId);
+    const next = answerItem?.nextQuestion;
+    const nextQuestionId = next && 'sys' in next && typeof (next as { sys: { id: string } }).sys.id === 'string' ? (next as { sys: { id: string } }).sys.id : null;
+
+    if (nextQuestionId) {
+      // If next question object is embedded in the answer, use it
+      if (next && isEmbeddedQuestion(next)) {
+        setLoadedQuestions((prev) => ({ ...prev, [next.sys.id]: next }));
+        setQuizQuestionId(next.sys.id);
+        setCurrentQuestionIndex((prev) => prev + 1);
+      } else {
+        try {
+          const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}`);
+          const data = await res.json();
+          const fresh: Quiz | null = data?.item || null;
+          if (fresh) {
+            setQuiz(fresh);
+            // try to find the node in the refreshed quiz
+            const found = findNodeById(fresh.firstQuestion, nextQuestionId);
+            if (found) {
+              setLoadedQuestions((prev) => ({ ...prev, [found.sys.id]: found }));
+              setQuizQuestionId(nextQuestionId);
+              setCurrentQuestionIndex((prev) => prev + 1);
+              return;
+            }
+          }
+          // If cannot find next question, submit
+          handleSubmit();
+        } catch (e) {
+          console.error('Error loading next question:', e);
+          handleSubmit();
+        }
+      }
     } else {
-      setCurrentQuestionIndex((prev) => prev + 1);
-      setQuizQuestionId(selectedAnswers[currentQuestion.sys.id]?.[0] || null) ;
-      console.log('Next question index, currentAnswers:', selectedAnswers) ;
-      // get next question ID from selected answer's nextQuestion field from api
+      handleSubmit();
     }
   };
+
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
@@ -110,17 +224,16 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   };
 
   const handleSubmit = () => {
-    // Calculate score
     let correctCount = 0;
-    quiz.questions.forEach((question) => {
-      const userAnswerIds = selectedAnswers[question.id] || [];
-      const correctAnswers = question.answers.filter((a) => a.isCorrect);
-      const isCorrect = correctAnswers.every((a) =>
-        userAnswerIds.includes(a.id)
-      );
-      if (isCorrect) {
-        correctCount++;
-      }
+    Object.keys(selectedAnswers).forEach((qId) => {
+      const userAnswerIds = selectedAnswers[qId] || [];
+      const q = loadedQuestions[qId] || findNodeById(quiz.firstQuestion, qId);
+      if (!q) return;
+      const answers = q.answersCollection?.items || [];
+      const correctAnswers = answers.filter((a) => Boolean(a.isCorrect)).map((a) => a.sys?.id as string);
+      if (correctAnswers.length === 0) return;
+      const isCorrect = correctAnswers.every((id) => userAnswerIds.includes(id));
+      if (isCorrect) correctCount++;
     });
     setScore(correctCount);
     setSubmitted(true);
@@ -144,7 +257,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
           </div>
           <ProgressBar
             currentQuestion={currentQuestionIndex + 1}
-            totalQuestions={quiz.questions.length}
+            totalQuestions={totalQuestions}
           />
         </div>
       </div>
@@ -156,7 +269,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
           selectedAnswerIds={currentAnswers}
           handleAnswerSelect={handleAnswerSelect}
           questionNumber={currentQuestionIndex + 1}
-          totalQuestions={quiz.questions.length}
+          totalQuestions={totalQuestions}
         />
 
         {/* Navigation Buttons */}
@@ -170,7 +283,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
           </button>
 
           <span className="text-gray-600 font-semibold">
-            {currentQuestionIndex + 1} / {quiz.questions.length}
+            {currentQuestionIndex + 1} / {totalQuestions}
           </span>
 
           {isLastQuestion ? (

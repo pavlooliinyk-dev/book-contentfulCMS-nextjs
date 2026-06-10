@@ -21,6 +21,15 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
+  const [loadedQuestions, setLoadedQuestions] = useState<Record<string, QuizQuestionLinked>>(() => (quiz?.firstQuestion?.sys?.id ? { [quiz.firstQuestion.sys.id]: quiz.firstQuestion } : {}));
+
+  useEffect(() => {
+    if (quiz?.firstQuestion?.sys?.id && !loadedQuestions[quiz.firstQuestion.sys.id]) {
+      setLoadedQuestions({ [quiz.firstQuestion.sys.id]: quiz.firstQuestion });
+      setQuizQuestionId(quiz.firstQuestion.sys.id);
+    }
+  }, [quiz]);
+
   const isEmbeddedQuestion = (n: unknown): n is QuizQuestionLinked => {
     if (typeof n !== 'object' || n === null) return false;
     const obj = n as Record<string, unknown>;
@@ -82,15 +91,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
       </div>
     );
   }
-
-  const [loadedQuestions, setLoadedQuestions] = useState<Record<string, QuizQuestionLinked>>(() => (quiz?.firstQuestion?.sys?.id ? { [quiz.firstQuestion.sys.id]: quiz.firstQuestion } : {}));
-
-  useEffect(() => {
-    if (quiz?.firstQuestion?.sys?.id && !loadedQuestions[quiz.firstQuestion.sys.id]) {
-      setLoadedQuestions({ [quiz.firstQuestion.sys.id]: quiz.firstQuestion });
-      setQuizQuestionId(quiz.firstQuestion.sys.id);
-    }
-  }, [quiz]);
 
   const findNodeById = (node: QuizQuestionLinked, id: string): QuizQuestionLinked | null => {
     if (!node) return null;

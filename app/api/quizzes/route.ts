@@ -81,8 +81,10 @@ export async function GET(request: NextRequest) {
         // First try to fetch the question node directly via GraphQL by id
         const GET_QUESTION_BY_ID = `
           query GetQuestionById($id: String!, $locale: String!) {
-            quizQuestion(id: $id) {
-              ...QuestionFields
+            quizQuestionCollection(limit: 1, where: { sys: { id: $id } }, locale: $locale) {
+              items {
+                ...QuestionFields
+              }
             }
           }
           ${QUESTION_FRAGMENT}
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
 
         try {
           const qres = await fetchGraphQL<any>(GET_QUESTION_BY_ID, isEnabled, { id: questionId, locale: 'en-US' });
-          const qnode = qres?.data?.quizQuestion || null;
+          const qnode = qres?.data?.quizQuestionCollection?.items?.[0] || null;
           if (qnode && qnode.sys && (qnode.title || qnode.text || qnode.answersCollection)) {
             return NextResponse.json({ item, question: qnode });
           }

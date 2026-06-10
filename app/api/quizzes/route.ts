@@ -49,26 +49,55 @@ export async function GET(request: NextRequest) {
 
       const item = result?.data?.quizCollection?.items?.[0] || null;
 
-      // If a specific questionId was requested, try to find it in the returned graph
-      const findNodeById = (node: any, id: string | null): any | null => {
-        if (!node || !id) return null;
-        if (node.sys?.id === id) return node;
-        const items = node.answersCollection?.items || [];
-        for (const ans of items) {
-          const next = ans.nextQuestion;
-          if (!next) continue;
-          // If embedded nextQuestion object
-          if (next.sys && next.title) {
-            const found = findNodeById(next, id);
-            if (found) return found;
+      // Helper to resolve included linked entries (Contentful style)
+      const resolveLinks = (response: any) => {
+        const index: Record<string, any> = {};
+        (response?.includes?.Entry || []).forEach((e: any) => {
+          if (e?.sys?.id) index[e.sys.id] = e;
+        });
+
+        const resolve = (node: any): any => {
+          if (!node || !node.sys) return node;
+          const entry = index[node.sys.id];
+          if (!entry) return node;
+          const resolved: Record<string, any> = { ...entry.fields, sys: entry.sys };
+          for (const [k, v] of Object.entries(resolved)) {
+            if (Array.isArray(v)) resolved[k] = v.map(resolve);
+            else if (v && typeof v === 'object' && v.sys && v.sys.type === 'Link') resolved[k] = resolve(v);
           }
+          return resolved;
+        };
+
+        const rawFirst = response?.data?.quizCollection?.items?.[0]?.firstQuestion;
+        if (!rawFirst) return null;
+        try {
+          return resolve(rawFirst);
+        } catch (e) {
+          return rawFirst;
         }
-        return null;
       };
 
-      if (questionId && item?.firstQuestion) {
-        const found = findNodeById(item.firstQuestion, questionId);
-        return NextResponse.json({ item, question: found || null });
+      if (questionId) {
+        // Try to resolve includes to find the requested node quickly
+        const resolvedFirst = resolveLinks(result);
+        if (resolvedFirst) {
+          // Depth-first search for the node
+          const findNodeById = (node: any, id: string | null): any | null => {
+            if (!node || !id) return null;
+            if (node.sys?.id === id) return node;
+            const items = node.answersCollection?.items || [];
+            for (const ans of items) {
+              const next = ans.nextQuestion;
+              if (!next) continue;
+              const found = findNodeById(next, id);
+              if (found) return found;
+            }
+            return null;
+          };
+
+          const found = findNodeById(resolvedFirst, questionId);
+          return NextResponse.json({ item, question: found || null });
+        }
       }
 
       return NextResponse.json({ item });

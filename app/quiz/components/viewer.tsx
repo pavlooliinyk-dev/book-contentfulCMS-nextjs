@@ -190,9 +190,20 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
         setCurrentQuestionIndex((prev) => prev + 1);
       } else {
         try {
-          const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}`);
+          const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}&questionId=${encodeURIComponent(nextQuestionId || '')}`);
+          console.log('Fetching next question via API with questionId:', nextQuestionId);
           const data = await res.json();
+          console.log('Fetched fresh quiz data:', res, data);
           const fresh: Quiz | null = data?.item || null;
+          const fetchedQuestion = data?.question || null;
+
+          if (fetchedQuestion && fetchedQuestion.sys?.id === nextQuestionId) {
+            setLoadedQuestions((prev) => ({ ...prev, [fetchedQuestion.sys.id]: fetchedQuestion }));
+            setQuizQuestionId(nextQuestionId);
+            setCurrentQuestionIndex((prev) => prev + 1);
+            return;
+          }
+
           if (fresh) {
             setQuiz(fresh);
             // try to find the node in the refreshed quiz

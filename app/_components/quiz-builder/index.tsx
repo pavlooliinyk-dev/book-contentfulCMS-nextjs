@@ -38,7 +38,7 @@ export default function QuizBuilderForm({
         slug: initialQuiz.slug,
         description: '',
         passingScore: initialQuiz.passingScore,
-        questions: initialQuiz.questions,
+        questions: initialQuiz.questions ?? [],
       };
     }
     return {
@@ -251,7 +251,7 @@ export default function QuizBuilderForm({
                   className="border-l-4 border-blue-500 pl-4 pb-4 mb-4"
                 >
                   <QuestionEditor
-                    control={control as Control<any>}
+                    control={control}
                     index={index}
                     onRemove={() => {
                       if (fields.length > 1) {

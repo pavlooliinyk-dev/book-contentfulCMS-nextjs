@@ -1,11 +1,12 @@
 'use client';
 
 import { Control, Controller, useFieldArray } from 'react-hook-form';
+import type { QuizFormData } from './index';
 import { QuizQuestion } from '@/lib/types';
 import AnswerEditor from './answer-editor';
 
 interface QuestionEditorProps {
-  control: Control<any>;
+  control: Control<QuizFormData>;
   index: number;
   onRemove: () => void;
 }

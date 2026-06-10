@@ -1,9 +1,10 @@
 'use client';
 
 import { Control, Controller } from 'react-hook-form';
+import type { QuizFormData } from './index';
 
 interface AnswerEditorProps {
-  control: Control<any>;
+  control: Control<QuizFormData>;
   fieldIndex: number;
   questionIndex: number;
   onRemove: () => void;

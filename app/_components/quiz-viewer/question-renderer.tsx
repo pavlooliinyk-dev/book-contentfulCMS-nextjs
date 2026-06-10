@@ -36,7 +36,7 @@ export default function QuestionRenderer({
 
       {/* Answers */}
       <div className="space-y-3">
-        {question.answersCollection.items.map((answer) => {
+        {(question.answersCollection?.items || []).map((answer) => {
           const isSelected = selectedAnswerIds.includes(answer.sys.id);
 
           return (

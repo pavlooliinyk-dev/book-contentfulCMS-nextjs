@@ -37,24 +37,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     return Boolean(sys && typeof sys['id'] === 'string' && (typeof obj['title'] === 'string' || typeof obj['text'] === 'string'));
   };
 
-  const computeTotalFromQuiz = (q: Quiz) => {
-    const visited = new Set<string>();
-    const stack: QuizQuestionLinked[] = [q.firstQuestion];
-    while (stack.length) {
-      const node = stack.shift();
-      if (!node || !node.sys?.id || visited.has(node.sys.id)) continue;
-      visited.add(node.sys.id);
-      const items = node.answersCollection?.items || [];
-      for (const ans of items) {
-        const next = ans.nextQuestion;
-        if (next && isEmbeddedQuestion(next)) {
-          stack.push(next);
-        }
-      }
-    }
-    return Math.max(visited.size, 1);
-  };
-
   if (!quiz) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -72,13 +54,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (!submitted) return;
-    const url = `/quiz/${quiz.slug}/results?score=${score}&total=${computeTotalFromQuiz(quiz)}&answers=${encodeURIComponent(JSON.stringify(selectedAnswers))}`;
-    // Navigate after render to avoid setState during render
-    router.push(url);
-  }, [submitted, score, selectedAnswers, quiz?.slug]);
 
   if (submitted) {
     // Show loading state while navigation happens
@@ -106,18 +81,20 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     return null;
   };
 
-  const currentQuestion: QuizQuestionLinked = (() => {
-    if (quizQuestionId) {
-      if (quiz.firstQuestion.sys.id === quizQuestionId) return quiz.firstQuestion;
-      if (loadedQuestions[quizQuestionId]) return loadedQuestions[quizQuestionId];
+  // When quizQuestionId changes, ensure the node is loaded into loadedQuestions
+  useEffect(() => {
+    if (!quizQuestionId) return;
+    setLoadedQuestions((prev) => {
+      if (prev[quizQuestionId]) return prev;
       const found = findNodeById(quiz.firstQuestion, quizQuestionId);
-      if (found) {
-        // Avoid calling setState during render; just return the found node
-        return found;
-      }
-    }
-    return quiz.firstQuestion;
-  })();
+      if (found) return { ...prev, [found.sys.id]: found };
+      return prev;
+    });
+  }, [quizQuestionId, quiz]);
+
+  const currentQuestion: QuizQuestionLinked = quizQuestionId
+    ? (quiz.firstQuestion.sys.id === quizQuestionId ? quiz.firstQuestion : (loadedQuestions[quizQuestionId] || quiz.firstQuestion))
+    : quiz.firstQuestion;
 
   const currentAnswers = selectedAnswers[currentQuestion.sys.id] || [];
   const isAnswered = currentAnswers.length > 0;
@@ -159,6 +136,13 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
 
   const totalQuestions = getTotalQuestions();
 
+  // Navigate to results when submitted
+  useEffect(() => {
+    if (!submitted) return;
+    const url = `/quiz/${quiz.slug}/results?score=${score}&total=${totalQuestions}&answers=${encodeURIComponent(JSON.stringify(selectedAnswers))}`;
+    router.push(url);
+  }, [submitted, score, selectedAnswers, totalQuestions, quiz?.slug]);
+
   const isLastQuestion = (() => {
     const selectedId = currentAnswers[0];
     if (!selectedId) return false;
@@ -191,11 +175,9 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
       } else {
         try {
           const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}&questionId=${encodeURIComponent(nextQuestionId || '')}`);
-          console.log('Fetching next question via API with questionId:', nextQuestionId);
           const data = await res.json();
-          console.log('Fetched fresh quiz data:', res, data);
-          const fresh: Quiz | null = data?.item || null;
           const fetchedQuestion = data?.question || null;
+          const fresh: Quiz | null = data?.item || null;
 
           if (fetchedQuestion && fetchedQuestion.sys?.id === nextQuestionId) {
             setLoadedQuestions((prev) => ({ ...prev, [fetchedQuestion.sys.id]: fetchedQuestion }));
@@ -206,7 +188,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
 
           if (fresh) {
             setQuiz(fresh);
-            // try to find the node in the refreshed quiz
             const found = findNodeById(fresh.firstQuestion, nextQuestionId);
             if (found) {
               setLoadedQuestions((prev) => ({ ...prev, [found.sys.id]: found }));
@@ -215,7 +196,8 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
               return;
             }
           }
-          // If cannot find next question, submit
+
+          // fallback: submit
           handleSubmit();
         } catch (e) {
           console.error('Error loading next question:', e);

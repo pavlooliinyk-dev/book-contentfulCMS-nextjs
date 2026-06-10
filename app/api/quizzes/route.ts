@@ -3,7 +3,7 @@ import { draftMode } from "next/headers";
 import { fetchGraphQL } from "@/lib/api";
 // import { BOOK_GRAPHQL_FIELDS } from "@/lib/graphql/fragments";
 import { QuizCollectionData, BookRaw, Quiz } from "@/lib/types";
-import { GET_QUIZ_BY_SLUG, QUIZ_FRAGMENT } from "@/lib/graphql/quiz-fragments";
+import { GET_QUIZ_BY_SLUG, QUIZ_FRAGMENT, QUESTION_FRAGMENT, ANSWER_FRAGMENT } from "@/lib/graphql/quiz-fragments";
 
 export async function GET(request: NextRequest) {
   const { isEnabled } = await draftMode();
@@ -78,7 +78,29 @@ export async function GET(request: NextRequest) {
       };
 
       if (questionId) {
-        // Try to resolve includes to find the requested node quickly
+        // First try to fetch the question node directly via GraphQL by id
+        const GET_QUESTION_BY_ID = `
+          query GetQuestionById($id: String!, $locale: String!) {
+            quizQuestion(id: $id) {
+              ...QuestionFields
+            }
+          }
+          ${QUESTION_FRAGMENT}
+          ${ANSWER_FRAGMENT}
+        `;
+
+        try {
+          const qres = await fetchGraphQL<any>(GET_QUESTION_BY_ID, isEnabled, { id: questionId, locale: 'en-US' });
+          const qnode = qres?.data?.quizQuestion || null;
+          if (qnode && qnode.sys && (qnode.title || qnode.text || qnode.answersCollection)) {
+            return NextResponse.json({ item, question: qnode });
+          }
+        } catch (e) {
+          // ignore and fallback to resolving includes
+          console.error('Error fetching question by id:', e);
+        }
+
+        // Fallback: Try to resolve includes to find the requested node
         const resolvedFirst = resolveLinks(result);
         if (resolvedFirst) {
           // Depth-first search for the node

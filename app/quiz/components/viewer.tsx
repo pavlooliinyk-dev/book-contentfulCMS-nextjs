@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Quiz, QuizQuestionLinked } from '@/lib/types';
 import QuestionRenderer from '@/app/_components/quiz-viewer/question-renderer';
 import ProgressBar from '@/app/_components/quiz-viewer/progress-bar';
 import { useRouter } from 'next/navigation';
+import { useQuizStore } from '@/lib/quizStore';
 
 interface QuizViewerProps {
   quizData: Quiz | null;
@@ -12,23 +13,26 @@ interface QuizViewerProps {
 
 export default function QuizViewer({ quizData }: QuizViewerProps) {
   const router = useRouter();
-  const [quiz, setQuiz] = useState<Quiz | null>(quizData);
-  const [quizQuestionId, setQuizQuestionId] = useState<string | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<
-    Record<string, string[]>
-  >({});
-  const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
+  const init = useQuizStore((s) => s.init);
+  const quiz = useQuizStore((s) => s.quiz);
+  const quizQuestionId = useQuizStore((s) => s.quizQuestionId);
+  const loadedQuestions = useQuizStore((s) => s.loadedQuestions);
+  const currentQuestionIndex = useQuizStore((s) => s.currentQuestionIndex);
+  const selectedAnswers = useQuizStore((s) => s.selectedAnswers);
+  const submitted = useQuizStore((s) => s.submitted);
+  const score = useQuizStore((s) => s.score);
 
-  const [loadedQuestions, setLoadedQuestions] = useState<Record<string, QuizQuestionLinked>>(() => (quiz?.firstQuestion?.sys?.id ? { [quiz.firstQuestion.sys.id]: quiz.firstQuestion } : {}));
+  const setQuizQuestionId = useQuizStore((s) => s.setQuizQuestionId);
+  const selectAnswer = useQuizStore((s) => s.selectAnswer);
+  const nextWithAnswer = useQuizStore((s) => s.nextWithAnswer);
+  const previous = useQuizStore((s) => s.previous);
+  const submit = useQuizStore((s) => s.submit);
 
+  // initialize store once
   useEffect(() => {
-    if (quiz?.firstQuestion?.sys?.id && !loadedQuestions[quiz.firstQuestion.sys.id]) {
-      setLoadedQuestions({ [quiz.firstQuestion.sys.id]: quiz.firstQuestion });
-      setQuizQuestionId(quiz.firstQuestion.sys.id);
-    }
-  }, [quiz]);
+    if (quizData) init(quizData);
+  }, [quizData, init]);
+
 
   const isEmbeddedQuestion = (n: unknown): n is QuizQuestionLinked => {
     if (typeof n !== 'object' || n === null) return false;
@@ -92,26 +96,20 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     });
   }, [quizQuestionId, quiz]);
 
-  const currentQuestion: QuizQuestionLinked = quizQuestionId
-    ? (quiz.firstQuestion.sys.id === quizQuestionId ? quiz.firstQuestion : (loadedQuestions[quizQuestionId] || quiz.firstQuestion))
-    : quiz.firstQuestion;
+  const currentQuestion: QuizQuestionLinked | null = (() => {
+    if (!quiz) return null;
+    if (!quizQuestionId) return quiz.firstQuestion;
+    if (quiz.firstQuestion.sys.id === quizQuestionId) return quiz.firstQuestion;
+    return loadedQuestions[quizQuestionId] || quiz.firstQuestion;
+  })();
+
+  if (!currentQuestion) return null;
 
   const currentAnswers = selectedAnswers[currentQuestion.sys.id] || [];
   const isAnswered = currentAnswers.length > 0;
 
   const handleAnswerSelect = (answerId: string, isSelected: boolean) => {
-    setSelectedAnswers((prev) => {
-      const answers = prev[currentQuestion.sys.id] || [];
-      if (isSelected) {
-        if (currentQuestion.answerType === 'single') {
-          return { ...prev, [currentQuestion.sys.id]: [answerId] };
-        } else {
-          return { ...prev, [currentQuestion.sys.id]: Array.from(new Set([...answers, answerId])) };
-        }
-      } else {
-        return { ...prev, [currentQuestion.sys.id]: answers.filter((id) => id !== answerId) };
-      }
-    });
+    selectAnswer(currentQuestion.sys.id, answerId, isSelected);
   };
 
   const getTotalQuestions = () => {
@@ -136,12 +134,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
 
   const totalQuestions = getTotalQuestions();
 
-  // Navigate to results when submitted
-  useEffect(() => {
-    if (!submitted) return;
-    const url = `/quiz/${quiz.slug}/results?score=${score}&total=${totalQuestions}&answers=${encodeURIComponent(JSON.stringify(selectedAnswers))}`;
-    router.push(url);
-  }, [submitted, score, selectedAnswers, totalQuestions, quiz?.slug]);
+  // submitted and navigation handled inside store; reflect state
 
   const isLastQuestion = (() => {
     const selectedId = currentAnswers[0];
@@ -281,7 +274,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
 
           {isLastQuestion ? (
             <button
-              onClick={handleSubmit}
+              onClick={() => submit()}
               disabled={!isAnswered}
               className="px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
             >
@@ -289,7 +282,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
             </button>
           ) : (
             <button
-              onClick={handleNext}
+              onClick={() => nextWithAnswer(currentAnswers[0])}
               disabled={!isAnswered}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
             >

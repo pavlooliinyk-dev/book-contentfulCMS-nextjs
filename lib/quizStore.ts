@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import type { Quiz, QuizQuestionLinked } from './types';
 
 type LoadedMap = Record<string, QuizQuestionLinked>;

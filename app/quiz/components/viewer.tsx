@@ -85,17 +85,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     return null;
   };
 
-  // When quizQuestionId changes, ensure the node is loaded into loadedQuestions
-  useEffect(() => {
-    if (!quizQuestionId) return;
-    setLoadedQuestions((prev) => {
-      if (prev[quizQuestionId]) return prev;
-      const found = findNodeById(quiz.firstQuestion, quizQuestionId);
-      if (found) return { ...prev, [found.sys.id]: found };
-      return prev;
-    });
-  }, [quizQuestionId, quiz]);
-
   const currentQuestion: QuizQuestionLinked | null = (() => {
     if (!quiz) return null;
     if (!quizQuestionId) return quiz.firstQuestion;
@@ -148,82 +137,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     return !(next.sys && typeof next.sys.id === 'string');
   })();
 
-  const handleNext = async () => {
-    if (!isAnswered) {
-      alert('Please select an answer before proceeding');
-      return;
-    }
-
-    const selectedId = currentAnswers[0];
-    const answerItem = (currentQuestion.answersCollection?.items || []).find((a) => a.sys.id === selectedId);
-    const next = answerItem?.nextQuestion;
-    const nextQuestionId = next && 'sys' in next && typeof (next as { sys: { id: string } }).sys.id === 'string' ? (next as { sys: { id: string } }).sys.id : null;
-
-    if (nextQuestionId) {
-      // If next question object is embedded in the answer, use it
-      if (next && isEmbeddedQuestion(next)) {
-        setLoadedQuestions((prev) => ({ ...prev, [next.sys.id]: next }));
-        setQuizQuestionId(next.sys.id);
-        setCurrentQuestionIndex((prev) => prev + 1);
-      } else {
-        try {
-          const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}&questionId=${encodeURIComponent(nextQuestionId || '')}`);
-          const data = await res.json();
-          const fetchedQuestion = data?.question || null;
-          const fresh: Quiz | null = data?.item || null;
-
-          if (fetchedQuestion && fetchedQuestion.sys?.id === nextQuestionId) {
-            setLoadedQuestions((prev) => ({ ...prev, [fetchedQuestion.sys.id]: fetchedQuestion }));
-            setQuizQuestionId(nextQuestionId);
-            setCurrentQuestionIndex((prev) => prev + 1);
-            return;
-          }
-
-          if (fresh) {
-            setQuiz(fresh);
-            const found = findNodeById(fresh.firstQuestion, nextQuestionId);
-            if (found) {
-              setLoadedQuestions((prev) => ({ ...prev, [found.sys.id]: found }));
-              setQuizQuestionId(nextQuestionId);
-              setCurrentQuestionIndex((prev) => prev + 1);
-              return;
-            }
-          }
-
-          // fallback: submit
-          handleSubmit();
-        } catch (e) {
-          console.error('Error loading next question:', e);
-          handleSubmit();
-        }
-      }
-    } else {
-      handleSubmit();
-    }
-  };
-
-
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
-    }
-  };
-
-  const handleSubmit = () => {
-    let correctCount = 0;
-    Object.keys(selectedAnswers).forEach((qId) => {
-      const userAnswerIds = selectedAnswers[qId] || [];
-      const q = loadedQuestions[qId] || findNodeById(quiz.firstQuestion, qId);
-      if (!q) return;
-      const answers = q.answersCollection?.items || [];
-      const correctAnswers = answers.filter((a) => Boolean(a.isCorrect)).map((a) => a.sys?.id as string);
-      if (correctAnswers.length === 0) return;
-      const isCorrect = correctAnswers.every((id) => userAnswerIds.includes(id));
-      if (isCorrect) correctCount++;
-    });
-    setScore(correctCount);
-    setSubmitted(true);
-  };
 
   return (
     <div className="w-full bg-gray-50 min-h-screen">

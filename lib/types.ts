@@ -126,6 +126,7 @@ export interface QuizAnswer {
   isCorrect: boolean;
 }
 
+// Back-compat: standalone question shape used by some components (not embedded on Quiz)
 export interface QuizQuestion {
   id: string;
   question: string;
@@ -133,6 +134,7 @@ export interface QuizQuestion {
   answers: QuizAnswer[];
   order: number;
 }
+
 export interface QuizQuestionLinked {
   sys: {
     id: string;
@@ -146,11 +148,10 @@ export interface QuizQuestionLinked {
         id: string;
       };
       text: string;
-      nextQuestion: {
-        sys: {
-          id: string;
-        };
-      } | null;
+      // nextQuestion may be either a link ({ sys: { id } }) or an embedded full question object from Contentful
+      nextQuestion?: QuizQuestionLinked | { sys: { id: string } } | null;
+      // Contentful may include isCorrect on answers in some payloads
+      isCorrect?: boolean;
     }[];
   };
 }
@@ -162,7 +163,8 @@ export interface Quiz {
   title: string;
   slug: string;
   description?: RichTextContent;
-  questions: QuizQuestion[];
+  // Keep flat questions for builder/editor compatibility
+  questions?: QuizQuestion[];
   passingScore: number;
   published: boolean;
   firstQuestion: QuizQuestionLinked;

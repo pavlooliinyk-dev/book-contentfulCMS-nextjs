@@ -174,7 +174,7 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center px-4 py-8 max-w-2xl mx-auto">
           <button
-            onClick={handlePrevious}
+            onClick={() => previous()}
             disabled={currentQuestionIndex === 0}
             className="px-6 py-3 bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 disabled:text-gray-400 text-gray-900 font-semibold rounded-lg transition-colors"
           >

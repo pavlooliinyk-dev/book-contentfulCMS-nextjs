@@ -11,6 +11,7 @@ interface QuizState {
   submitted: boolean;
   score: number;
   currentQuestionIndex: number;
+  history: string[];
 
   init: (q: Quiz) => void;
   setQuizQuestionId: (id: string) => Promise<void>;
@@ -29,24 +30,26 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   submitted: false,
   score: 0,
   currentQuestionIndex: 0,
+  history: [],
 
   init: (q: Quiz) => {
     const firstId = q.firstQuestion?.sys?.id || null;
-    set({ quiz: q, loadedQuestions: firstId ? { [firstId]: q.firstQuestion } : {}, quizQuestionId: firstId, selectedAnswers: {}, submitted: false, score: 0, currentQuestionIndex: 0 });
+    const hist = firstId ? [firstId] : [];
+    set({ quiz: q, loadedQuestions: firstId ? { [firstId]: q.firstQuestion } : {}, quizQuestionId: firstId, selectedAnswers: {}, submitted: false, score: 0, currentQuestionIndex: hist.length - 1, history: hist });
   },
 
   setQuizQuestionId: async (id: string) => {
     const { loadedQuestions, quiz } = get();
     if (!id) return;
     if (loadedQuestions[id]) {
-      set({ quizQuestionId: id });
+      set((s) => ({ quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
       return;
     }
     const fetched = await get().loadQuestionById(id);
     if (fetched) {
-      set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [id]: fetched }, quizQuestionId: id }));
+      set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [id]: fetched }, quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
     } else {
-      set({ quizQuestionId: id });
+      set((s) => ({ quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
     }
   },
 
@@ -91,16 +94,18 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     const nextId = next && 'sys' in next && typeof (next as any).sys?.id === 'string' ? (next as any).sys.id : null;
 
     if (nextId) {
-      if (next && (next as any).title) {
-        // embedded
-        set((st) => ({ loadedQuestions: { ...st.loadedQuestions, [nextId]: next as QuizQuestionLinked }, quizQuestionId: nextId, currentQuestionIndex: st.currentQuestionIndex + 1 }));
+      // push current id onto history and navigate to nextId
+      const st = get();
+      const alreadyEmbedded = next && (next as any).title;
+      if (alreadyEmbedded) {
+        set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [nextId]: next as QuizQuestionLinked }, quizQuestionId: nextId, history: [...s.history, nextId], currentQuestionIndex: s.history.length }));
         return;
       }
 
       // fetch via API
       const fetched = await get().loadQuestionById(nextId);
       if (fetched) {
-        set((st) => ({ loadedQuestions: { ...st.loadedQuestions, [nextId]: fetched }, quizQuestionId: nextId, currentQuestionIndex: st.currentQuestionIndex + 1 }));
+        set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [nextId]: fetched }, quizQuestionId: nextId, history: [...s.history, nextId], currentQuestionIndex: s.history.length }));
         return;
       }
 
@@ -112,7 +117,14 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     }
   },
 
-  previous: () => set((s) => ({ currentQuestionIndex: Math.max(0, s.currentQuestionIndex - 1) })),
+
+  previous: () => set((s) => {
+    if (!s.history || s.history.length <= 1) return s; // already at first
+    const newHistory = s.history.slice(0, -1);
+    const newIndex = Math.max(0, newHistory.length - 1);
+    const newId = newHistory[newHistory.length - 1] || null;
+    return { history: newHistory, quizQuestionId: newId, currentQuestionIndex: newIndex };
+  }),
 
   submit: () => {
     const s = get();

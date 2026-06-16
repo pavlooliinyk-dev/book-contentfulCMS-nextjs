@@ -78,6 +78,8 @@ export const GET_ALL_QUIZZES = `
     }
   }
   ${QUIZ_FRAGMENT}
+  ${QUESTION_FRAGMENT}
+  ${ANSWER_FRAGMENT}
 `;
 
 export const GET_FEATURED_QUIZZES = `
@@ -89,4 +91,6 @@ export const GET_FEATURED_QUIZZES = `
     }
   }
   ${QUIZ_FRAGMENT}
+  ${QUESTION_FRAGMENT}
+  ${ANSWER_FRAGMENT}
 `;

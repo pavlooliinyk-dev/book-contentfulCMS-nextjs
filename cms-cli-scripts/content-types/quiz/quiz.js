@@ -33,6 +33,7 @@ module.exports = function (migration) {
       },
     ]);
 
+
   quiz
     .createField("description")
     .name("Description")
@@ -40,10 +41,12 @@ module.exports = function (migration) {
     .required(false);
 
   quiz
-    .createField("questions")
-    .name("Questions")
-    .type("Text")
-    .required(true);
+    .createField("firstQuestion")
+    .name("First Question")
+    .type("Link")
+    .linkType("Entry")
+    .required(true)
+    .validations([{ linkContentType: ["quizQuestion"] }]);
 
   quiz
     .createField("passingScore")
@@ -66,10 +69,10 @@ module.exports = function (migration) {
     .type("Boolean")
     .required(true);
 
-  quiz.changeFieldControl("title", "builtin", "single-line", {});
-  quiz.changeFieldControl("slug", "builtin", "slug", {});
+  quiz.changeFieldControl("title", "builtin", "singleLine", {});
+  quiz.changeFieldControl("slug", "builtin", "slugEditor", {});
   quiz.changeFieldControl("description", "builtin", "richTextEditor", {});
-  quiz.changeFieldControl("questions", "builtin", "objectsEditor", {});
+  quiz.changeFieldControl("firstQuestion", "builtin", "entryLinkEditor", {});
   quiz.changeFieldControl("passingScore", "builtin", "numberEditor", {});
   quiz.changeFieldControl("published", "builtin", "boolean", {});
 };

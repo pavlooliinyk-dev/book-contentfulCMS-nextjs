@@ -18,7 +18,7 @@ export default async function QuizIndexPage() {
     console.log('setSkip called, move to client compomnent for pagination', number);
   }
 
-   const { quizzes, total }: { quizzes: Quiz[]; total: number }
+  const { quizzes, total }: { quizzes: Quiz[]; total: number }
     = await getAllQuizzes(false, limit, skip);
 
   // useEffect(() => {
@@ -119,15 +119,7 @@ export default async function QuizIndexPage() {
 
                       {/* Stats */}
                       <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span>
-                            📝{' '}
-                            {Array.isArray(quiz.questions)
-                              ? quiz.questions.length
-                              : 0}{' '}
-                            questions
-                          </span>
-                        </div>
+                       
                         <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
                           {quiz.passingScore}% to pass
                         </span>
@@ -148,33 +140,7 @@ export default async function QuizIndexPage() {
                 </Link>
               ))}
             </div>
-
-            {/* Pagination */}
-            {/* {total > limit && (
-              <div className="flex justify-center items-center gap-4 mb-8">
-                <button
-                  onClick={() => setSkip(Math.max(0, skip - limit))}
-                  disabled={skip === 0}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded disabled:cursor-not-allowed transition-colors"
-                >
-                  ← Previous
-                </button>
-                <span className="text-gray-600 font-semibold">
-                  {skip + 1} - {Math.min(skip + limit, total)} of {total}
-                </span>
-                <button
-                  onClick={() => {
-                    if (skip + limit < total) {
-                      setSkip(skip + limit);
-                    }
-                  }}
-                  disabled={skip + limit >= total}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded disabled:cursor-not-allowed transition-colors"
-                >
-                  Next →
-                </button>
-              </div>
-            )} */}
+           
           </>
         ) : (
           <div className="text-center py-12">

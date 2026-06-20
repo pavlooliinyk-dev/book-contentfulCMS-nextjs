@@ -103,15 +103,7 @@ export default function FeaturedQuizzes() {
 
                     {/* Stats */}
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>
-                          📝{' '}
-                          {Array.isArray(quiz.questions)
-                            ? quiz.questions.length
-                            : 0}{' '}
-                          questions
-                        </span>
-                      </div>
+                     
                       <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
                         {quiz.passingScore}% to pass
                       </span>

@@ -44,7 +44,6 @@ export const QUIZ_FRAGMENT = `
     description {
       json
     }
-    questions
     passingScore
     published
     firstQuestion {

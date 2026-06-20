@@ -35,21 +35,37 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   init: (q: Quiz) => {
     const firstId = q.firstQuestion?.sys?.id || null;
     const hist = firstId ? [firstId] : [];
-    set({ quiz: q, loadedQuestions: firstId ? { [firstId]: q.firstQuestion } : {}, quizQuestionId: firstId, selectedAnswers: {}, submitted: false, score: 0, currentQuestionIndex: hist.length - 1, history: hist });
+    set({ quiz: q, 
+      loadedQuestions: firstId ? { [firstId]: q.firstQuestion } : {}, 
+      quizQuestionId: firstId, 
+      selectedAnswers: {}, 
+      submitted: false, 
+      score: 0, 
+      currentQuestionIndex: hist.length - 1, 
+      history: hist });
   },
 
   setQuizQuestionId: async (id: string) => {
     const { loadedQuestions, quiz } = get();
     if (!id) return;
     if (loadedQuestions[id]) {
-      set((s) => ({ quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
+      set((s) => ({ 
+        quizQuestionId: id, 
+        history: s.history.includes(id) ? s.history : [...s.history, id], 
+        currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length 
+      }));
       return;
     }
     const fetched = await get().loadQuestionById(id);
     if (fetched) {
-      set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [id]: fetched }, quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
+      set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [id]: fetched }, 
+        quizQuestionId: id, 
+        history: s.history.includes(id) ? s.history : [...s.history, id], 
+        currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
     } else {
-      set((s) => ({ quizQuestionId: id, history: s.history.includes(id) ? s.history : [...s.history, id], currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
+      set((s) => ({ quizQuestionId: id, 
+        history: s.history.includes(id) ? s.history : [...s.history, id], 
+        currentQuestionIndex: s.history.includes(id) ? s.history.indexOf(id) : s.history.length }));
     }
   },
 
@@ -98,14 +114,23 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       const st = get();
       const alreadyEmbedded = next && (next as any).title;
       if (alreadyEmbedded) {
-        set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [nextId]: next as QuizQuestionLinked }, quizQuestionId: nextId, history: [...s.history, nextId], currentQuestionIndex: s.history.length }));
+        set((s) => ({ 
+          loadedQuestions: { 
+            ...s.loadedQuestions, [nextId]: next as QuizQuestionLinked 
+          }, 
+          quizQuestionId: nextId, 
+          history: [...s.history, nextId], currentQuestionIndex: s.history.length 
+        }));
         return;
       }
 
       // fetch via API
       const fetched = await get().loadQuestionById(nextId);
       if (fetched) {
-        set((s) => ({ loadedQuestions: { ...s.loadedQuestions, [nextId]: fetched }, quizQuestionId: nextId, history: [...s.history, nextId], currentQuestionIndex: s.history.length }));
+        set((s) => ({ 
+          loadedQuestions: { ...s.loadedQuestions, [nextId]: fetched }, 
+          quizQuestionId: nextId, history: [...s.history, nextId], 
+          currentQuestionIndex: s.history.length }));
         return;
       }
 

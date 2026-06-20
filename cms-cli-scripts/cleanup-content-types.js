@@ -20,6 +20,9 @@ const CONTENT_TYPES_TO_DELETE = [
   'book',
   'homePage',
   'quiz',
+  'quizAnswer',
+  'quizQuestion',
+  'quizResult'
 ];
 
 async function cleanupContentTypes() {
@@ -63,10 +66,11 @@ async function cleanupContentTypes() {
         await contentType.delete();
         console.log(`✔ Deleted content type: ${contentTypeId}\n`);
       } catch (error) {
-        if (error.status === 404) {
-          console.log(`⊘ Not found (skip): ${contentTypeId}\n`);
+        const errorMessage = JSON.parse(error.message) || '';
+        if (errorMessage.status === 404 || errorMessage.status === 400) {
+          console.warn(`⊘ Not found (skip): ${contentTypeId}\n`, errorMessage);
         } else {
-          console.error(`✗ Error deleting ${contentTypeId}:`, error.message, '\n');
+          console.error(`✗ Error deleting ${contentTypeId}:`, errorMessage, '\n');
         }
       }
     }

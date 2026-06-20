@@ -163,8 +163,6 @@ export interface Quiz {
   title: string;
   slug: string;
   description?: RichTextContent;
-  // Keep flat questions for builder/editor compatibility
-  questions?: QuizQuestion[];
   passingScore: number;
   published: boolean;
   firstQuestion: QuizQuestionLinked;

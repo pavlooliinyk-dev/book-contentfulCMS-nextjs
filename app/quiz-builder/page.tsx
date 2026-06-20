@@ -44,24 +44,24 @@ export default function QuizBuilderPage() {
             Access Denied
           </h1>
           <ErrorBoundary>
-          <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-6">
             You don't have permission to access the quiz builder. A valid token
             is required.
-          </p>
-          <div className="space-y-3">
-            <Link
-              href="/quiz-landing"
-              className="block px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors"
-            >
+            </p>
+            <div className="space-y-3">
+              <Link
+                href="/quiz-landing"
+                className="block px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors"
+              >
               Back to Home
-            </Link>
-            <Link
-              href="/quiz"
-              className="block px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
+              </Link>
+              <Link
+                href="/quiz"
+                className="block px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+              >
               Browse Quizzes
-            </Link>
-          </div>
+              </Link>
+            </div>
           </ErrorBoundary>
         </div>
       </div>
@@ -84,18 +84,18 @@ export default function QuizBuilderPage() {
       </div>
 
 
-    <ErrorBoundary>
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        <QuizBuilderForm
-          onSave={async (data) => {
+      <ErrorBoundary>
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden">
+          <QuizBuilderForm
+            onSave={async (data) => {
             // TODO: Implement Contentful mutation
-            console.log('Saving quiz:', data);
-            // For now, just show success
-            alert('Quiz saved (feature coming soon)');
-          }}
-        />
-      </div>
+              console.log('Saving quiz:', data);
+              // For now, just show success
+              alert('Quiz saved (feature coming soon)');
+            }}
+          />
+        </div>
       </ErrorBoundary>
     </div>
   );

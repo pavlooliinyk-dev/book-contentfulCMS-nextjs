@@ -1,7 +1,7 @@
 'use client';
 
-import { useForm, useFieldArray, Controller, SubmitHandler, Control } from 'react-hook-form';
-import { Quiz, QuizQuestion, QuizAnswer } from '@/lib/types';
+import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
+import { Quiz, QuizQuestion } from '@/lib/types';
 import QuestionEditor from './question-editor';
 import FormActions from './form-actions';
 import PreviewPanel from './preview-panel';

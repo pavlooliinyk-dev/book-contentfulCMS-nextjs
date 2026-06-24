@@ -1,12 +1,13 @@
 'use client';
-
+import { connection } from 'next/server'
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import QuizBuilderForm from '@/app/_components/quiz-builder';
 import Link from 'next/link';
 import { ErrorBoundary } from '../_components/error-boundary';
 
-export default function QuizBuilderPage() {
+export default async function QuizBuilderPage() {
+  await connection()
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAuthorized, setIsAuthorized] = useState(false);

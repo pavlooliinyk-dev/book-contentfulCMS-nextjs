@@ -82,7 +82,8 @@ export default function FeaturedQuizzes() {
                 href={`/quiz/${quiz.slug}`}
                 className="group"
               >
-                <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow h-full flex flex-col">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden
+                 hover:shadow-xl transition-shadow h-full flex flex-col">
                   {/* Quiz Header */}
                   <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
                     <h3 className="text-2xl font-bold group-hover:text-blue-100 transition-colors">
@@ -104,14 +105,16 @@ export default function FeaturedQuizzes() {
                     {/* Stats */}
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
                      
-                      <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                      <span className="text-xs font-semibold bg-green-100
+                       text-green-800 px-3 py-1 rounded-full">
                         {quiz.passingScore}% to pass
                       </span>
                     </div>
 
                     {/* CTA */}
                     <button
-                      className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors"
+                      className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white
+                       font-semibold py-2 rounded-lg transition-colors"
                       onClick={(e) => {
                         e.preventDefault();
                       }}
@@ -135,7 +138,8 @@ export default function FeaturedQuizzes() {
         <div className="text-center mt-12">
           <Link
             href="/quiz"
-            className="inline-block px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors"
+            className="inline-block px-8 py-3 bg-indigo-600 hover:bg-indigo-700
+             text-white font-bold rounded-lg transition-colors"
           >
             Browse All Quizzes →
           </Link>

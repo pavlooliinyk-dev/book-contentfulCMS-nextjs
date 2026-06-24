@@ -55,7 +55,8 @@ export default function QuestionEditor({
               <input
                 type="text"
                 {...field}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your question..."
               />
               {error && (
@@ -77,7 +78,8 @@ export default function QuestionEditor({
           render={({ field }) => (
             <select
               {...field}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg
+               focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="single">Single Choice (Radio)</option>
               <option value="multiple">Multiple Choice (Checkboxes)</option>

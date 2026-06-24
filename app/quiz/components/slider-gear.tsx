@@ -57,12 +57,19 @@ function SliderGearCard({ item, index, inView }: props) {
         {/* Cursor spotlight */}
         {hovered && (
           <div className="absolute inset-0 pointer-events-none z-10 transition-opacity"
-            style={{ background: `radial-gradient(160px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.18) 0%, transparent 70%)` }}
+            style={{ 
+              background: `radial-gradient(
+                160px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,255,255,0.18) 0%, transparent 70%
+              )`
+            }}
           />
         )}
 
         {/* Corner brackets */}
-        {[['top-2 left-2 border-t-2 border-l-2'], ['top-2 right-2 border-t-2 border-r-2'], ['bottom-2 left-2 border-b-2 border-l-2'], ['bottom-2 right-2 border-b-2 border-r-2']].map(([cls], i) => (
+        {[['top-2 left-2 border-t-2 border-l-2'], 
+          ['top-2 right-2 border-t-2 border-r-2'], 
+          ['bottom-2 left-2 border-b-2 border-l-2'], 
+          ['bottom-2 right-2 border-b-2 border-r-2']].map(([cls], i) => (
           <div key={i} className={`absolute w-4 h-4 border-[#ffde4e] z-20 ${cls}`} />
         ))}
 
@@ -75,7 +82,8 @@ function SliderGearCard({ item, index, inView }: props) {
             animate={{ scale: hovered ? 1.06 : 1 }}
             transition={{ duration: 0.6 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#e8dcc8]/60 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#e8dcc8]/60 
+            via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Card text */}
@@ -91,13 +99,14 @@ function SliderGearCard({ item, index, inView }: props) {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.25 }}
               >
-                  {item.description && <Markdown content={item.description} />}
+                {item.description && <Markdown content={item.description} />}
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className="flex flex-col items-center">
-            <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a4a2a] group-hover:text-[#434ee6] transition-colors duration-300">
+            <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#5a4a2a] 
+              group-hover:text-[#434ee6] transition-colors duration-300">
               Learn More
             </span>
             <motion.svg viewBox="0 0 80 6" className="w-16 mt-1" fill="none">
@@ -155,11 +164,14 @@ export default function SliderGear({ quizzes }: { quizzes: Quiz[] }) {
         <div className="flex gap-2">
           {[-1, 1].map(dir => (
             <button key={dir} onClick={() => scroll(dir)}
-              className="w-10 h-10 border border-black/20 hover:border-[#434ee6]/60 hover:bg-[#434ee6]/5 flex items-center justify-center transition-all duration-300">
+              className="w-10 h-10 border border-black/20 hover:border-[#434ee6]/60 
+                hover:bg-[#434ee6]/5 flex items-center justify-center transition-all duration-300">
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 {dir === -1
-                  ? <path d="M8 1L3 6L8 11" stroke="black" strokeOpacity="0.6" strokeWidth="1.5" strokeLinecap="round" />
-                  : <path d="M4 1L9 6L4 11" stroke="black" strokeOpacity="0.6" strokeWidth="1.5" strokeLinecap="round" />
+                  ? <path d="M8 1L3 6L8 11" stroke="black" 
+                    strokeOpacity="0.6" strokeWidth="1.5" strokeLinecap="round" />
+                  : <path d="M4 1L9 6L4 11" stroke="black" 
+                    strokeOpacity="0.6" strokeWidth="1.5" strokeLinecap="round" />
                 }
               </svg>
             </button>

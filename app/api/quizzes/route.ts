@@ -127,7 +127,13 @@ export async function GET(request: NextRequest) {
 
     const result = await fetchGraphQL<QuizCollectionData>(
       `query GetQuizzes($limit: Int!, $skip: Int!, $where: BookFilter) {
-        quizCollection(limit: $limit, skip: $skip, order: title_DESC, preview: ${isEnabled ? "true" : "false"}, where: $where) {
+        quizCollection(
+          limit: $limit, 
+          skip: $skip, 
+          order: title_DESC, 
+          preview: ${isEnabled ? "true" : "false"}, 
+          where: $where
+        ) {
           total
           items {
             ${QUIZ_FRAGMENT}

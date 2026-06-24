@@ -28,7 +28,8 @@ export default function QuizLandingPage() {
           </p>
           <Link
             href={`/quiz-builder?token=${process.env.NEXT_PUBLIC_QUIZ_BUILDER_TOKEN || ''}`}
-            className="inline-block px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all transform hover:scale-105"
+            className="inline-block px-8 py-4 bg-white text-blue-600 font-bold 
+            rounded-lg hover:bg-blue-50 transition-all transform hover:scale-105"
           >
             Start Creating Now →
           </Link>

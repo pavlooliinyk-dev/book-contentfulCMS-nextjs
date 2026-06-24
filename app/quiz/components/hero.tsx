@@ -30,7 +30,8 @@ export default function HeroSection({ total }: { total: number }) {
           <div className="overflow-hidden">
             <motion.div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
               <motion.span
-                className="font-cinzel font-black text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.12em] uppercase block"
+                className="font-cinzel font-black text-white text-5xl 
+                  sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.12em] uppercase block"
                 initial={{ opacity: 0, y: 60 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{ x: adventureX }}
@@ -39,7 +40,8 @@ export default function HeroSection({ total }: { total: number }) {
                 Adventure
               </motion.span>
               <motion.span
-                className="font-cinzel font-black text-gold text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.12em] uppercase block"
+                className="font-cinzel font-black text-gold text-5xl 
+                  sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.12em] uppercase block"
                 initial={{ opacity: 0, y: 60 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{ x: awaitsX }}
@@ -60,7 +62,7 @@ export default function HeroSection({ total }: { total: number }) {
             The Legend Lives On {total} quizzes
           </motion.p>
         </motion.div>
-        </div>
+      </div>
     </section>
   );
 }

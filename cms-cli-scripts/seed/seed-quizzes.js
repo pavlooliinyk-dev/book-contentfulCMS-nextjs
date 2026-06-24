@@ -195,7 +195,11 @@ async function seedQuizzes() {
         // If quizData contains a firstQuestionData object, create answers and question entries recursively
         if (quizData.fields.firstQuestionData) {
           const firstQuestionId = await createQuestionRecursive(quizData.fields.firstQuestionData);
-          quizData.fields.firstQuestion = { 'en-US': { sys: { type: 'Link', linkType: 'Entry', id: firstQuestionId } } };
+          quizData.fields.firstQuestion = { 
+            'en-US': { 
+              sys: { type: 'Link', linkType: 'Entry', id: firstQuestionId } 
+            } 
+          };
           delete quizData.fields.firstQuestionData;
         }
 
@@ -214,72 +218,79 @@ async function seedQuizzes() {
       }
     }
 
-        // Create sample quiz results
-        // Ensure placeholder asset for quiz results exists (id: img-early-bird)
-        const QUIZ_RESULT_ASSET_ID = 'img-early-bird';
+    // Create sample quiz results
+    // Ensure placeholder asset for quiz results exists (id: img-early-bird)
+    const QUIZ_RESULT_ASSET_ID = 'img-early-bird';
+    try {
+      try {
+        await environment.getAsset(QUIZ_RESULT_ASSET_ID);
+        console.log(`Using existing asset for quiz results: ${QUIZ_RESULT_ASSET_ID}`);
+      } catch (e) {
+        console.log(`Creating placeholder asset for quiz results: ${QUIZ_RESULT_ASSET_ID}`);
+        let asset = await environment.createAssetWithId(QUIZ_RESULT_ASSET_ID, {
+          fields: {
+            title: { 'en-US': 'Quiz Result Image' },
+            file: { 'en-US': { contentType: 'image/jpeg', 
+              fileName: 'quiz-result.jpg', upload: 'https://placehold.co/600x400' } }
+          }
+        });
+        asset = await asset.processForAllLocales();
+        await asset.publish();
+        console.log(`Created and published quiz result asset: ${QUIZ_RESULT_ASSET_ID}`);
+      }
+    } catch (e) {
+      console.warn('Failed to ensure quiz result asset:', e.message);
+    }
+
+    const SAMPLE_RESULTS = [
+      {
+        sys: {
+          id: 'r1-early-bird-athlete',
+          contentType: { sys: { id: 'quizResult' } },
+        },
+        fields: {
+          title: { 'en-US': 'Early Bird Athlete' },
+          description: { 
+            'en-US': 'You rise with the sun and get moving straight away. Your mornings are your superpower.' 
+          },
+          image: { 'en-US': { sys: { type: 'Link', linkType: 'Asset', id: QUIZ_RESULT_ASSET_ID } } }
+        }
+      }
+    ];
+
+    console.log('\nCreating sample quiz results...\n');
+    for (const resultData of SAMPLE_RESULTS) {
+      try {
+        console.log(`📝 Creating quiz result: "${resultData.fields.title['en-US']}"`);
+        // Try to use createEntryWithId if available to preserve ID, fall back to createEntry
+        let resultEntry;
+        if (typeof environment.createEntryWithId === 'function' && resultData.sys && resultData.sys.id) {
+          resultEntry = await environment.createEntryWithId(
+            'quizResult', 
+            resultData.sys.id, 
+            { fields: resultData.fields }
+          );
+        } else {
+          resultEntry = await environment.createEntry('quizResult', { fields: resultData.fields });
+        }
+        console.log(`✔ Result entry created with ID: ${resultEntry.sys.id}`);
         try {
-          try {
-            await environment.getAsset(QUIZ_RESULT_ASSET_ID);
-            console.log(`Using existing asset for quiz results: ${QUIZ_RESULT_ASSET_ID}`);
-          } catch (e) {
-            console.log(`Creating placeholder asset for quiz results: ${QUIZ_RESULT_ASSET_ID}`);
-            let asset = await environment.createAssetWithId(QUIZ_RESULT_ASSET_ID, {
-              fields: {
-                title: { 'en-US': 'Quiz Result Image' },
-                file: { 'en-US': { contentType: 'image/jpeg', fileName: 'quiz-result.jpg', upload: 'https://placehold.co/600x400' } }
-              }
-            });
-            asset = await asset.processForAllLocales();
-            await asset.publish();
-            console.log(`Created and published quiz result asset: ${QUIZ_RESULT_ASSET_ID}`);
-          }
-        } catch (e) {
-          console.warn('Failed to ensure quiz result asset:', e.message);
+          await resultEntry.publish();
+          console.log(`✔ Published quiz result: "${resultEntry.fields.title['en-US']}"`);
+        } catch (pubErr) {
+          console.warn('⚠️ Failed to publish result (may already exist):', pubErr.message);
         }
+      } catch (error) {
+        console.error(`✗ Error creating quiz result:`, error.message);
+        if (error.details) console.error(`  Details:`, JSON.stringify(error.details, null, 2));
+      }
+    }
 
-        const SAMPLE_RESULTS = [
-          {
-            sys: {
-              id: 'r1-early-bird-athlete',
-              contentType: { sys: { id: 'quizResult' } },
-            },
-            fields: {
-              title: { 'en-US': 'Early Bird Athlete' },
-              description: { 'en-US': 'You rise with the sun and get moving straight away. Your mornings are your superpower.' },
-              image: { 'en-US': { sys: { type: 'Link', linkType: 'Asset', id: QUIZ_RESULT_ASSET_ID } } }
-            }
-          }
-        ];
-
-        console.log('\nCreating sample quiz results...\n');
-        for (const resultData of SAMPLE_RESULTS) {
-          try {
-            console.log(`📝 Creating quiz result: "${resultData.fields.title['en-US']}"`);
-            // Try to use createEntryWithId if available to preserve ID, fall back to createEntry
-            let resultEntry;
-            if (typeof environment.createEntryWithId === 'function' && resultData.sys && resultData.sys.id) {
-              resultEntry = await environment.createEntryWithId('quizResult', resultData.sys.id, { fields: resultData.fields });
-            } else {
-              resultEntry = await environment.createEntry('quizResult', { fields: resultData.fields });
-            }
-            console.log(`✔ Result entry created with ID: ${resultEntry.sys.id}`);
-            try {
-              await resultEntry.publish();
-              console.log(`✔ Published quiz result: "${resultEntry.fields.title['en-US']}"`);
-            } catch (pubErr) {
-              console.warn('⚠️ Failed to publish result (may already exist):', pubErr.message);
-            }
-          } catch (error) {
-            console.error(`✗ Error creating quiz result:`, error.message);
-            if (error.details) console.error(`  Details:`, JSON.stringify(error.details, null, 2));
-          }
-        }
-
-        console.log('\n✅ Quiz seeding complete!');
+    console.log('\n✅ Quiz seeding complete!');
   } catch (error) {
-        console.error('❌ Seeding failed:', error.message);
-        console.error(error);
-        process.exit(1);
+    console.error('❌ Seeding failed:', error.message);
+    console.error(error);
+    process.exit(1);
   }
 }
 

@@ -35,7 +35,8 @@ export default async function BookPage(props: {
 
   return (
     <div className="container mx-auto px-5">
-      <h2 className="mb-20 mt-8 text-2xl font-bold leading-tight tracking-tight md:text-4xl md:tracking-tighter">
+      <h2 className="mb-20 mt-8 text-2xl font-bold leading-tight 
+        tracking-tight md:text-4xl md:tracking-tighter">
         <Link href="/" className="hover:underline">
           {'Home'}
         </Link>
@@ -44,7 +45,8 @@ export default async function BookPage(props: {
         </Link>
       </h2>
       <article>
-        <h1 className="mb-12 text-center text-6xl font-bold leading-tight tracking-tighter md:text-left md:text-7xl md:leading-none lg:text-8xl">
+        <h1 className="mb-12 text-center text-6xl font-bold leading-tight 
+          tracking-tighter md:text-left md:text-7xl md:leading-none lg:text-8xl">
           Product detail: {book.title}
         </h1>
         <div className="mb-8 sm:mx-0 md:mb-16">
@@ -80,7 +82,8 @@ export default async function BookPage(props: {
                 href={book.externalResourceLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-white hover:text-black border border-black transition-colors"
+                className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-white hover:text-black
+                 border border-black transition-colors"
               >
                 View Resource
               </a>

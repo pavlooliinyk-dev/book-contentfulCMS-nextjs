@@ -37,7 +37,11 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
     if (typeof n !== 'object' || n === null) return false;
     const obj = n as Record<string, unknown>;
     const sys = obj['sys'] as Record<string, unknown> | undefined;
-    return Boolean(sys && typeof sys['id'] === 'string' && (typeof obj['title'] === 'string' || typeof obj['text'] === 'string'));
+    return Boolean(sys 
+      && typeof sys['id'] === 'string' 
+      && (typeof obj['title'] === 'string' 
+      || typeof obj['text'] === 'string')
+    );
   };
 
   if (!quiz) {
@@ -175,7 +179,8 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
           <button
             onClick={() => previous()}
             disabled={currentQuestionIndex === 0}
-            className="px-6 py-3 bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 disabled:text-gray-400 text-gray-900 font-semibold rounded-lg transition-colors"
+            className="px-6 py-3 bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 
+              disabled:text-gray-400 text-gray-900 font-semibold rounded-lg transition-colors"
           >
             ← Previous
           </button>
@@ -188,7 +193,8 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
             <button
               onClick={() => submit()}
               disabled={!isAnswered}
-              className="px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
+              className="px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 
+                disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
             >
               Submit Quiz
             </button>
@@ -196,7 +202,8 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
             <button
               onClick={() => nextWithAnswer(currentAnswers[0])}
               disabled={!isAnswered}
-              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 
+                disabled:text-gray-500 text-white font-semibold rounded-lg transition-colors"
             >
               Next →
             </button>

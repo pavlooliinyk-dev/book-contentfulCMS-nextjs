@@ -118,7 +118,8 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
           classNames={{
             root: "mb-4",
             form: "relative flex items-center",
-            input: "w-full rounded border border-gray-300 py-2 pl-10 pr-10 outline-none transition focus:border-gray-500",
+            input: "w-full rounded border border-gray-300 py-2" 
+              + "pl-10 pr-10 outline-none transition focus:border-gray-500",
             submit: "absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",
             submitIcon: "h-4 w-4",
             reset: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-400",
@@ -133,7 +134,8 @@ export default function SearchAlgolia({showHits = false}: {showHits?: boolean}) 
             root: "mt-6",
             list: "flex flex-wrap items-center gap-2",
             item: "list-none",
-            link: "inline-flex h-9 min-w-9 items-center justify-center rounded border border-gray-300 px-3 text-sm text-gray-700 hover:bg-gray-50",
+            link: "inline-flex h-9 min-w-9 items-center justify-center rounded" + 
+              "border border-gray-300 px-3 text-sm text-gray-700 hover:bg-gray-50",
             selectedItem: "!border-gray-200 !bg-gray-200 !text-white",
             disabledItem: "opacity-40 pointer-events-none",
             previousPageItem: "mr-1",

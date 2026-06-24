@@ -29,7 +29,8 @@ export default async function QuizIndexPage() {
             </p>
             <Link
               href="/quiz-landing"
-              className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors"
+              className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600
+                text-white font-semibold rounded-lg transition-colors"
             >
               Back to Home
             </Link>

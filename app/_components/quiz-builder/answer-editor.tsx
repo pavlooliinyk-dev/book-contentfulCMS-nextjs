@@ -29,7 +29,8 @@ export default function AnswerEditor({
               <input
                 type="text"
                 {...field}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded 
+                  focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 placeholder="Answer text..."
               />
               {error && (

@@ -64,11 +64,13 @@ export default function ParallaxHero() {
         aria-hidden="true"
       >
         <div
-          className="absolute top-0 left-0 w-96 h-96 bg-purple-400 rounded-full opacity-10 blur-3xl -translate-x-1/2 -translate-y-1/2"
+          className="absolute top-0 left-0 w-96 h-96 bg-purple-400
+           rounded-full opacity-10 blur-3xl -translate-x-1/2 -translate-y-1/2"
           aria-hidden="true"
         ></div>
         <div
-          className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full opacity-10 blur-3xl translate-x-1/2 translate-y-1/2"
+          className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400
+           rounded-full opacity-10 blur-3xl translate-x-1/2 translate-y-1/2"
           aria-hidden="true"
         ></div>
       </motion.div>
@@ -115,14 +117,18 @@ export default function ParallaxHero() {
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
             <a
               href="/quiz"
-              className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 transition-all transform hover:scale-105 shadow-lg"
+              className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg 
+                hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white 
+                focus:ring-offset-2 focus:ring-offset-blue-600 transition-all transform hover:scale-105 shadow-lg"
               aria-label="Browse and take available quizzes"
             >
               Take a Quiz
             </a>
             <a
               href={`/quiz-builder?token=${process.env.NEXT_PUBLIC_QUIZ_BUILDER_TOKEN || ''}`}
-              className="px-8 py-4 bg-yellow-400 text-blue-900 font-bold rounded-lg hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-blue-600 transition-all transform hover:scale-105 shadow-lg"
+              className="px-8 py-4 bg-yellow-400 text-blue-900 font-bold rounded-lg 
+                hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 
+                focus:ring-offset-2 focus:ring-offset-blue-600 transition-all transform hover:scale-105 shadow-lg"
               aria-label="Create a new quiz"
             >
               Create Quiz

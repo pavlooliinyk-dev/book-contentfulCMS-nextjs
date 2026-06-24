@@ -47,7 +47,9 @@ async function cleanupContentTypes() {
               await entry.unpublish();
             }
             await entry.delete();
-            console.log(`  ✔ Deleted entry: ${entry.fields.title?.['en-US'] || entry.fields.name?.['en-US'] || entry.sys.id}`);
+            console.log(`✔ Deleted entry:
+               ${entry.fields.title?.['en-US'] || entry.fields.name?.['en-US'] || entry.sys.id}`
+            );
           } catch (err) {
             console.log(`  ⊘ Skipped entry: ${err.message}`);
           }

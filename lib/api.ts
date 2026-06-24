@@ -1,6 +1,6 @@
 
 import { BOOK_GRAPHQL_FIELDS, TAXONOMY_TERM_GRAPHQL_FIELDS, HOME_PAGE_GRAPHQL_FIELDS } from './graphql/fragments';
-import { QUIZ_FRAGMENT, GET_QUIZ_BY_SLUG, GET_ALL_QUIZZES, GET_FEATURED_QUIZZES, GET_RESULTS_QUIZ } from './graphql/quiz-fragments';
+import { GET_QUIZ_BY_SLUG, GET_ALL_QUIZZES, GET_FEATURED_QUIZZES } from './graphql/quiz-fragments';
 import { 
   GraphQLResponse, 
   BookCollectionData, 

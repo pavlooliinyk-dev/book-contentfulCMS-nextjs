@@ -38,7 +38,7 @@ export default function QuizBuilderForm({
         slug: initialQuiz.slug,
         description: '',
         passingScore: initialQuiz.passingScore,
-        questions: initialQuiz.questions ?? [],
+        questions: /* initialQuiz.questions ?? */ [],
       };
     }
     return {
@@ -163,7 +163,8 @@ export default function QuizBuilderForm({
                     message: 'Title must be 100 characters or less',
                   },
                 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2
+                 focus:ring-blue-500 focus:border-transparent"
                 placeholder="e.g., General Knowledge Quiz"
               />
               {errors.title && (
@@ -186,7 +187,8 @@ export default function QuizBuilderForm({
                       'Slug must be lowercase alphanumeric with hyphens only',
                   },
                 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="e.g., general-knowledge-quiz"
               />
               {errors.slug && (
@@ -208,7 +210,8 @@ export default function QuizBuilderForm({
                   min: { value: 0, message: 'Minimum is 0' },
                   max: { value: 100, message: 'Maximum is 100' },
                 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {errors.passingScore && (
                 <p className="text-red-600 text-sm mt-1">
@@ -224,7 +227,8 @@ export default function QuizBuilderForm({
               </label>
               <textarea
                 {...register('description')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={3}
                 placeholder="Brief description of the quiz..."
               />
@@ -238,7 +242,8 @@ export default function QuizBuilderForm({
               <button
                 type="button"
                 onClick={addQuestion}
-                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors"
+                className="px-4 py-2 bg-green-500 hover:bg-green-600
+                 text-white font-semibold rounded-lg transition-colors"
               >
                 + Add Question
               </button>

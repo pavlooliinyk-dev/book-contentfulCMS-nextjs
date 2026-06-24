@@ -47,7 +47,8 @@ export default function FormActions({
           type="button"
           onClick={onSave}
           disabled={isLoading}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white
+            font-semibold rounded-lg transition-colors flex items-center gap-2"
         >
           {isLoading && <span className="animate-spin">⏳</span>}
           {isLoading ? 'Saving...' : 'Save Quiz'}
@@ -56,7 +57,8 @@ export default function FormActions({
         <button
           type="button"
           onClick={onDraftSave}
-          className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold 
+            rounded-lg transition-colors flex items-center gap-2"
         >
           💾 Save Draft
         </button>
@@ -64,14 +66,16 @@ export default function FormActions({
         <button
           type="button"
           onClick={onTogglePreview}
-          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors"
+          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 
+            text-white font-semibold rounded-lg transition-colors"
         >
           👁️ Toggle Preview
         </button>
 
         <button
           type="button"
-          className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors ml-auto"
+          className="px-6 py-3 bg-red-600 hover:bg-red-700 
+            text-white font-semibold rounded-lg transition-colors ml-auto"
         >
           ✕ Cancel
         </button>
@@ -79,7 +83,7 @@ export default function FormActions({
 
       {/* Info */}
       <p className="text-xs text-gray-500 mt-4">
-        📝 Draft saves to your browser. Click "Save Quiz" to publish to Contentful.
+        📝 Draft saves to your browser. Click &quot;Save Quiz&quot; to publish to Contentful.
       </p>
     </div>
   );

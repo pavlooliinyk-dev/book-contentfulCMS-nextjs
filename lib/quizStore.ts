@@ -89,7 +89,9 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     try {
       const quiz = get().quiz;
       if (!quiz) return null;
-      const res = await fetch(`/api/quizzes?slug=${encodeURIComponent(quiz.slug)}&questionId=${encodeURIComponent(id)}`);
+      const res = await fetch(
+        `/api/quizzes?slug=${encodeURIComponent(quiz.slug)}&questionId=${encodeURIComponent(id)}`
+      );
       const data = await res.json();
       const q = data?.question || null;
       return q;
@@ -156,7 +158,8 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     let correctCount = 0;
     Object.keys(s.selectedAnswers).forEach((qId) => {
       const userAnswerIds = s.selectedAnswers[qId] || [];
-      const q = s.loadedQuestions[qId] || (s.quiz && s.quiz.firstQuestion && s.quiz.firstQuestion.sys.id === qId ? s.quiz.firstQuestion : null);
+      const q = s.loadedQuestions[qId] 
+        || (s.quiz && s.quiz.firstQuestion && s.quiz.firstQuestion.sys.id === qId ? s.quiz.firstQuestion : null);
       if (!q) return;
       const answers = q.answersCollection?.items || [];
       const correctAnswers = answers.filter((a) => Boolean(a.isCorrect)).map((a) => a.sys?.id as string);
@@ -167,8 +170,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     const total = Math.max(Object.keys(s.loadedQuestions).length, 1);
     const resultContentId = s.quiz?.resultContentId;
     const url = `/quiz/${s.quiz?.slug}/results/${s.quiz?.resultContentId
-}?answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}`;
-    // const url = `/quiz/${s.quiz?.slug}/results?score=${correctCount}&total=${total}&answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}&resultContentId=${encodeURIComponent(resultContentId || '')}`;
+    }?answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}`;
     set({ score: correctCount, submitted: true });
     // navigate
     if (typeof window !== 'undefined') window.location.href = url;

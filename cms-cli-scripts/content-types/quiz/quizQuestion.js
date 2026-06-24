@@ -24,7 +24,7 @@ module.exports = function (migration) {
     .required(true)
     .validations([{ in: ['single', 'multiple'] }])
     .defaultValue({
-        "en-US": "single"
+      "en-US": "single"
     });
 
   quizQuestion
@@ -32,13 +32,13 @@ module.exports = function (migration) {
     .name('Answers')
     .type('Array')
     .items({ type: 'Link', linkType: 'Entry', "validations": [
-          {
-            "linkContentType": [
-              "quizAnswer"
-            ],
-            "message": "quiz-answer type only available"
-          }
-        ], })
+      {
+        "linkContentType": [
+          "quizAnswer"
+        ],
+        "message": "quiz-answer type only available"
+      }
+    ], })
     .required(false);
 
   quizQuestion.changeFieldControl('title', 'builtin', 'singleLine', {});

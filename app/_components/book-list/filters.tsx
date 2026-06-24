@@ -64,7 +64,8 @@ const Filters = memo(function Filters({
                       type="checkbox"
                       checked={selectedTaxIds.includes(tax.title)}
                       onChange={() => handleFilterChange(tax)}
-                      className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black focus:ring-2 focus:ring-offset-2 focus-visible:outline-none cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-300 text-black 
+                        focus:ring-black focus:ring-2 focus:ring-offset-2 focus-visible:outline-none cursor-pointer"
                       aria-label={`Filter by ${tax.title}`}
                     />
                     <span className="text-sm group-hover:text-black transition-colors select-none">
@@ -79,7 +80,8 @@ const Filters = memo(function Filters({
         {selectedTaxIds.length > 0 && (
           <button 
             onClick={clearFilters}
-            className="text-sm text-red-600 hover:underline pt-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 rounded px-1"
+            className="text-sm text-red-600 hover:underline pt-4 focus:outline-none 
+              focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 rounded px-1"
             aria-label={`Clear ${selectedTaxIds.length} active filter${selectedTaxIds.length === 1 ? '' : 's'}`}
           >
             Clear all filters ({selectedTaxIds.length})

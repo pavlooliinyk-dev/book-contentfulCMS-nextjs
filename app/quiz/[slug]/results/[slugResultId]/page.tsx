@@ -32,7 +32,7 @@ export default async function QuizResults({
 
   return (
     <div className="w-full bg-gray-50 min-h-screen py-8">
-       {/* <div>quizResult: <pre>{JSON.stringify(quizResult, null, 2)}</pre></div>  
+      {/* <div>quizResult: <pre>{JSON.stringify(quizResult, null, 2)}</pre></div>  
         <div>params: <pre>{JSON.stringify(paramsAll, null, 2)}</pre></div>   */}
       <div className="max-w-3xl mx-auto">
         {/* Header */}
@@ -41,7 +41,7 @@ export default async function QuizResults({
             Quiz Complete!
           </h1>
           <p className="text-gray-600">
-            Here's a summary of your performance
+            Here&apos;s a summary of your performance
           </p>
           <p >{quizResult?.title}</p>
           <p className="text-gray-600">{quizResult?.description}</p>
@@ -59,19 +59,22 @@ export default async function QuizResults({
         <div className="flex flex-col md:flex-row gap-4 justify-center mt-8">
           <Link
             href={`/quiz/${slug}`}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg text-center transition-colors"
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 
+              text-white font-semibold rounded-lg text-center transition-colors"
           >
             Retake Quiz
           </Link>
           <Link
             href="/quiz"
-            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg text-center transition-colors"
+            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 
+              text-white font-semibold rounded-lg text-center transition-colors"
           >
             Browse More Quizzes
           </Link>
           <Link
             href="/quiz-landing"
-            className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg text-center transition-colors"
+            className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 
+              text-white font-semibold rounded-lg text-center transition-colors"
           >
             Back to Home
           </Link>

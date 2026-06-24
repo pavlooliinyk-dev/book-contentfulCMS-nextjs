@@ -33,7 +33,13 @@ export async function GET(request: NextRequest) {
   try {
     const result = await fetchGraphQL<BookCollectionData>(
       `query GetBooks($limit: Int!, $skip: Int!, $where: BookFilter) {
-        bookCollection(limit: $limit, skip: $skip, order: title_DESC, preview: ${isEnabled ? "true" : "false"}, where: $where) {
+        bookCollection(
+          limit: $limit, 
+          skip: $skip, 
+          order: title_DESC, 
+          preview: ${isEnabled ? "true" : "false"}, 
+          where: $where
+        ) {
           total
           items {
             ${BOOK_GRAPHQL_FIELDS}

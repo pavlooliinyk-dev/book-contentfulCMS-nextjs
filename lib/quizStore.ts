@@ -165,7 +165,10 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       if (isCorrect) correctCount++;
     });
     const total = Math.max(Object.keys(s.loadedQuestions).length, 1);
-    const url = `/quiz/${s.quiz?.slug}/results?score=${correctCount}&total=${total}&answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}`;
+    const resultContentId = s.quiz?.resultContentId;
+    const url = `/quiz/${s.quiz?.slug}/results/${s.quiz?.resultContentId
+}?answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}`;
+    // const url = `/quiz/${s.quiz?.slug}/results?score=${correctCount}&total=${total}&answers=${encodeURIComponent(JSON.stringify(s.selectedAnswers))}&resultContentId=${encodeURIComponent(resultContentId || '')}`;
     set({ score: correctCount, submitted: true });
     // navigate
     if (typeof window !== 'undefined') window.location.href = url;

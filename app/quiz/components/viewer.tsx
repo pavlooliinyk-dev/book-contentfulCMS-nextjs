@@ -20,9 +20,9 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   const currentQuestionIndex = useQuizStore((s) => s.currentQuestionIndex);
   const selectedAnswers = useQuizStore((s) => s.selectedAnswers);
   const submitted = useQuizStore((s) => s.submitted);
-  const score = useQuizStore((s) => s.score);
+  // const score = useQuizStore((s) => s.score);
 
-  const setQuizQuestionId = useQuizStore((s) => s.setQuizQuestionId);
+  // const setQuizQuestionId = useQuizStore((s) => s.setQuizQuestionId);
   const selectAnswer = useQuizStore((s) => s.selectAnswer);
   const nextWithAnswer = useQuizStore((s) => s.nextWithAnswer);
   const previous = useQuizStore((s) => s.previous);
@@ -32,7 +32,6 @@ export default function QuizViewer({ quizData }: QuizViewerProps) {
   useEffect(() => {
     if (quizData) init(quizData);
   }, [quizData, init]);
-
 
   const isEmbeddedQuestion = (n: unknown): n is QuizQuestionLinked => {
     if (typeof n !== 'object' || n === null) return false;

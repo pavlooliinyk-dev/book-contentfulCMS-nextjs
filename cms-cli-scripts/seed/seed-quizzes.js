@@ -79,7 +79,7 @@ const SAMPLE_QUIZZES = [
       passingScore: { 'en-US': 75 },
       published: { 'en-US': true },
       firstQuestionData: { 
-        title: 'Placeholder', 
+        title: 'Placeholder-1', 
         text: '', answerType: 'single', answers: [
 
         ] }
@@ -178,7 +178,7 @@ async function seedQuizzes() {
         title: { 'en-US': qd.title || qd.text || 'Question' },
         text: { 'en-US': qd.text || '' },
         answerType: { 'en-US': qd.answerType || 'single' },
-        answersCollection: { 'en-US': answerLinks }
+        answers: { 'en-US': answerLinks }
       };
 
       const questionEntry = await environment.createEntry('quizQuestion', { fields: questionFields });

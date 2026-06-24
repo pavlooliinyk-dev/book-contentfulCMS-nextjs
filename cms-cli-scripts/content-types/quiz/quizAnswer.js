@@ -28,7 +28,7 @@ module.exports = function (migration) {
       linkContentType: ['quizQuestion'], 
       message: "next Question only" }]);
 
-  quizAnswer.changeFieldControl('text', 'builtin', 'single-line', {});
+  quizAnswer.changeFieldControl('text', 'builtin', 'singleLine', {});
   quizAnswer.changeFieldControl('isCorrect', 'builtin', 'boolean', {});
   quizAnswer.changeFieldControl('nextQuestion', 'builtin', 'entryLinkEditor', {});
 };

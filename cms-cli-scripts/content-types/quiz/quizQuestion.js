@@ -28,7 +28,7 @@ module.exports = function (migration) {
     });
 
   quizQuestion
-    .createField('answersCollection')
+    .createField('answers')
     .name('Answers')
     .type('Array')
     .items({ type: 'Link', linkType: 'Entry', "validations": [
@@ -41,8 +41,8 @@ module.exports = function (migration) {
         ], })
     .required(false);
 
-  quizQuestion.changeFieldControl('title', 'builtin', 'single-line', {});
-  quizQuestion.changeFieldControl('text', 'builtin', 'single-line', {});
+  quizQuestion.changeFieldControl('title', 'builtin', 'singleLine', {});
+  quizQuestion.changeFieldControl('text', 'builtin', 'singleLine', {});
   quizQuestion.changeFieldControl('answerType', 'builtin', 'dropdown', {});
-  quizQuestion.changeFieldControl('answersCollection', 'builtin', 'entry-hyperlink', {});
+  quizQuestion.changeFieldControl('answers', 'builtin', 'entryLinksEditor', {});
 };

@@ -166,6 +166,7 @@ export interface Quiz {
   passingScore: number;
   published: boolean;
   firstQuestion: QuizQuestionLinked;
+  resultContentId: string;
 }
 
 export interface QuizCollectionData {

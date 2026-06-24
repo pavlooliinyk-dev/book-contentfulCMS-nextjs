@@ -51,6 +51,7 @@ export const QUIZ_FRAGMENT = `
         ...QuestionFields
       }
     }
+    resultContentId
   }
 `;
 
@@ -92,4 +93,9 @@ export const GET_FEATURED_QUIZZES = `
   ${QUIZ_FRAGMENT}
   ${QUESTION_FRAGMENT}
   ${ANSWER_FRAGMENT}
+`;
+
+export const GET_RESULTS_QUIZ = `
+  title
+  description
 `;

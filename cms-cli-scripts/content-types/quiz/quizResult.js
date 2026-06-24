@@ -24,7 +24,7 @@ module.exports = function (migration) {
     .linkType('Asset')
     .required(false);
 
-  quizResult.changeFieldControl('title', 'builtin', 'single-line', {});
-  quizResult.changeFieldControl('description', 'builtin', 'multiple-line', {});
+  quizResult.changeFieldControl('title', 'builtin', 'singleLine', {});
+  quizResult.changeFieldControl('description', 'builtin', 'multipleLine', {});
   quizResult.changeFieldControl('image', 'builtin', 'assetLinkEditor', {});
 };

@@ -59,7 +59,7 @@ export default function QRCodeGenerator({
       <p className="text-center text-sm text-gray-600">
         Scan this QR code to share your quiz result. It contains:
         <br />
-        Your score ({resultData.score}/{resultData.totalQuestions}),
+        Your score 100,
         answers, and timestamp.
       </p>
     </div>

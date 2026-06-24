@@ -1,6 +1,6 @@
 
 import { BOOK_GRAPHQL_FIELDS, TAXONOMY_TERM_GRAPHQL_FIELDS, HOME_PAGE_GRAPHQL_FIELDS } from './graphql/fragments';
-import { QUIZ_FRAGMENT, GET_QUIZ_BY_SLUG, GET_ALL_QUIZZES, GET_FEATURED_QUIZZES } from './graphql/quiz-fragments';
+import { QUIZ_FRAGMENT, GET_QUIZ_BY_SLUG, GET_ALL_QUIZZES, GET_FEATURED_QUIZZES, GET_RESULTS_QUIZ } from './graphql/quiz-fragments';
 import { 
   GraphQLResponse, 
   BookCollectionData, 
@@ -21,6 +21,7 @@ import {
   DEFAULT_RATING_COLOR,
   DEFAULT_RATING_MAX_STARS
 } from './constants';
+import { QuizResultData } from './qr-code-utils';
 
 function isValidMaxStars(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 10;
@@ -233,4 +234,29 @@ export async function getFeaturedQuizzes(preview = false, limit = 6): Promise<Qu
   );
 
   return result?.data?.quizCollection?.items || [];
+}
+
+export const GET_QUIZ_RESULT_BY_ID = `
+  query GetQuizResult($slug: String!) {
+    quizResult(id: $slug) {
+      title
+      description
+    }
+  }
+`;
+
+export interface QuizResultDataCMS {
+  title: string;
+  description: string;
+}
+export async function getQuizResultById(slug: string, preview = false): Promise<QuizResultDataCMS | null> {
+  const result = await fetchGraphQL<{ quizResult: QuizResultDataCMS }>(
+    GET_QUIZ_RESULT_BY_ID,
+    preview,
+    { slug, locale: "en-US" },
+  );
+
+  console.log('getQuizResultById: result:', result);
+
+  return result?.data?.quizResult || null;
 }

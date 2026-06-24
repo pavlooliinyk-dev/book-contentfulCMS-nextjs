@@ -95,7 +95,3 @@ export const GET_FEATURED_QUIZZES = `
   ${ANSWER_FRAGMENT}
 `;
 
-export const GET_RESULTS_QUIZ = `
-  title
-  description
-`;

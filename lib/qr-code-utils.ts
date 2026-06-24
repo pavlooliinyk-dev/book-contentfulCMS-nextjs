@@ -73,24 +73,24 @@ export interface QuizResultData {
 /**
  * Format percentage for display
  */
-export function formatPercentage(percentage: number): string {
-  return `${Math.round(percentage)}%`;
-}
+// export function formatPercentage(percentage: number): string {
+//   return `${Math.round(percentage)}%`;
+// }
 
 /**
  * Get result status based on passing score
  */
-export function getResultStatus(percentage: number, passingScore: number): {
-  passed: boolean;
-  label: string;
-  bgColor: string;
-  textColor: string;
-} {
-  const passed = percentage >= passingScore;
-  return {
-    passed,
-    label: passed ? '✓ Passed' : '✗ Failed',
-    bgColor: passed ? 'bg-green-100' : 'bg-red-100',
-    textColor: passed ? 'text-green-800' : 'text-red-800',
-  };
-}
+// export function getResultStatus(percentage: number, passingScore: number): {
+//   passed: boolean;
+//   label: string;
+//   bgColor: string;
+//   textColor: string;
+// } {
+//   const passed = percentage >= passingScore;
+//   return {
+//     passed,
+//     label: passed ? '✓ Passed' : '✗ Failed',
+//     bgColor: passed ? 'bg-green-100' : 'bg-red-100',
+//     textColor: passed ? 'text-green-800' : 'text-red-800',
+//   };
+// }

@@ -236,7 +236,7 @@ export async function getFeaturedQuizzes(preview = false, limit = 6): Promise<Qu
   return result?.data?.quizCollection?.items || [];
 }
 
-export const GET_QUIZ_RESULT_BY_ID = `
+const GET_QUIZ_RESULT_BY_ID = `
   query GetQuizResult($slug: String!) {
     quizResult(id: $slug) {
       title

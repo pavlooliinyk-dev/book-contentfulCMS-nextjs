@@ -51,6 +51,7 @@ export default function AnswerEditor({
               type="checkbox"
               {...field}
               checked={field.value || false}
+              value={field.value ? 'true' : 'false'}
               className="w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500 cursor-pointer"
               title="Mark as correct answer"
             />

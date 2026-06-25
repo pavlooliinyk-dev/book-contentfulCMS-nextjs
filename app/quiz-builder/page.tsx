@@ -1,7 +1,7 @@
-'use client';
+// 'use client';
 // import { connection } from 'next/server'
 // import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import QuizBuilderForm from '@/app/_components/quiz-builder';
 import Link from 'next/link';
 import { ErrorBoundary } from '../_components/error-boundary';

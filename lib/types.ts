@@ -120,7 +120,7 @@ export interface HomePageCollectionData {
 }
 
 // Quiz related types
-export interface QuizAnswer {
+interface QuizAnswer {
   id: string;
   text: string;
   isCorrect: boolean;

@@ -90,14 +90,7 @@ export default async function QuizBuilderPage({searchParams}: {searchParams: URL
       <ErrorBoundary>
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
-          <QuizBuilderForm
-            onSave={async (data) => {
-            // TODO: Implement Contentful mutation
-              console.log('Saving quiz:', data);
-              // For now, just show success
-              alert('Quiz saved (feature coming soon)');
-            }}
-          />
+          <QuizBuilderForm          />
         </div>
       </ErrorBoundary>
     </div>

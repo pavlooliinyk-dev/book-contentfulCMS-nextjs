@@ -25,7 +25,7 @@ const inter = Inter({
 
 function Footer() {
   return (
-    <footer className="bg-accent-1 border-t border-accent-2">
+    <footer className="bg-accent-1 border-t border-accent-2 py-12">
       <div className="container mx-auto px-5">
         <div className="text-red-600">Footer</div>        
       </div>

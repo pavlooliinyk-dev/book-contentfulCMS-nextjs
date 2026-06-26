@@ -118,3 +118,60 @@ export interface HomePageCollectionData {
     }>;
   };
 }
+
+// Quiz related types
+interface QuizAnswer {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+}
+
+// Back-compat: standalone question shape used by some components (not embedded on Quiz)
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  questionType: 'single' | 'multiple';
+  answers: QuizAnswer[];
+  order: number;
+}
+
+export interface QuizQuestionLinked {
+  sys: {
+    id: string;
+  };
+  title: string;
+  text: string;
+  answerType: 'single' | 'multiple';
+  answersCollection: {
+    items: {
+      sys: {
+        id: string;
+      };
+      text: string;
+      // nextQuestion may be either a link ({ sys: { id } }) or an embedded full question object from Contentful
+      nextQuestion?: QuizQuestionLinked | { sys: { id: string } } | null;
+      // Contentful may include isCorrect on answers in some payloads
+      isCorrect?: boolean;
+    }[];
+  };
+}
+
+export interface Quiz {
+  sys: {
+    id: string;
+  };
+  title: string;
+  slug: string;
+  description?: RichTextContent;
+  passingScore: number;
+  published: boolean;
+  firstQuestion: QuizQuestionLinked;
+  resultContentId: string;
+}
+
+export interface QuizCollectionData {
+  quizCollection: {
+    items: Quiz[];
+    total: number;
+  };
+}

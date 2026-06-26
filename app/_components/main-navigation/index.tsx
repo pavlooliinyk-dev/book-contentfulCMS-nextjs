@@ -20,6 +20,14 @@ export default function MainNavigation() {
             Movies
           </Link>
         </li>
+        <li>
+          <Link 
+            href="/quiz-landing"
+            className="text-blue-700 hover:text-blue-900 hover:underline transition-colors font-medium"
+          >
+            Quizzes
+          </Link>
+        </li>
       </ul>
     </nav>
   );

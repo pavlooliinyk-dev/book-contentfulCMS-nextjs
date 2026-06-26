@@ -1,5 +1,6 @@
 
 import { BOOK_GRAPHQL_FIELDS, TAXONOMY_TERM_GRAPHQL_FIELDS, HOME_PAGE_GRAPHQL_FIELDS } from './graphql/fragments';
+import { GET_QUIZ_BY_SLUG, GET_ALL_QUIZZES, GET_FEATURED_QUIZZES } from './graphql/quiz-fragments';
 import { 
   GraphQLResponse, 
   BookCollectionData, 
@@ -10,7 +11,9 @@ import {
   TaxonomyTerm,
   HomePage,
   RatingDisplayConfig,
-  ImageWithTextSection
+  ImageWithTextSection,
+  Quiz,
+  QuizCollectionData
 } from './types';
 import { 
   BOOKS_DEFAULT_LIMIT, 
@@ -18,6 +21,7 @@ import {
   DEFAULT_RATING_COLOR,
   DEFAULT_RATING_MAX_STARS
 } from './constants';
+import { QuizResultData } from './qr-code-utils';
 
 function isValidMaxStars(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 10;
@@ -28,7 +32,7 @@ export async function fetchGraphQL<T = unknown>(
   preview = false,
   variables?: Record<string, unknown>
 ): Promise<GraphQLResponse<T>> {
-  const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master';
+  const environment = process.env.CONTENTFUL_ENVIRONMENT || 'nuutrt4cwach';
   const response = await fetch(
     `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`,
     {
@@ -191,4 +195,68 @@ export async function getRatingDisplayConfig(preview: boolean): Promise<RatingDi
     : DEFAULT_RATING_MAX_STARS;
 
   return { color, maxStars };
+}
+
+// Quiz Functions
+
+export async function getQuizBySlug(slug: string, preview = false): Promise<Quiz | null> {
+  const result = await fetchGraphQL<QuizCollectionData>(
+    GET_QUIZ_BY_SLUG,
+    preview,
+    { slug, locale: "en-US" },
+  );
+
+  return result?.data?.quizCollection?.items?.[0] || null;
+}
+
+export async function getAllQuizzes(
+  preview = false,
+  limit = 10,
+  skip = 0
+): Promise<{ quizzes: Quiz[]; total: number }> {
+  const result = await fetchGraphQL<QuizCollectionData>(
+    GET_ALL_QUIZZES,
+    preview,
+    { limit, skip },
+  );
+
+  return {
+    quizzes: result?.data?.quizCollection?.items || [],
+    total: result?.data?.quizCollection?.total || 0,
+  };
+}
+
+export async function getFeaturedQuizzes(preview = false, limit = 6): Promise<Quiz[]> {
+  const result = await fetchGraphQL<QuizCollectionData>(
+    GET_FEATURED_QUIZZES,
+    preview,
+    { limit },
+  );
+
+  return result?.data?.quizCollection?.items || [];
+}
+
+const GET_QUIZ_RESULT_BY_ID = `
+  query GetQuizResult($slug: String!) {
+    quizResult(id: $slug) {
+      title
+      description
+    }
+  }
+`;
+
+export interface QuizResultDataCMS {
+  title: string;
+  description: string;
+}
+export async function getQuizResultById(slug: string, preview = false): Promise<QuizResultDataCMS | null> {
+  const result = await fetchGraphQL<{ quizResult: QuizResultDataCMS }>(
+    GET_QUIZ_RESULT_BY_ID,
+    preview,
+    { slug, locale: "en-US" },
+  );
+
+  console.log('getQuizResultById: result:', result);
+
+  return result?.data?.quizResult || null;
 }

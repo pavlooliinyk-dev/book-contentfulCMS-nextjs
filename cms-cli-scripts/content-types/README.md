@@ -5,8 +5,9 @@ Modular migration scripts for Contentful content model.
 ## Usage
 
 ```bash
-npm run migrate  # Create all content types
-npm run seed     # Populate sample data
+npm run cms:migrate  # Create all content types
+npm run cms:seed  # Populate sample data book
+npm run cms:seed:quizzes     # Populate sample data quiz
 ```
 
 

@@ -14,7 +14,8 @@ export default function ButtonPagination({ page, total, limit, disabled, onGoToP
       <button
         onClick={() => onGoToPage(-1)}
         disabled={page === 0 || disabled}
-        className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
+        className="px-6 py-2 border border-black rounded disabled:opacity-30
+          disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
       >
         ← Previous
       </button>
@@ -24,7 +25,8 @@ export default function ButtonPagination({ page, total, limit, disabled, onGoToP
       <button
         onClick={() => onGoToPage(1)}
         disabled={(page + 1) * limit >= total || disabled}
-        className="px-6 py-2 border border-black rounded disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
+        className="px-6 py-2 border border-black rounded disabled:opacity-30 
+          disabled:cursor-not-allowed hover:bg-black hover:text-white transition"
       >
         Next →
       </button>

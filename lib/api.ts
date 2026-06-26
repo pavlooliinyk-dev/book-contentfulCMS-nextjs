@@ -54,7 +54,7 @@ export async function fetchGraphQL<T = unknown>(
   
   const result = await response.json();
 
-  console.log("Home Page Data:", url);
+  // console.log("Home Page Data:", url);
   if (result.errors) {
     console.error("GraphQL Errors:", JSON.stringify(result.errors, null, 2));
   }

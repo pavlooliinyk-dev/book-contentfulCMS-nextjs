@@ -33,7 +33,8 @@ export async function fetchGraphQL<T = unknown>(
   variables?: Record<string, unknown>
 ): Promise<GraphQLResponse<T>> {
   const environment = process.env.CONTENTFUL_ENVIRONMENT || 'nuutrt4cwach';
-  const url = `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`
+  const baseUrl = 'https://graphql.contentful.com/content/v1/spaces';
+  const url = `${baseUrl}/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`
   const response = await fetch(
     url,
     {

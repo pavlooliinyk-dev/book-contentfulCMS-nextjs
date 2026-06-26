@@ -33,8 +33,9 @@ export async function fetchGraphQL<T = unknown>(
   variables?: Record<string, unknown>
 ): Promise<GraphQLResponse<T>> {
   const environment = process.env.CONTENTFUL_ENVIRONMENT || 'nuutrt4cwach';
+  const url = `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`
   const response = await fetch(
-    `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/${environment}`,
+    url,
     {
       method: "POST",
       headers: {
@@ -51,6 +52,8 @@ export async function fetchGraphQL<T = unknown>(
   );
   
   const result = await response.json();
+
+  console.log("Home Page Data:", url);
   if (result.errors) {
     console.error("GraphQL Errors:", JSON.stringify(result.errors, null, 2));
   }
@@ -161,6 +164,8 @@ export async function getHomePage(preview: boolean): Promise<HomePage | null> {
   );
   const homePageRaw = entry?.data?.homePageCollection?.items?.[0];
   
+  console.log("Home Page Data:", homePageRaw);
+
   if (!homePageRaw) {
     return null;
   }

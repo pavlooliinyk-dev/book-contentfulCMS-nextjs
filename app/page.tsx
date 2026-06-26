@@ -21,6 +21,7 @@ export default async function Page() {
   ]);
   const heroBook = initialBooks && initialBooks.length > 0 ? initialBooks[0] : null;
 
+  
   return (
     <div className="container mx-auto px-5">
       <Intro title={homePage?.title} />
